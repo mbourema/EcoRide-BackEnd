@@ -25,8 +25,8 @@ class Paiement
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date_paiement = null;
 
-    #[ORM\Column(enumType: Avancement::class)]
-    private ?Avancement $avancement = Avancement::ATTENTE;
+    #[ORM\Column(length: 255)]
+    private ?string $avancement = null;
 
     public function getPaiementId(): ?int
     {
@@ -62,12 +62,12 @@ class Paiement
         return $this;
     }
 
-    public function getAvancement(): ?Avancement
+    public function getAvancement(): ?string
     {
         return $this->avancement;
     }
 
-    public function setAvancement(Avancement $avancement): static
+    public function setAvancement(string $avancement): static
     {
         $this->avancement = $avancement;
 

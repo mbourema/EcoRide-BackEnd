@@ -21,8 +21,8 @@ class Voiture
     #[ORM\Column(length: 20, unique: true)]
     private ?string $immatriculation = null;
 
-    #[ORM\Column(enumType: Energie::class)]
-    private ?Energie $energie = null;
+    #[ORM\Column(length: 255)]
+    private ?string $energie = null;
 
     #[ORM\Column(length: 30)]
     private ?string $couleur = null;
@@ -70,12 +70,12 @@ class Voiture
         return $this;
     }
 
-    public function getEnergie(): ?Energie
+    public function getEnergie(): ?string
     {
         return $this->energie;
     }
 
-    public function setEnergie(Energie $energie): static
+    public function setEnergie(string $energie): static
     {
         $this->energie = $energie;
 

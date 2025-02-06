@@ -32,8 +32,8 @@ class Suspension
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $date_fin = null;
 
-    #[ORM\Column(enumType: Sanction::class)]
-    private ?Sanction $sanction = Sanction::ACTIF;
+    #[ORM\Column(length: 255)]
+    private ?string $sanction = null;
 
     public function getSuspensionId(): ?int
     {
@@ -86,12 +86,12 @@ class Suspension
         return $this;
     }
 
-    public function getSanction(): ?Sanction
+    public function getSanction(): ?string
     {
         return $this->sanction;
     }
 
-    public function setSanction(Sanction $sanction): static
+    public function setSanction(string $sanction): static
     {
         $this->sanction = $sanction;
 

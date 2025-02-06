@@ -30,8 +30,8 @@ class Covoiturage
     #[ORM\Column(length: 100)]
     private ?string $lieu_arrivee = null;
 
-    #[ORM\Column(enumType: Statut::class)]
-    private ?Statut $statut = Statut::EN_ATTENTE; // valeur par défaut
+    #[ORM\Column(length: 255)]
+    private ?string $statut = null; // valeur par défaut
 
     #[ORM\Column]
     private ?int $nb_places = null;
@@ -104,12 +104,12 @@ class Covoiturage
         return $this;
     }
 
-    public function getStatut(): ?Statut
+    public function getStatut(): ?string
     {
         return $this->statut;
     }
 
-    public function setStatut(Statut $statut): static
+    public function setStatut(string $statut): static
     {
         $this->statut = $statut;
 
