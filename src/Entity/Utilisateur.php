@@ -28,6 +28,9 @@ class Utilisateur
     #[ORM\Column(length: 50, unique: true)]
     private ?string $email = null;
 
+    #[ORM\Column(type: 'integer', options: ["default" => 20])]
+    private int $nbCredit = 20;
+
     #[ORM\Column(length: 255)]
     private ?string $mdp = null;
 
@@ -98,6 +101,17 @@ class Utilisateur
     {
         $this->email = $email;
 
+        return $this;
+    }
+
+    public function getNbCredit(): int
+    {
+        return $this->nbCredit;
+    }
+
+    public function setNbCredit(int $nbCredit): self
+    {
+        $this->nbCredit = $nbCredit;
         return $this;
     }
 

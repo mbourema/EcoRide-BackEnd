@@ -12,13 +12,24 @@
         "doctrine/dbal": "^4.2",
         "doctrine/doctrine-bundle": "^2.13",
         "doctrine/doctrine-migrations-bundle": "^3.4.1",
+        "doctrine/mongodb-odm-bundle": "^5.2",
         "doctrine/orm": "^3.3.2",
+        "nelmio/api-doc-bundle": "^4.36",
+        "phpdocumentor/reflection-docblock": "^5.6",
+        "phpstan/phpdoc-parser": "^2.0",
+        "symfony/asset": "7.2.*",
         "symfony/console": "7.2.*",
         "symfony/dotenv": "7.2.*",
         "symfony/flex": "^2.4.7",
         "symfony/framework-bundle": "7.2.*",
+        "symfony/property-access": "7.2.*",
+        "symfony/property-info": "7.2.*",
         "symfony/runtime": "7.2.*",
-        "symfony/yaml": "7.2.*"
+        "symfony/serializer": "7.2.*",
+        "symfony/twig-bundle": "7.2.*",
+        "symfony/yaml": "7.2.*",
+        "twig/extra-bundle": "^2.12|^3.0",
+        "twig/twig": "^2.12|^3.0"
     },
     "config": {
         "allow-plugins": {
@@ -71,6 +82,7 @@
         }
     },
     "require-dev": {
+        "symfony/debug-bundle": "7.2.*",
         "symfony/maker-bundle": "^1.62.1"
     }
 }

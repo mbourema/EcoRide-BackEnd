@@ -1,0 +1,1735 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: "Covoiturage API"
+            description: "API pour gérer les covoiturages"
+            version: "1.0.0"
+        components:
+            securitySchemes:
+                X-AUTH-TOKEN:
+                    type: apiKey
+                    name: X-AUTH-TOKEN
+                    in: header
+        security:
+            - X-AUTH-TOKEN: []
+        paths:
+            # Ajout des routes pour CovoiturageController
+            /covoiturage/list:
+                get:
+                    summary: "Récupérer la liste des covoiturages"
+                    description: "Cette méthode permet de récupérer la liste de tous les covoiturages."
+                    responses:
+                        200:
+                            description: "Liste des covoiturages"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                covoiturage_id:
+                                                    type: integer
+                                                    example: 1
+                                                date_depart:
+                                                    type: string
+                                                    format: date-time
+                                                    example: "2025-03-01T08:00:00"
+                                                lieu_depart:
+                                                    type: string
+                                                    example: "Paris"
+                                                date_arrivee:
+                                                    type: string
+                                                    format: date-time
+                                                    example: "2025-03-01T10:00:00"
+                                                lieu_arrivee:
+                                                    type: string
+                                                    example: "Lyon"
+                                                statut:
+                                                    type: string
+                                                    example: "Disponible"
+                                                nb_places:
+                                                    type: integer
+                                                    example: 4
+                                                prix_personne:
+                                                    type: number
+                                                    format: float
+                                                    example: 15.50
+            /covoiturage/add:
+                post:
+                    summary: "Ajouter un nouveau covoiturage"
+                    description: "Cette méthode permet d'ajouter un nouveau covoiturage."
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required:
+                                        - date_depart
+                                        - lieu_depart
+                                        - date_arrivee
+                                        - lieu_arrivee
+                                        - statut
+                                        - nb_places
+                                        - prix_personne
+                                        - voiture_id
+                                    properties:
+                                        date_depart:
+                                            type: string
+                                            format: date-time
+                                            example: "2025-03-01T08:00:00"
+                                        lieu_depart:
+                                            type: string
+                                            example: "Paris"
+                                        date_arrivee:
+                                            type: string
+                                            format: date-time
+                                            example: "2025-03-01T10:00:00"
+                                        lieu_arrivee:
+                                            type: string
+                                            example: "Lyon"
+                                        statut:
+                                            type: string
+                                            example: "Disponible"
+                                        nb_places:
+                                            type: integer
+                                            example: 4
+                                        prix_personne:
+                                            type: number
+                                            format: float
+                                            example: 15.50
+                                        voiture_id:
+                                            type: integer
+                                            example: 1
+                    responses:
+                        201:
+                            description: "Covoiturage ajouté avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            covoiturage_id:
+                                                type: integer
+                                                example: 1
+                                            date_depart:
+                                                type: string
+                                                format: date-time
+                                                example: "2025-03-01T08:00:00"
+                                            lieu_depart:
+                                                type: string
+                                                example: "Paris"
+                                            date_arrivee:
+                                                type: string
+                                                format: date-time
+                                                example: "2025-03-01T10:00:00"
+                                            lieu_arrivee:
+                                                type: string
+                                                example: "Lyon"
+                                            statut:
+                                                type: string
+                                                example: "Disponible"
+                                            nb_places:
+                                                type: integer
+                                                example: 4
+                                            prix_personne:
+                                                type: number
+                                                format: float
+                                                example: 15.50
+            /covoiturage/{id}:
+                get:
+                    summary: "Afficher un covoiturage par ID"
+                    description: "Cette méthode permet de récupérer un covoiturage spécifique par ID."
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: "ID du covoiturage à afficher"
+                          schema:
+                              type: integer
+                              example: 1
+                    responses:
+                        200:
+                            description: "Covoiturage trouvé avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            covoiturage_id:
+                                                type: integer
+                                                example: 1
+                                            date_depart:
+                                                type: string
+                                                format: date-time
+                                                example: "2025-03-01T08:00:00"
+                                            lieu_depart:
+                                                type: string
+                                                example: "Paris"
+                                            date_arrivee:
+                                                type: string
+                                                format: date-time
+                                                example: "2025-03-01T10:00:00"
+                                            lieu_arrivee:
+                                                type: string
+                                                example: "Lyon"
+                                            statut:
+                                                type: string
+                                                example: "Disponible"
+                                            nb_places:
+                                                type: integer
+                                                example: 4
+                                            prix_personne:
+                                                type: number
+                                                format: float
+                                                example: 15.50
+                        404:
+                            description: "Covoiturage non trouvé"
+            /covoiturage/update/{id}:
+                put:
+                    summary: "Mettre à jour un covoiturage"
+                    description: "Cette méthode permet de mettre à jour les informations d'un covoiturage."
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: "ID du covoiturage à mettre à jour"
+                          schema:
+                              type: integer
+                              example: 1
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    properties:
+                                        date_depart:
+                                            type: string
+                                            format: date-time
+                                            example: "2025-03-01T08:00:00"
+                                        lieu_depart:
+                                            type: string
+                                            example: "Paris"
+                                        date_arrivee:
+                                            type: string
+                                            format: date-time
+                                            example: "2025-03-01T10:00:00"
+                                        lieu_arrivee:
+                                            type: string
+                                            example: "Lyon"
+                                        statut:
+                                            type: string
+                                            example: "Disponible"
+                                        nb_places:
+                                            type: integer
+                                            example: 4
+                                        prix_personne:
+                                            type: number
+                                            format: float
+                                            example: 15.50
+                                        voiture_id:
+                                            type: integer
+                                            example: 1
+                    responses:
+                        200:
+                            description: "Covoiturage mis à jour avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            covoiturage_id:
+                                                type: integer
+                                                example: 1
+                                            date_depart:
+                                                type: string
+                                                format: date-time
+                                                example: "2025-03-01T08:00:00"
+                                            lieu_depart:
+                                                type: string
+                                                example: "Paris"
+                                            date_arrivee:
+                                                type: string
+                                                format: date-time
+                                                example: "2025-03-01T10:00:00"
+                                            lieu_arrivee:
+                                                type: string
+                                                example: "Lyon"
+                                            statut:
+                                                type: string
+                                                example: "Disponible"
+                                            nb_places:
+                                                type: integer
+                                                example: 4
+                                            prix_personne:
+                                                type: number
+                                                format: float
+                                                example: 15.50
+                        404:
+                            description: "Covoiturage non trouvé"
+            /covoiturage/delete/{id}:
+                delete:
+                    summary: "Supprimer un covoiturage"
+                    description: "Cette méthode permet de supprimer un covoiturage par ID."
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: "ID du covoiturage à supprimer"
+                          schema:
+                              type: integer
+                              example: 1
+                    responses:
+                        200:
+                            description: "Covoiturage supprimé avec succès"
+                        404:
+                            description: "Covoiturage non trouvé"
+            # Ajout des routes pour AvisController
+            # Ajout des routes pour AvisController
+            /avis/add:
+                post:
+                    summary: "Ajouter un nouvel avis"
+                    description: "Cette méthode permet d'ajouter un avis pour un covoiturage."
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required:
+                                        - covoiturage_id
+                                        - passager_id
+                                        - conducteur_id
+                                        - note
+                                        - commentaire
+                                    properties:
+                                        covoiturage_id:
+                                            type: integer
+                                            example: 1
+                                        passager_id:
+                                            type: integer
+                                            example: 2
+                                        conducteur_id:
+                                            type: integer
+                                            example: 3
+                                        note:
+                                            type: number
+                                            format: float
+                                            example: 4.5
+                                        commentaire:
+                                            type: string
+                                            example: "Très bon trajet, conducteur agréable."
+                    responses:
+                        201:
+                            description: "Avis ajouté avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: "Avis ajouté avec succès"
+                        400:
+                            description: "Données manquantes"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Donnees manquantes"
+
+            /avis/list:
+                get:
+                    summary: "Récupérer la liste des avis"
+                    description: "Cette méthode permet de récupérer tous les avis pour les covoiturages."
+                    responses:
+                        200:
+                            description: "Liste des avis"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                id:
+                                                    type: integer
+                                                    example: 1
+                                                covoiturage_id:
+                                                    type: integer
+                                                    example: 1
+                                                passager_id:
+                                                    type: integer
+                                                    example: 2
+                                                conducteur_id:
+                                                    type: integer
+                                                    example: 3
+                                                note:
+                                                    type: number
+                                                    format: float
+                                                    example: 4.5
+                                                commentaire:
+                                                    type: string
+                                                    example: "Très bon trajet, conducteur agréable."
+                                                date:
+                                                    type: string
+                                                    format: date-time
+                                                    example: "2025-02-06T12:00:00"
+            # Routes pour CommandeController
+            /commande/add:
+                post:
+                    summary: "Ajouter une nouvelle commande"
+                    description: "Cette méthode permet d'ajouter une nouvelle commande pour un covoiturage."
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required:
+                                        - conducteur_id
+                                        - passager_id
+                                        - covoiturage_id
+                                        - lieu_depart
+                                        - lieu_arrivee
+                                        - date_depart
+                                        - date_arrivee
+                                        - statut
+                                    properties:
+                                        conducteur_id:
+                                            type: integer
+                                            example: 1
+                                        passager_id:
+                                            type: integer
+                                            example: 2
+                                        covoiturage_id:
+                                            type: integer
+                                            example: 3
+                                        lieu_depart:
+                                            type: string
+                                            example: "Paris"
+                                        lieu_arrivee:
+                                            type: string
+                                            example: "Lyon"
+                                        date_depart:
+                                            type: string
+                                            format: date-time
+                                            example: "2025-02-10T08:00:00"
+                                        date_arrivee:
+                                            type: string
+                                            format: date-time
+                                            example: "2025-02-10T12:00:00"
+                                        statut:
+                                            type: string
+                                            example: "En cours"
+                    responses:
+                        201:
+                            description: "Commande ajoutée avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: "Commande ajoutée avec succès"
+                        400:
+                            description: "Données manquantes"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Données manquantes"
+
+            /commande/list:
+                get:
+                    summary: "Récupérer la liste des commandes"
+                    description: "Cette méthode permet de récupérer toutes les commandes de covoiturage."
+                    responses:
+                        200:
+                            description: "Liste des commandes"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                id:
+                                                    type: integer
+                                                    example: 1
+                                                conducteur_id:
+                                                    type: integer
+                                                    example: 1
+                                                passager_id:
+                                                    type: integer
+                                                    example: 2
+                                                covoiturage_id:
+                                                    type: integer
+                                                    example: 3
+                                                lieu_depart:
+                                                    type: string
+                                                    example: "Paris"
+                                                lieu_arrivee:
+                                                    type: string
+                                                    example: "Lyon"
+                                                date_depart:
+                                                    type: string
+                                                    format: date-time
+                                                    example: "2025-02-10T08:00:00"
+                                                date_arrivee:
+                                                    type: string
+                                                    format: date-time
+                                                    example: "2025-02-10T12:00:00"
+                                                statut:
+                                                    type: string
+                                                    example: "En cours"
+
+            /commande/{id}:
+                get:
+                    summary: "Afficher une commande par ID"
+                    description: "Cette méthode permet de récupérer les détails d'une commande spécifique."
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: "ID de la commande à afficher"
+                          schema:
+                              type: integer
+                              example: 1
+                    responses:
+                        200:
+                            description: "Commande trouvée"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            id:
+                                                type: integer
+                                                example: 1
+                                            conducteur_id:
+                                                type: integer
+                                                example: 1
+                                            passager_id:
+                                                type: integer
+                                                example: 2
+                                            covoiturage_id:
+                                                type: integer
+                                                example: 3
+                                            lieu_depart:
+                                                type: string
+                                                example: "Paris"
+                                            lieu_arrivee:
+                                                type: string
+                                                example: "Lyon"
+                                            date_depart:
+                                                type: string
+                                                format: date-time
+                                                example: "2025-02-10T08:00:00"
+                                            date_arrivee:
+                                                type: string
+                                                format: date-time
+                                                example: "2025-02-10T12:00:00"
+                                            statut:
+                                                type: string
+                                                example: "En cours"
+                        404:
+                            description: "Commande non trouvée"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Commande non trouvée"
+            # Routes pour PreferencesController
+            /preferences/add:
+                post:
+                    summary: "Ajouter des préférences pour un conducteur"
+                    description: "Cette méthode permet d'ajouter les préférences d'un conducteur concernant le covoiturage."
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required:
+                                        - conducteur_id
+                                        - fumeur
+                                        - animaux_acceptes
+                                    properties:
+                                        conducteur_id:
+                                            type: integer
+                                            example: 1
+                                        fumeur:
+                                            type: boolean
+                                            example: false
+                                        animaux_acceptes:
+                                            type: boolean
+                                            example: true
+                                        preferences_perso:
+                                            type: string
+                                            example: "Préférence spécifique du conducteur"
+                    responses:
+                        201:
+                            description: "Préférences ajoutées avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: "Préférences ajoutées avec succès"
+                        400:
+                            description: "Données manquantes"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Données manquantes"
+
+            /preferences/{conducteurId}:
+                get:
+                    summary: "Récupérer les préférences d'un conducteur"
+                    description: "Cette méthode permet de récupérer les préférences d'un conducteur en fonction de son ID."
+                    parameters:
+                        - name: conducteurId
+                          in: path
+                          required: true
+                          description: "ID du conducteur pour lequel récupérer les préférences"
+                          schema:
+                              type: integer
+                              example: 1
+                    responses:
+                        200:
+                            description: "Préférences trouvées"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            id:
+                                                type: integer
+                                                example: 1
+                                            conducteur_id:
+                                                type: integer
+                                                example: 1
+                                            fumeur:
+                                                type: boolean
+                                                example: false
+                                            animaux_acceptes:
+                                                type: boolean
+                                                example: true
+                                            preferences_perso:
+                                                type: string
+                                                example: "Préférence spécifique du conducteur"
+                        404:
+                            description: "Préférences non trouvées"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Préférences non trouvées"
+
+            /preferences/{conducteurId}/update:
+                put:
+                    summary: "Mettre à jour les préférences d'un conducteur"
+                    description: "Cette méthode permet de mettre à jour les préférences d'un conducteur pour un covoiturage."
+                    parameters:
+                        - name: conducteurId
+                          in: path
+                          required: true
+                          description: "ID du conducteur pour lequel mettre à jour les préférences"
+                          schema:
+                              type: integer
+                              example: 1
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    properties:
+                                        fumeur:
+                                            type: boolean
+                                            example: true
+                                        animaux_acceptes:
+                                            type: boolean
+                                            example: false
+                                        preferences_perso:
+                                            type: string
+                                            example: "Nouvelle préférence spécifique"
+                    responses:
+                        200:
+                            description: "Préférences mises à jour avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: "Préférences mises à jour avec succès"
+                        404:
+                            description: "Préférences non trouvées"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Préférences non trouvées"
+            # Routes pour StatistiquesController
+            /statistiques/add:
+                post:
+                    summary: "Ajouter des statistiques"
+                    description: "Cette méthode permet d'ajouter des statistiques concernant les covoiturages et les crédits."
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required:
+                                        - nb_covoiturages
+                                        - nb_credits_jour
+                                        - nb_credits_total
+                                    properties:
+                                        nb_covoiturages:
+                                            type: integer
+                                            example: 100
+                                        nb_credits_jour:
+                                            type: integer
+                                            example: 50
+                                        nb_credits_total:
+                                            type: integer
+                                            example: 1000
+                    responses:
+                        201:
+                            description: "Statistiques ajoutées avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: "Statistiques ajoutées avec succès"
+                        400:
+                            description: "Données manquantes"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Données manquantes"
+
+            /statistiques/latest:
+                get:
+                    summary: "Récupérer les dernières statistiques"
+                    description: "Cette méthode permet de récupérer les dernières statistiques ajoutées."
+                    responses:
+                        200:
+                            description: "Statistiques trouvées"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            id:
+                                                type: integer
+                                                example: 1
+                                            date:
+                                                type: string
+                                                format: date
+                                                example: "2025-02-06"
+                                            nb_covoiturages:
+                                                type: integer
+                                                example: 100
+                                            nb_credits_jour:
+                                                type: integer
+                                                example: 50
+                                            nb_credits_total:
+                                                type: integer
+                                                example: 1000
+                        404:
+                            description: "Aucune statistique trouvée"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Aucune statistique trouvée"
+
+            /statistiques/update:
+                put:
+                    summary: "Mettre à jour les statistiques"
+                    description: "Cette méthode permet de mettre à jour les statistiques existantes."
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    properties:
+                                        nb_covoiturages:
+                                            type: integer
+                                            example: 150
+                                        nb_credits_jour:
+                                            type: integer
+                                            example: 60
+                                        nb_credits_total:
+                                            type: integer
+                                            example: 1100
+                    responses:
+                        200:
+                            description: "Statistiques mises à jour avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: "Statistiques mises à jour avec succès"
+                        404:
+                            description: "Aucune statistique trouvée"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Aucune statistique trouvée"
+            # Routes pour EmployeController
+            /employe/add:
+                post:
+                    summary: "Ajouter un employé"
+                    description: "Cette méthode permet d'ajouter un nouvel employé."
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required:
+                                        - employe_id
+                                    properties:
+                                        employe_id:
+                                            type: integer
+                                            example: 123
+                    responses:
+                        201:
+                            description: "Employé ajouté avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: "Employé ajouté avec succès"
+                        400:
+                            description: "Données manquantes"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Données manquantes"
+
+            /employe/{id}:
+                get:
+                    summary: "Récupérer un employé par son ID"
+                    description: "Cette méthode permet de récupérer un employé en fonction de son ID."
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: "ID de l'employé à récupérer"
+                          schema:
+                              type: integer
+                              example: 123
+                    responses:
+                        200:
+                            description: "Employé trouvé"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            employe_id:
+                                                type: integer
+                                                example: 123
+                        404:
+                            description: "Employé non trouvé"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Employé non trouvé"
+
+            /employe/list:
+                get:
+                    summary: "Lister tous les employés"
+                    description: "Cette méthode permet de récupérer la liste de tous les employés."
+                    responses:
+                        200:
+                            description: "Liste des employés"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                employe_id:
+                                                    type: integer
+                                                    example: 123
+            # Routes pour MarqueController
+            /marque/add:
+                post:
+                    summary: "Ajouter une marque"
+                    description: "Cette méthode permet d'ajouter une nouvelle marque."
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required:
+                                        - libelle
+                                    properties:
+                                        libelle:
+                                            type: string
+                                            example: "Peugeot"
+                    responses:
+                        201:
+                            description: "Marque ajoutée avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: "Marque ajoutée avec succès"
+                        400:
+                            description: "Données manquantes"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Données manquantes"
+
+            /marque/{id}:
+                get:
+                    summary: "Récupérer une marque par son ID"
+                    description: "Cette méthode permet de récupérer une marque en fonction de son ID."
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: "ID de la marque à récupérer"
+                          schema:
+                              type: integer
+                              example: 123
+                    responses:
+                        200:
+                            description: "Marque trouvée"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            marque_id:
+                                                type: integer
+                                                example: 123
+                                            libelle:
+                                                type: string
+                                                example: "Peugeot"
+                        404:
+                            description: "Marque non trouvée"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Marque non trouvée"
+
+            /marque/list:
+                get:
+                    summary: "Lister toutes les marques"
+                    description: "Cette méthode permet de récupérer la liste de toutes les marques."
+                    responses:
+                        200:
+                            description: "Liste des marques"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                marque_id:
+                                                    type: integer
+                                                    example: 123
+                                                libelle:
+                                                    type: string
+                                                    example: "Peugeot"
+            # Routes pour PaiementController
+            /paiement/add:
+                post:
+                    summary: "Ajouter un paiement"
+                    description: "Cette méthode permet d'ajouter un nouveau paiement."
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required:
+                                        - utilisateur_id
+                                        - montant
+                                        - date_paiement
+                                        - avancement
+                                    properties:
+                                        utilisateur_id:
+                                            type: integer
+                                            example: 123
+                                        montant:
+                                            type: number
+                                            format: float
+                                            example: 250.50
+                                        date_paiement:
+                                            type: string
+                                            format: date-time
+                                            example: "2025-02-06T15:00:00"
+                                        avancement:
+                                            type: string
+                                            example: "complet"
+                    responses:
+                        201:
+                            description: "Paiement ajouté avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: "Paiement ajouté avec succès"
+                        400:
+                            description: "Données manquantes"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Données manquantes"
+
+            /paiement/{id}:
+                get:
+                    summary: "Récupérer un paiement par son ID"
+                    description: "Cette méthode permet de récupérer un paiement en fonction de son ID."
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: "ID du paiement à récupérer"
+                          schema:
+                              type: integer
+                              example: 123
+                    responses:
+                        200:
+                            description: "Paiement trouvé"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            paiement_id:
+                                                type: integer
+                                                example: 123
+                                            utilisateur_id:
+                                                type: integer
+                                                example: 123
+                                            montant:
+                                                type: number
+                                                format: float
+                                                example: 250.50
+                                            date_paiement:
+                                                type: string
+                                                format: date-time
+                                                example: "2025-02-06T15:00:00"
+                                            avancement:
+                                                type: string
+                                                example: "complet"
+                        404:
+                            description: "Paiement non trouvé"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Paiement non trouvé"
+
+            /paiement/list:
+                get:
+                    summary: "Lister tous les paiements"
+                    description: "Cette méthode permet de récupérer la liste de tous les paiements."
+                    responses:
+                        200:
+                            description: "Liste des paiements"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                paiement_id:
+                                                    type: integer
+                                                    example: 123
+                                                utilisateur_id:
+                                                    type: integer
+                                                    example: 123
+                                                montant:
+                                                    type: number
+                                                    format: float
+                                                    example: 250.50
+                                                date_paiement:
+                                                    type: string
+                                                    format: date-time
+                                                    example: "2025-02-06T15:00:00"
+                                                avancement:
+                                                    type: string
+                                                    example: "complet"
+            # Routes pour RoleController
+            /role/add:
+                post:
+                    summary: "Ajouter un rôle"
+                    description: "Cette méthode permet d'ajouter un nouveau rôle."
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required:
+                                        - libelle
+                                    properties:
+                                        libelle:
+                                            type: string
+                                            example: "admin"
+                    responses:
+                        201:
+                            description: "Rôle ajouté avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: "Rôle ajouté avec succès"
+                        400:
+                            description: "Données manquantes"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Données manquantes"
+
+            /role/{id}:
+                get:
+                    summary: "Récupérer un rôle par son ID"
+                    description: "Cette méthode permet de récupérer un rôle en fonction de son ID."
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: "ID du rôle à récupérer"
+                          schema:
+                              type: integer
+                              example: 1
+                    responses:
+                        200:
+                            description: "Rôle trouvé"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            role_id:
+                                                type: integer
+                                                example: 1
+                                            libelle:
+                                                type: string
+                                                example: "admin"
+                        404:
+                            description: "Rôle non trouvé"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Rôle non trouvé"
+
+            /role/list:
+                get:
+                    summary: "Lister tous les rôles"
+                    description: "Cette méthode permet de récupérer la liste de tous les rôles."
+                    responses:
+                        200:
+                            description: "Liste des rôles"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                role_id:
+                                                    type: integer
+                                                    example: 1
+                                                libelle:
+                                                    type: string
+                                                    example: "admin"
+            # Routes pour SuspensionController
+            /suspension/add:
+                post:
+                    summary: "Ajouter une suspension"
+                    description: "Cette méthode permet d'ajouter une nouvelle suspension."
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required:
+                                        - utilisateur_id
+                                        - employe_id
+                                        - raison
+                                        - date_debut
+                                        - sanction
+                                    properties:
+                                        utilisateur_id:
+                                            type: integer
+                                            example: 1
+                                        employe_id:
+                                            type: integer
+                                            example: 2
+                                        raison:
+                                            type: string
+                                            example: "Violation des règles"
+                                        date_debut:
+                                            type: string
+                                            format: date-time
+                                            example: "2025-02-06T10:00:00"
+                                        date_fin:
+                                            type: string
+                                            format: date-time
+                                            example: "2025-02-10T10:00:00"
+                                        sanction:
+                                            type: string
+                                            example: "Suspension temporaire"
+                    responses:
+                        201:
+                            description: "Suspension ajoutée avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: "Suspension ajoutée avec succès"
+                        400:
+                            description: "Données manquantes"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Données manquantes"
+
+            /suspension/{id}:
+                get:
+                    summary: "Récupérer une suspension par son ID"
+                    description: "Cette méthode permet de récupérer une suspension en fonction de son ID."
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: "ID de la suspension à récupérer"
+                          schema:
+                              type: integer
+                              example: 1
+                    responses:
+                        200:
+                            description: "Suspension trouvée"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            suspension_id:
+                                                type: integer
+                                                example: 1
+                                            utilisateur_id:
+                                                type: integer
+                                                example: 1
+                                            employe_id:
+                                                type: integer
+                                                example: 2
+                                            raison:
+                                                type: string
+                                                example: "Violation des règles"
+                                            date_debut:
+                                                type: string
+                                                format: date-time
+                                                example: "2025-02-06T10:00:00"
+                                            date_fin:
+                                                type: string
+                                                format: date-time
+                                                example: "2025-02-10T10:00:00"
+                                            sanction:
+                                                type: string
+                                                example: "Suspension temporaire"
+                        404:
+                            description: "Suspension non trouvée"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Suspension non trouvée"
+
+            /suspension/list:
+                get:
+                    summary: "Lister toutes les suspensions"
+                    description: "Cette méthode permet de récupérer la liste de toutes les suspensions."
+                    responses:
+                        200:
+                            description: "Liste des suspensions"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                suspension_id:
+                                                    type: integer
+                                                    example: 1
+                                                utilisateur_id:
+                                                    type: integer
+                                                    example: 1
+                                                employe_id:
+                                                    type: integer
+                                                    example: 2
+                                                raison:
+                                                    type: string
+                                                    example: "Violation des règles"
+                                                date_debut:
+                                                    type: string
+                                                    format: date-time
+                                                    example: "2025-02-06T10:00:00"
+                                                date_fin:
+                                                    type: string
+                                                    format: date-time
+                                                    example: "2025-02-10T10:00:00"
+                                                sanction:
+                                                    type: string
+                                                    example: "Suspension temporaire"
+            # Routes pour UtilisateurController
+            /utilisateur/add:
+                post:
+                    summary: "Ajouter un utilisateur"
+                    description: "Cette méthode permet d'ajouter un nouvel utilisateur."
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required:
+                                        - nom
+                                        - prenom
+                                        - email
+                                        - mdp
+                                        - telephone
+                                        - adresse
+                                        - date_naissance
+                                        - pseudo
+                                    properties:
+                                        nom:
+                                            type: string
+                                            example: "Dupont"
+                                        prenom:
+                                            type: string
+                                            example: "Pierre"
+                                        email:
+                                            type: string
+                                            example: "pierre.dupont@example.com"
+                                        mdp:
+                                            type: string
+                                            example: "password123"
+                                        telephone:
+                                            type: string
+                                            example: "0123456789"
+                                        adresse:
+                                            type: string
+                                            example: "123 rue de Paris"
+                                        date_naissance:
+                                            type: string
+                                            format: date
+                                            example: "1990-01-01"
+                                        pseudo:
+                                            type: string
+                                            example: "pierre_du"
+                    responses:
+                        201:
+                            description: "Utilisateur ajouté avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: "Utilisateur ajouté avec succès"
+                        400:
+                            description: "Données manquantes"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Données manquantes"
+
+            /utilisateur/{id}:
+                get:
+                    summary: "Récupérer un utilisateur par son ID"
+                    description: "Cette méthode permet de récupérer un utilisateur en fonction de son ID."
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: "ID de l'utilisateur à récupérer"
+                          schema:
+                              type: integer
+                              example: 1
+                    responses:
+                        200:
+                            description: "Utilisateur trouvé"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            utilisateur_id:
+                                                type: integer
+                                                example: 1
+                                            nom:
+                                                type: string
+                                                example: "Dupont"
+                                            prenom:
+                                                type: string
+                                                example: "Pierre"
+                                            email:
+                                                type: string
+                                                example: "pierre.dupont@example.com"
+                                            telephone:
+                                                type: string
+                                                example: "0123456789"
+                                            adresse:
+                                                type: string
+                                                example: "123 rue de Paris"
+                                            date_naissance:
+                                                type: string
+                                                format: date
+                                                example: "1990-01-01"
+                                            pseudo:
+                                                type: string
+                                                example: "pierre_du"
+                        404:
+                            description: "Utilisateur non trouvé"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Utilisateur non trouvé"
+
+            /utilisateur/{id}/roles:
+                get:
+                    summary: "Récupérer les rôles d'un utilisateur"
+                    description: "Cette méthode permet de récupérer les rôles d'un utilisateur en fonction de son ID."
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: "ID de l'utilisateur"
+                          schema:
+                              type: integer
+                              example: 1
+                    responses:
+                        200:
+                            description: "Rôles récupérés avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                role_id:
+                                                    type: integer
+                                                    example: 1
+                                                libelle:
+                                                    type: string
+                                                    example: "Admin"
+                        404:
+                            description: "Utilisateur non trouvé"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Utilisateur non trouvé"
+
+            /utilisateur/{id}/covoiturages:
+                get:
+                    summary: "Récupérer les covoiturages d'un utilisateur"
+                    description: "Cette méthode permet de récupérer les covoiturages d'un utilisateur en fonction de son ID."
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: "ID de l'utilisateur"
+                          schema:
+                              type: integer
+                              example: 1
+                    responses:
+                        200:
+                            description: "Covoiturages récupérés avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                covoiturage_id:
+                                                    type: integer
+                                                    example: 1
+                                                date_depart:
+                                                    type: string
+                                                    format: date-time
+                                                    example: "2025-02-06T10:00:00"
+                                                lieu_depart:
+                                                    type: string
+                                                    example: "Paris"
+                                                lieu_arrivee:
+                                                    type: string
+                                                    example: "Lyon"
+                        404:
+                            description: "Utilisateur non trouvé"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Utilisateur non trouvé"
+            /voiture/add:
+                post:
+                    summary: "Ajouter une voiture"
+                    description: "Cette méthode permet d'ajouter une nouvelle voiture."
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required:
+                                        - modele
+                                        - immatriculation
+                                        - energie
+                                        - couleur
+                                        - date_premiere_immatriculation
+                                        - nb_places
+                                        - utilisateur_id
+                                        - marque_id
+                                    properties:
+                                        modele:
+                                            type: string
+                                            example: "Clio"
+                                        immatriculation:
+                                            type: string
+                                            example: "AB-123-CD"
+                                        energie:
+                                            type: string
+                                            example: "Essence"
+                                        couleur:
+                                            type: string
+                                            example: "Rouge"
+                                        date_premiere_immatriculation:
+                                            type: string
+                                            format: date
+                                            example: "2018-05-15"
+                                        nb_places:
+                                            type: integer
+                                            example: 5
+                                        utilisateur_id:
+                                            type: integer
+                                            example: 1
+                                        marque_id:
+                                            type: integer
+                                            example: 2
+                    responses:
+                        201:
+                            description: "Voiture ajoutée avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: "Voiture ajoutée avec succès"
+                        400:
+                            description: "Données manquantes"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Données manquantes"
+                        404:
+                            description: "Utilisateur ou marque non trouvée"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Utilisateur ou marque non trouvée"
+
+            /voiture/{id}:
+                get:
+                    summary: "Récupérer une voiture par son ID"
+                    description: "Cette méthode permet de récupérer une voiture en fonction de son ID."
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: "ID de la voiture à récupérer"
+                          schema:
+                              type: integer
+                              example: 1
+                    responses:
+                        200:
+                            description: "Voiture trouvée"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            voiture_id:
+                                                type: integer
+                                                example: 1
+                                            modele:
+                                                type: string
+                                                example: "Clio"
+                                            immatriculation:
+                                                type: string
+                                                example: "AB-123-CD"
+                                            energie:
+                                                type: string
+                                                example: "Essence"
+                                            couleur:
+                                                type: string
+                                                example: "Rouge"
+                                            date_premiere_immatriculation:
+                                                type: string
+                                                format: date
+                                                example: "2018-05-15"
+                                            nb_places:
+                                                type: integer
+                                                example: 5
+                                            utilisateur_id:
+                                                type: integer
+                                                example: 1
+                                            marque_id:
+                                                type: integer
+                                                example: 2
+                        404:
+                            description: "Voiture non trouvée"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Voiture non trouvée"
+
