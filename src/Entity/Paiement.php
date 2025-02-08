@@ -12,7 +12,7 @@ class Paiement
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $paiement_id = null;
 
     #[ORM\ManyToOne]
@@ -36,6 +36,13 @@ class Paiement
     public function getUtilisateurId(): ?Utilisateur
     {
         return $this->utilisateur_id;
+    }
+
+    public function setUtilisateurId(Utilisateur $utilisateur): static
+    {
+        $this->utilisateur_id = $utilisateur;
+
+        return $this;
     }
 
     public function getMontant(): ?float

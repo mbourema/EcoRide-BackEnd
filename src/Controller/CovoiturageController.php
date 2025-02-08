@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Covoiturage;
 use App\Entity\Voiture;
+use App\Entity\Utilisateur;
 use App\Repository\CovoiturageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,18 +20,33 @@ class CovoiturageController extends AbstractController
     #[Route('/add', name: 'covoiturage_add', methods: ['POST'])]
     public function addCovoiturage(Request $request, EntityManagerInterface $em, SerializerInterface $serializer): JsonResponse
     {
-        $covoiturage = $serializer->deserialize($request->getContent(), Covoiturage::class, 'json');
-
         $data = json_decode($request->getContent(), true);
-        if (!isset($data['voiture_id'])) {
-            return new JsonResponse(['error' => 'voiture_id manquant'], 400);
+
+        if (!isset($data['voiture_id'], $data['conducteur_id'])) {
+            return new JsonResponse(['error' => 'voiture_id ou conducteur_id manquant'], 400);
         }
 
         $voiture = $em->getRepository(Voiture::class)->find($data['voiture_id']);
         if (!$voiture) {
             return new JsonResponse(['error' => 'Voiture non trouvée'], 404);
         }
-        $covoiturage->setVoitureId($voiture);
+
+        $conducteur = $em->getRepository(Utilisateur::class)->find($data['conducteur_id']);
+        if (!$conducteur) {
+            return new JsonResponse(['error' => 'Conducteur non trouvé'], 404);
+        }
+
+        $covoiturage = new Covoiturage();
+        $serializer->deserialize($request->getContent(), Covoiturage::class, 'json', [
+            AbstractNormalizer::OBJECT_TO_POPULATE => $covoiturage
+        ]);
+
+        $covoiturage->setVoiture($voiture);
+        $covoiturage->setConducteur($conducteur);
+
+        if (isset($data['photo'])) {
+            $covoiturage->setPhoto(base64_decode($data['photo']));
+        }
 
         $em->persist($covoiturage);
         $em->flush();
@@ -69,11 +85,23 @@ class CovoiturageController extends AbstractController
         ]);
 
         $data = json_decode($request->getContent(), true);
+
         if (isset($data['voiture_id'])) {
             $voiture = $em->getRepository(Voiture::class)->find($data['voiture_id']);
             if ($voiture) {
-                $covoiturage->setVoitureId($voiture);
+                $covoiturage->setVoiture($voiture);
             }
+        }
+
+        if (isset($data['conducteur_id'])) {
+            $conducteur = $em->getRepository(Utilisateur::class)->find($data['conducteur_id']);
+            if ($conducteur) {
+                $covoiturage->setConducteur($conducteur);
+            }
+        }
+
+        if (isset($data['photo'])) {
+            $covoiturage->setPhoto(base64_decode($data['photo']));
         }
 
         $em->flush();

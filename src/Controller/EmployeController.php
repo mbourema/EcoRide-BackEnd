@@ -8,6 +8,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 class EmployeController extends AbstractController
 {
@@ -16,13 +18,13 @@ class EmployeController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['employe_id'])) {
+        if (!isset($data['pseudo_employe'])) {
             return new JsonResponse(['error' => 'Données manquantes'], 400);
         }
 
         // Création d'un nouvel employé
         $employe = new Employe();
-        $employe->setEmployeId($data['employe_id']);
+        $employe->setPseudoEmploye($data['pseudo_employe']);
 
         $em->persist($employe);
         $em->flush();
@@ -41,18 +43,7 @@ class EmployeController extends AbstractController
 
         return new JsonResponse([
             'employe_id' => $employe->getEmployeId(),
+            'pseudo_employe' => $employe->getPseudoEmploye(),
         ]);
-    }
-
-    #[Route('/employe/list', methods: ['GET'])]
-    public function listEmployes(EntityManagerInterface $em): JsonResponse
-    {
-        $employes = $em->getRepository(Employe::class)->findAll();
-
-        $employeArray = array_map(fn($employe) => [
-            'employe_id' => $employe->getEmployeId(),
-        ], $employes);
-
-        return new JsonResponse($employeArray);
     }
 }

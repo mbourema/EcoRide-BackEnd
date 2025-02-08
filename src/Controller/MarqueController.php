@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Marque;
+use App\Entity\Voiture;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,16 +17,21 @@ class MarqueController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['libelle'])) {
-            return new JsonResponse(['error' => 'Données manquantes'], 400);
+        // Validation des données
+        if (!isset($data['libelle']) || empty($data['libelle'])) {
+            return new JsonResponse(['error' => 'Données manquantes ou libellé vide'], 400);
         }
 
         // Création d'une nouvelle marque
         $marque = new Marque();
         $marque->setLibelle($data['libelle']);
 
-        $em->persist($marque);
-        $em->flush();
+        try {
+            $em->persist($marque);
+            $em->flush();
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Erreur lors de l\'ajout de la marque: ' . $e->getMessage()], 500);
+        }
 
         return new JsonResponse(['message' => 'Marque ajoutée avec succès'], 201);
     }
@@ -38,23 +44,20 @@ class MarqueController extends AbstractController
         if (!$marque) {
             return new JsonResponse(['error' => 'Marque non trouvée'], 404);
         }
+        // Récupérer les voitures associées à cette marque
+        $voitures = array_map(function($voiture) {
+            return [
+                'voiture_id' => $voiture->getVoitureId(),
+                'modele' => $voiture->getModele(),
+                // autres informations
+            ];
+        }, $marque->getVoitures()->toArray());
 
         return new JsonResponse([
             'marque_id' => $marque->getMarqueId(),
             'libelle' => $marque->getLibelle(),
+            'voitures' => $voitures
         ]);
     }
-
-    #[Route('/marque/list', methods: ['GET'])]
-    public function listMarques(EntityManagerInterface $em): JsonResponse
-    {
-        $marques = $em->getRepository(Marque::class)->findAll();
-
-        $marqueArray = array_map(fn($marque) => [
-            'marque_id' => $marque->getMarqueId(),
-            'libelle' => $marque->getLibelle(),
-        ], $marques);
-
-        return new JsonResponse($marqueArray);
-    }
 }
+

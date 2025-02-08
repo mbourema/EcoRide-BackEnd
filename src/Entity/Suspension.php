@@ -12,21 +12,17 @@ class Suspension
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $suspension_id = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: "utilisateur_id", referencedColumnName: "utilisateur_id", nullable: false)]
     private ?Utilisateur $utilisateur_id = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(name: "employe_id", referencedColumnName: "employe_id",nullable: false)]
-    private ?Employe $employe_id = null;
-
     #[ORM\Column(length: 255)]
     private ?string $raison = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeInterface $date_debut = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
@@ -43,11 +39,6 @@ class Suspension
     public function getUtilisateurId(): ?Utilisateur
     {
         return $this->utilisateur_id;
-    }
-
-    public function getEmployeId(): ?Employe
-    {
-        return $this->employe_id;
     }
 
     public function getRaison(): ?string

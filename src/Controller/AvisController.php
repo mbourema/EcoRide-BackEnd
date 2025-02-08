@@ -32,6 +32,10 @@ class AvisController extends AbstractController
         $avis->setCommentaire($data['commentaire']);
         $avis->setDate(new \DateTime());
 
+        // Gestion du signalement (par défaut false si non fourni)
+        $signale = $data['signale'] ?? false;
+        $avis->setSignale((bool) $signale);
+
         // Sauvegarde dans MongoDB
         $dm->persist($avis);
         $dm->flush();
@@ -55,6 +59,7 @@ class AvisController extends AbstractController
             'note' => $avis->getNote(),
             'commentaire' => $avis->getCommentaire(),
             'date' => $avis->getDate()->format('Y-m-d H:i:s'),
+            'signale' => $avis->getSignale(),
         ], $avisList);
 
         return new JsonResponse($avisArray);

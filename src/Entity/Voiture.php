@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Enum\Energie;
 use App\Repository\VoitureRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,7 +11,7 @@ class Voiture
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $voiture_id = null;
 
     #[ORM\Column(length: 50)]
@@ -21,30 +20,34 @@ class Voiture
     #[ORM\Column(length: 20, unique: true)]
     private ?string $immatriculation = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 20)]
     private ?string $energie = null;
 
     #[ORM\Column(length: 30)]
     private ?string $couleur = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private ?\DateTimeInterface $date_premiere_immatriculation = null;
 
     #[ORM\Column]
     private ?int $nb_places = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(name: "utilisateur_id", referencedColumnName: "utilisateur_id", nullable: false)]
-    private ?Utilisateur $utilisateur_id = null;
+    #[ORM\ManyToOne(targetEntity: Marque::class, cascade: ["remove"])]
+    #[ORM\JoinColumn(name: "marque_id", referencedColumnName: "marque_id", nullable: false)]
+    private ?Marque $marque = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(name: "marque_id", referencedColumnName: "marque_id", nullable: false)]
-    private ?Marque $marque_id = null;
+    #[ORM\JoinColumn(name: "utilisateur_id", referencedColumnName: "utilisateur_id", nullable: false)]
+    private ?Utilisateur $utilisateur = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: "covoiturage_id", referencedColumnName: "covoiturage_id", nullable: false)]
+    private ?Covoiturage $covoiturage = null;
 
     public function getVoitureId(): ?int
     {
         return $this->voiture_id;
-    }
+    } 
 
     public function getModele(): ?string
     {
@@ -118,13 +121,36 @@ class Voiture
         return $this;
     }
 
-    public function getUtilisateurId(): ?Utilisateur
+    public function setMarque(Marque $marque): static
     {
-        return $this->utilisateur_id;
+    $this->marque = $marque;
+    return $this;
     }
 
-    public function getMarqueId(): ?Marque
+    public function getMarque(): ?Marque
     {
-        return $this->marque_id;
+    return $this->marque;
+    }
+
+    public function setUtilisateur(Utilisateur $utilisateur): static
+    {
+    $this->utilisateur = $utilisateur;
+    return $this;
+    }
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+    return $this->utilisateur;
+    }
+
+    public function setCovoiturage(Covoiturage $covoiturage): static
+    {
+        $this->covoiturage = $covoiturage;
+        return $this;
+    }
+
+    public function getCovoiturage(): ?Covoiturage
+    {
+        return $this->covoiturage;
     }
 }

@@ -9,14 +9,14 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Role;
 use App\Entity\Covoiturage;
-
+use App\Entity\Voiture;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
 class Utilisateur
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $utilisateur_id = null;
 
     #[ORM\Column(length: 50)]
@@ -43,25 +43,33 @@ class Utilisateur
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date_naissance = null;
 
-    #[ORM\Column(type: Types::BLOB, nullable: true)]
-    private mixed $photo = null;
-
     #[ORM\Column(length: 50, unique: true)]
     private ?string $pseudo = null;
 
+    #[ORM\Column(type: 'blob', nullable: true)]
+    private $photo;
+
+    // Relation avec les covoiturages
+    #[ORM\OneToMany(mappedBy: 'conducteur', targetEntity: Covoiturage::class)]
+    private Collection $covoiturages;
+
+    // Relation avec les rôles
     #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'utilisateurs')]
-    #[ORM\JoinTable(name: 'utilisateur_role', joinColumns: [new ORM\JoinColumn(name: 'utilisateur_id', referencedColumnName: 'utilisateur_id')], inverseJoinColumns: [new ORM\JoinColumn(name: 'role_id', referencedColumnName: 'role_id')])] // Table de jointure
+    #[ORM\JoinTable(name: 'utilisateur_role', joinColumns: [new ORM\JoinColumn(name: 'utilisateur_id', referencedColumnName: 'utilisateur_id')], inverseJoinColumns: [new ORM\JoinColumn(name: 'role_id', referencedColumnName: 'role_id')])]
     private Collection $roles;
 
-    #[ORM\ManyToMany(targetEntity: Covoiturage::class, inversedBy: 'utilisateurs')]
-    #[ORM\JoinTable(name: 'utilisateur_covoiturage', joinColumns: [new ORM\JoinColumn(name: 'utilisateur_id', referencedColumnName: 'utilisateur_id')], inverseJoinColumns: [new ORM\JoinColumn(name: 'covoiturage_id', referencedColumnName: 'covoiturage_id')])]
-    private Collection $covoiturages;
+    // Relation avec les voitures
+    #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: Voiture::class)]
+    private Collection $voitures;
 
     public function __construct()
     {
-        $this->roles = new ArrayCollection(); // Initialiser la collection
-        $this->covoiturages = new ArrayCollection(); // Initialiser la collection
+        $this->covoiturages = new ArrayCollection();
+        $this->roles = new ArrayCollection();
+        $this->voitures = new ArrayCollection();
     }
+
+    // Getters et setters pour chaque propriété
 
     public function getUtilisateurId(): ?int
     {
@@ -76,7 +84,6 @@ class Utilisateur
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -88,7 +95,6 @@ class Utilisateur
     public function setPrenom(string $prenom): static
     {
         $this->prenom = $prenom;
-
         return $this;
     }
 
@@ -100,7 +106,6 @@ class Utilisateur
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
@@ -109,7 +114,7 @@ class Utilisateur
         return $this->nbCredit;
     }
 
-    public function setNbCredit(int $nbCredit): self
+    public function setNbCredit(int $nbCredit): static
     {
         $this->nbCredit = $nbCredit;
         return $this;
@@ -123,7 +128,6 @@ class Utilisateur
     public function setMdp(string $mdp): static
     {
         $this->mdp = $mdp;
-
         return $this;
     }
 
@@ -135,7 +139,6 @@ class Utilisateur
     public function setTelephone(string $telephone): static
     {
         $this->telephone = $telephone;
-
         return $this;
     }
 
@@ -147,7 +150,6 @@ class Utilisateur
     public function setAdresse(string $adresse): static
     {
         $this->adresse = $adresse;
-
         return $this;
     }
 
@@ -159,19 +161,6 @@ class Utilisateur
     public function setDateNaissance(\DateTimeInterface $date_naissance): static
     {
         $this->date_naissance = $date_naissance;
-
-        return $this;
-    }
-
-    public function getPhoto(): mixed
-    {
-        return $this->photo;
-    }
-
-    public function setPhoto(mixed $photo): static
-    {
-        $this->photo = $photo;
-
         return $this;
     }
 
@@ -183,9 +172,48 @@ class Utilisateur
     public function setPseudo(string $pseudo): static
     {
         $this->pseudo = $pseudo;
-
         return $this;
     }
+
+    public function getPhoto()
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto($photo): static
+    {
+        $this->photo = $photo;
+        return $this;
+    }
+
+    // Gestion des covoiturages
+
+    public function getCovoiturages(): Collection
+    {
+        return $this->covoiturages;
+    }
+
+    public function addCovoiturage(Covoiturage $covoiturage): static
+    {
+        if (!$this->covoiturages->contains($covoiturage)) {
+            $this->covoiturages[] = $covoiturage;
+            $covoiturage->setConducteur($this);  // Associe l'utilisateur à ce covoiturage
+        }
+        return $this;
+    }
+
+    public function removeCovoiturage(Covoiturage $covoiturage): static
+    {
+        if ($this->covoiturages->removeElement($covoiturage)) {
+            // Si l'utilisateur est le conducteur du covoiturage, on le dissocie
+            if ($covoiturage->getConducteur() === $this) {
+                $covoiturage->setConducteur(null);
+            }
+        }
+        return $this;
+    }
+
+    // Gestion des rôles
 
     public function getRoles(): Collection
     {
@@ -197,35 +225,40 @@ class Utilisateur
         if (!$this->roles->contains($role)) {
             $this->roles[] = $role;
         }
-
         return $this;
     }
 
     public function removeRole(Role $role): static
     {
         $this->roles->removeElement($role);
-
         return $this;
     }
 
-    public function getCovoiturages(): Collection
+    // Gestion des voitures
+
+    public function getVoitures(): Collection
     {
-        return $this->covoiturages;
+        return $this->voitures;
     }
 
-    public function addCovoiturage(Covoiturage $covoiturage): static
+    public function addVoiture(Voiture $voiture): static
     {
-        if (!$this->covoiturages->contains($covoiturage)) {
-            $this->covoiturages[] = $covoiturage;
+    if (!$this->voitures->contains($voiture)) {
+        $this->voitures[] = $voiture;
+        $voiture->setUtilisateur($this);  // Associe l'utilisateur à cette voiture
+    }
+    return $this;
+    }
+
+    public function removeVoiture(Voiture $voiture): static
+    {
+        if ($this->voitures->removeElement($voiture)) {
+            // Définit l'utilisateur de la voiture à null si nécessaire
+            if ($voiture->getUtilisateur() === $this) {
+                $voiture->setUtilisateur(null);
+            }
         }
-
-        return $this;
-    }
-
-    public function removeCovoiturage(Covoiturage $covoiturage): static
-    {
-        $this->covoiturages->removeElement($covoiturage);
-
         return $this;
     }
 }
+

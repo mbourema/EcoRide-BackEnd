@@ -1,8 +1,8 @@
 <?php
-
 namespace App\Controller;
 
 use App\Entity\Paiement;
+use App\Entity\Utilisateur;  // N'oublie pas d'importer l'entité Utilisateur
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,13 +16,20 @@ class PaiementController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
+        // Vérification des données requises
         if (!isset($data['utilisateur_id'], $data['montant'], $data['date_paiement'], $data['avancement'])) {
             return new JsonResponse(['error' => 'Données manquantes'], 400);
         }
 
-        // Création d'un nouveau paiement
+        // Récupération de l'utilisateur
+        $utilisateur = $em->getRepository(Utilisateur::class)->find($data['utilisateur_id']);
+        if (!$utilisateur) {
+            return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
+        }
+
+        // Création du paiement
         $paiement = new Paiement();
-        $paiement->setUtilisateurId($data['utilisateur_id']);
+        $paiement->setUtilisateurId($utilisateur);
         $paiement->setMontant((float) $data['montant']);
         $paiement->setDatePaiement(new \DateTime($data['date_paiement']));
         $paiement->setAvancement($data['avancement']);
@@ -44,7 +51,7 @@ class PaiementController extends AbstractController
 
         return new JsonResponse([
             'paiement_id' => $paiement->getPaiementId(),
-            'utilisateur_id' => $paiement->getUtilisateurId()->getUtilisateurId(),
+            'utilisateur_id' => $paiement->getUtilisateurId()->getUtilisateurId(), // Ou getId() si nécessaire
             'montant' => $paiement->getMontant(),
             'date_paiement' => $paiement->getDatePaiement()->format('Y-m-d H:i:s'),
             'avancement' => $paiement->getAvancement(),
@@ -58,7 +65,7 @@ class PaiementController extends AbstractController
 
         $paiementArray = array_map(fn($paiement) => [
             'paiement_id' => $paiement->getPaiementId(),
-            'utilisateur_id' => $paiement->getUtilisateurId()->getUtilisateurId(),
+            'utilisateur_id' => $paiement->getUtilisateurId()->getUtilisateurId(),  // Ou getId()
             'montant' => $paiement->getMontant(),
             'date_paiement' => $paiement->getDatePaiement()->format('Y-m-d H:i:s'),
             'avancement' => $paiement->getAvancement(),

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Suspension;
+use App\Entity\Utilisateur; // Assure-toi que l'entité Utilisateur est bien importée
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,19 +17,26 @@ class SuspensionController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['utilisateur_id'], $data['employe_id'], $data['raison'], $data['date_debut'], $data['sanction'])) {
+        // Vérification de la présence des données nécessaires
+        if (!isset($data['utilisateur_id'], $data['raison'], $data['date_debut'], $data['sanction'])) {
             return new JsonResponse(['error' => 'Données manquantes'], 400);
+        }
+
+        // Récupérer l'utilisateur en fonction de l'ID
+        $utilisateur = $em->getRepository(Utilisateur::class)->find($data['utilisateur_id']);
+        if (!$utilisateur) {
+            return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
         }
 
         // Création d'une nouvelle suspension
         $suspension = new Suspension();
-        $suspension->setUtilisateurId($data['utilisateur_id']);
-        $suspension->setEmployeId($data['employe_id']);
+        $suspension->setUtilisateur($utilisateur);  // Associer l'objet Utilisateur
         $suspension->setRaison($data['raison']);
         $suspension->setDateDebut(new \DateTime($data['date_debut']));
         $suspension->setDateFin(isset($data['date_fin']) ? new \DateTime($data['date_fin']) : null);
         $suspension->setSanction($data['sanction']);
 
+        // Sauvegarder la suspension
         $em->persist($suspension);
         $em->flush();
 
@@ -38,16 +46,17 @@ class SuspensionController extends AbstractController
     #[Route('/suspension/{id}', methods: ['GET'])]
     public function getSuspension(int $id, EntityManagerInterface $em): JsonResponse
     {
+        // Récupérer la suspension par ID
         $suspension = $em->getRepository(Suspension::class)->find($id);
 
         if (!$suspension) {
             return new JsonResponse(['error' => 'Suspension non trouvée'], 404);
         }
 
+        // Retourner les données de la suspension
         return new JsonResponse([
             'suspension_id' => $suspension->getSuspensionId(),
-            'utilisateur_id' => $suspension->getUtilisateurId(),
-            'employe_id' => $suspension->getEmployeId(),
+            'utilisateur_id' => $suspension->getUtilisateur()->getUtilisateurId(),  // Utilisation de l'objet Utilisateur
             'raison' => $suspension->getRaison(),
             'date_debut' => $suspension->getDateDebut()->format('Y-m-d H:i:s'),
             'date_fin' => $suspension->getDateFin() ? $suspension->getDateFin()->format('Y-m-d H:i:s') : null,
@@ -58,12 +67,12 @@ class SuspensionController extends AbstractController
     #[Route('/suspension/list', methods: ['GET'])]
     public function listSuspensions(EntityManagerInterface $em): JsonResponse
     {
+        // Récupérer toutes les suspensions
         $suspensions = $em->getRepository(Suspension::class)->findAll();
 
         $suspensionArray = array_map(fn($suspension) => [
             'suspension_id' => $suspension->getSuspensionId(),
-            'utilisateur_id' => $suspension->getUtilisateurId(),
-            'employe_id' => $suspension->getEmployeId(),
+            'utilisateur_id' => $suspension->getUtilisateur()->getUtilisateurId(), // Utilisation de l'objet Utilisateur
             'raison' => $suspension->getRaison(),
             'date_debut' => $suspension->getDateDebut()->format('Y-m-d H:i:s'),
             'date_fin' => $suspension->getDateFin() ? $suspension->getDateFin()->format('Y-m-d H:i:s') : null,
@@ -73,3 +82,4 @@ class SuspensionController extends AbstractController
         return new JsonResponse($suspensionArray);
     }
 }
+

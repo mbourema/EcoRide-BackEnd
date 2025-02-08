@@ -16,6 +16,7 @@ nelmio_api_doc:
             # Ajout des routes pour CovoiturageController
             /covoiturage/list:
                 get:
+                    tags: ["Covoiturage"]
                     summary: "Récupérer la liste des covoiturages"
                     description: "Cette méthode permet de récupérer la liste de tous les covoiturages."
                     responses:
@@ -55,8 +56,17 @@ nelmio_api_doc:
                                                     type: number
                                                     format: float
                                                     example: 15.50
+                                                voiture_id:
+                                                    type: integer
+                                                    example: 1
+                                                utilisateurs:
+                                                    type: array
+                                                    items:
+                                                        type: integer
+                                                    example: [2, 3, 5]
             /covoiturage/add:
                 post:
+                    tags: ["Covoiturage"]
                     summary: "Ajouter un nouveau covoiturage"
                     description: "Cette méthode permet d'ajouter un nouveau covoiturage."
                     requestBody:
@@ -102,6 +112,11 @@ nelmio_api_doc:
                                         voiture_id:
                                             type: integer
                                             example: 1
+                                        utilisateurs:
+                                            type: array
+                                            items:
+                                                type: integer
+                                            example: [2, 3, 5]
                     responses:
                         201:
                             description: "Covoiturage ajouté avec succès"
@@ -110,35 +125,12 @@ nelmio_api_doc:
                                     schema:
                                         type: object
                                         properties:
-                                            covoiturage_id:
-                                                type: integer
-                                                example: 1
-                                            date_depart:
+                                            message:
                                                 type: string
-                                                format: date-time
-                                                example: "2025-03-01T08:00:00"
-                                            lieu_depart:
-                                                type: string
-                                                example: "Paris"
-                                            date_arrivee:
-                                                type: string
-                                                format: date-time
-                                                example: "2025-03-01T10:00:00"
-                                            lieu_arrivee:
-                                                type: string
-                                                example: "Lyon"
-                                            statut:
-                                                type: string
-                                                example: "Disponible"
-                                            nb_places:
-                                                type: integer
-                                                example: 4
-                                            prix_personne:
-                                                type: number
-                                                format: float
-                                                example: 15.50
+                                                example: "Covoiturage ajouté avec succès"
             /covoiturage/{id}:
                 get:
+                    tags: ["Covoiturage"]
                     summary: "Afficher un covoiturage par ID"
                     description: "Cette méthode permet de récupérer un covoiturage spécifique par ID."
                     parameters:
@@ -147,8 +139,8 @@ nelmio_api_doc:
                           required: true
                           description: "ID du covoiturage à afficher"
                           schema:
-                              type: integer
-                              example: 1
+                            type: integer
+                            example: 1
                     responses:
                         200:
                             description: "Covoiturage trouvé avec succès"
@@ -184,10 +176,16 @@ nelmio_api_doc:
                                                 type: number
                                                 format: float
                                                 example: 15.50
+                                            utilisateurs:
+                                                type: array
+                                                items:
+                                                    type: integer
+                                                example: [2, 3, 5]
                         404:
                             description: "Covoiturage non trouvé"
             /covoiturage/update/{id}:
                 put:
+                    tags: ["Covoiturage"]
                     summary: "Mettre à jour un covoiturage"
                     description: "Cette méthode permet de mettre à jour les informations d'un covoiturage."
                     parameters:
@@ -196,8 +194,8 @@ nelmio_api_doc:
                           required: true
                           description: "ID du covoiturage à mettre à jour"
                           schema:
-                              type: integer
-                              example: 1
+                            type: integer
+                            example: 1
                     requestBody:
                         required: true
                         content:
@@ -232,45 +230,19 @@ nelmio_api_doc:
                                         voiture_id:
                                             type: integer
                                             example: 1
+                                        utilisateurs:
+                                            type: array
+                                            items:
+                                                type: integer
+                                            example: [2, 3, 5]
                     responses:
                         200:
                             description: "Covoiturage mis à jour avec succès"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: object
-                                        properties:
-                                            covoiturage_id:
-                                                type: integer
-                                                example: 1
-                                            date_depart:
-                                                type: string
-                                                format: date-time
-                                                example: "2025-03-01T08:00:00"
-                                            lieu_depart:
-                                                type: string
-                                                example: "Paris"
-                                            date_arrivee:
-                                                type: string
-                                                format: date-time
-                                                example: "2025-03-01T10:00:00"
-                                            lieu_arrivee:
-                                                type: string
-                                                example: "Lyon"
-                                            statut:
-                                                type: string
-                                                example: "Disponible"
-                                            nb_places:
-                                                type: integer
-                                                example: 4
-                                            prix_personne:
-                                                type: number
-                                                format: float
-                                                example: 15.50
                         404:
                             description: "Covoiturage non trouvé"
             /covoiturage/delete/{id}:
                 delete:
+                    tags: ["Covoiturage"]
                     summary: "Supprimer un covoiturage"
                     description: "Cette méthode permet de supprimer un covoiturage par ID."
                     parameters:
@@ -279,17 +251,17 @@ nelmio_api_doc:
                           required: true
                           description: "ID du covoiturage à supprimer"
                           schema:
-                              type: integer
-                              example: 1
+                            type: integer
+                            example: 1
                     responses:
                         200:
                             description: "Covoiturage supprimé avec succès"
                         404:
                             description: "Covoiturage non trouvé"
             # Ajout des routes pour AvisController
-            # Ajout des routes pour AvisController
             /avis/add:
                 post:
+                    tags: ["Avis"]
                     summary: "Ajouter un nouvel avis"
                     description: "Cette méthode permet d'ajouter un avis pour un covoiturage."
                     requestBody:
@@ -321,6 +293,9 @@ nelmio_api_doc:
                                         commentaire:
                                             type: string
                                             example: "Très bon trajet, conducteur agréable."
+                                        signale:
+                                            type: boolean
+                                            example: false
                     responses:
                         201:
                             description: "Avis ajouté avec succès"
@@ -342,9 +317,9 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Donnees manquantes"
-
             /avis/list:
                 get:
+                    tags: ["Avis"]
                     summary: "Récupérer la liste des avis"
                     description: "Cette méthode permet de récupérer tous les avis pour les covoiturages."
                     responses:
@@ -380,9 +355,13 @@ nelmio_api_doc:
                                                     type: string
                                                     format: date-time
                                                     example: "2025-02-06T12:00:00"
+                                                signale:
+                                                    type: boolean
+                                                    example: false
             # Routes pour CommandeController
             /commande/add:
                 post:
+                    tags: ["Commande"]
                     summary: "Ajouter une nouvelle commande"
                     description: "Cette méthode permet d'ajouter une nouvelle commande pour un covoiturage."
                     requestBody:
@@ -448,9 +427,9 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Données manquantes"
-
             /commande/list:
                 get:
+                    tags: ["Commande"]
                     summary: "Récupérer la liste des commandes"
                     description: "Cette méthode permet de récupérer toutes les commandes de covoiturage."
                     responses:
@@ -492,9 +471,9 @@ nelmio_api_doc:
                                                 statut:
                                                     type: string
                                                     example: "En cours"
-
             /commande/{id}:
                 get:
+                    tags: ["Commande"]
                     summary: "Afficher une commande par ID"
                     description: "Cette méthode permet de récupérer les détails d'une commande spécifique."
                     parameters:
@@ -503,8 +482,8 @@ nelmio_api_doc:
                           required: true
                           description: "ID de la commande à afficher"
                           schema:
-                              type: integer
-                              example: 1
+                              type: string
+                              example: 1dzz12d
                     responses:
                         200:
                             description: "Commande trouvée"
@@ -555,6 +534,7 @@ nelmio_api_doc:
             # Routes pour PreferencesController
             /preferences/add:
                 post:
+                    tags: ["Preferences"]
                     summary: "Ajouter des préférences pour un conducteur"
                     description: "Cette méthode permet d'ajouter les préférences d'un conducteur concernant le covoiturage."
                     requestBody:
@@ -604,6 +584,7 @@ nelmio_api_doc:
 
             /preferences/{conducteurId}:
                 get:
+                    tags: ["Preferences"]
                     summary: "Récupérer les préférences d'un conducteur"
                     description: "Cette méthode permet de récupérer les préférences d'un conducteur en fonction de son ID."
                     parameters:
@@ -650,6 +631,7 @@ nelmio_api_doc:
 
             /preferences/{conducteurId}/update:
                 put:
+                    tags: ["Preferences"]
                     summary: "Mettre à jour les préférences d'un conducteur"
                     description: "Cette méthode permet de mettre à jour les préférences d'un conducteur pour un covoiturage."
                     parameters:
@@ -700,6 +682,7 @@ nelmio_api_doc:
             # Routes pour StatistiquesController
             /statistiques/add:
                 post:
+                    tags: ["Statistique"]
                     summary: "Ajouter des statistiques"
                     description: "Cette méthode permet d'ajouter des statistiques concernant les covoiturages et les crédits."
                     requestBody:
@@ -743,9 +726,9 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Données manquantes"
-
             /statistiques/latest:
                 get:
+                    tags: ["Statistique"]
                     summary: "Récupérer les dernières statistiques"
                     description: "Cette méthode permet de récupérer les dernières statistiques ajoutées."
                     responses:
@@ -782,9 +765,9 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Aucune statistique trouvée"
-
             /statistiques/update:
                 put:
+                    tags: ["Statistique"]
                     summary: "Mettre à jour les statistiques"
                     description: "Cette méthode permet de mettre à jour les statistiques existantes."
                     requestBody:
@@ -827,6 +810,7 @@ nelmio_api_doc:
             # Routes pour EmployeController
             /employe/add:
                 post:
+                    tags: ["Employe"]
                     summary: "Ajouter un employé"
                     description: "Cette méthode permet d'ajouter un nouvel employé."
                     requestBody:
@@ -836,11 +820,11 @@ nelmio_api_doc:
                                 schema:
                                     type: object
                                     required:
-                                        - employe_id
+                                        - pseudo_id
                                     properties:
-                                        employe_id:
-                                            type: integer
-                                            example: 123
+                                        pseudo_employe:
+                                            type: string
+                                            example: "Nicolas"
                     responses:
                         201:
                             description: "Employé ajouté avec succès"
@@ -862,19 +846,19 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Données manquantes"
-
             /employe/{id}:
                 get:
+                    tags: ["Employe"]
                     summary: "Récupérer un employé par son ID"
                     description: "Cette méthode permet de récupérer un employé en fonction de son ID."
                     parameters:
                         - name: id
                           in: path
                           required: true
-                          description: "ID de l'employé à récupérer"
+                          description: "Id de l'employé à récupérer"
                           schema:
                               type: integer
-                              example: 123
+                              example: 3
                     responses:
                         200:
                             description: "Employé trouvé"
@@ -885,7 +869,10 @@ nelmio_api_doc:
                                         properties:
                                             employe_id:
                                                 type: integer
-                                                example: 123
+                                                example: 1
+                                            pseudo_employe:
+                                                type: string
+                                                example: "Nicolas"
                         404:
                             description: "Employé non trouvé"
                             content:
@@ -896,27 +883,10 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Employé non trouvé"
-
-            /employe/list:
-                get:
-                    summary: "Lister tous les employés"
-                    description: "Cette méthode permet de récupérer la liste de tous les employés."
-                    responses:
-                        200:
-                            description: "Liste des employés"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: array
-                                        items:
-                                            type: object
-                                            properties:
-                                                employe_id:
-                                                    type: integer
-                                                    example: 123
             # Routes pour MarqueController
             /marque/add:
                 post:
+                    tags: ["Marque"]
                     summary: "Ajouter une marque"
                     description: "Cette méthode permet d'ajouter une nouvelle marque."
                     requestBody:
@@ -952,9 +922,9 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Données manquantes"
-
             /marque/{id}:
                 get:
+                    tags: ["Marque"]
                     summary: "Récupérer une marque par son ID"
                     description: "Cette méthode permet de récupérer une marque en fonction de son ID."
                     parameters:
@@ -989,30 +959,10 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Marque non trouvée"
-
-            /marque/list:
-                get:
-                    summary: "Lister toutes les marques"
-                    description: "Cette méthode permet de récupérer la liste de toutes les marques."
-                    responses:
-                        200:
-                            description: "Liste des marques"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: array
-                                        items:
-                                            type: object
-                                            properties:
-                                                marque_id:
-                                                    type: integer
-                                                    example: 123
-                                                libelle:
-                                                    type: string
-                                                    example: "Peugeot"
             # Routes pour PaiementController
             /paiement/add:
                 post:
+                    tags: ["Paiement"]
                     summary: "Ajouter un paiement"
                     description: "Cette méthode permet d'ajouter un nouveau paiement."
                     requestBody:
@@ -1062,9 +1012,9 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Données manquantes"
-
             /paiement/{id}:
                 get:
+                    tags: ["Paiement"]
                     summary: "Récupérer un paiement par son ID"
                     description: "Cette méthode permet de récupérer un paiement en fonction de son ID."
                     parameters:
@@ -1110,9 +1060,9 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Paiement non trouvé"
-
             /paiement/list:
                 get:
+                    tags: ["Paiement"]
                     summary: "Lister tous les paiements"
                     description: "Cette méthode permet de récupérer la liste de tous les paiements."
                     responses:
@@ -1145,6 +1095,7 @@ nelmio_api_doc:
             # Routes pour RoleController
             /role/add:
                 post:
+                    tags: ["Role"]
                     summary: "Ajouter un rôle"
                     description: "Cette méthode permet d'ajouter un nouveau rôle."
                     requestBody:
@@ -1180,9 +1131,9 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Données manquantes"
-
             /role/{id}:
                 get:
+                    tags: ["Role"]
                     summary: "Récupérer un rôle par son ID"
                     description: "Cette méthode permet de récupérer un rôle en fonction de son ID."
                     parameters:
@@ -1217,9 +1168,9 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Rôle non trouvé"
-
             /role/list:
                 get:
+                    tags: ["Role"]
                     summary: "Lister tous les rôles"
                     description: "Cette méthode permet de récupérer la liste de tous les rôles."
                     responses:
@@ -1241,6 +1192,7 @@ nelmio_api_doc:
             # Routes pour SuspensionController
             /suspension/add:
                 post:
+                    tags: ["Suspension"]
                     summary: "Ajouter une suspension"
                     description: "Cette méthode permet d'ajouter une nouvelle suspension."
                     requestBody:
@@ -1297,9 +1249,9 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Données manquantes"
-
             /suspension/{id}:
                 get:
+                    tags: ["Suspension"]
                     summary: "Récupérer une suspension par son ID"
                     description: "Cette méthode permet de récupérer une suspension en fonction de son ID."
                     parameters:
@@ -1351,9 +1303,9 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Suspension non trouvée"
-
             /suspension/list:
                 get:
+                    tags: ["Suspension"]
                     summary: "Lister toutes les suspensions"
                     description: "Cette méthode permet de récupérer la liste de toutes les suspensions."
                     responses:
@@ -1390,346 +1342,558 @@ nelmio_api_doc:
                                                     type: string
                                                     example: "Suspension temporaire"
             # Routes pour UtilisateurController
-            /utilisateur/add:
-                post:
-                    summary: "Ajouter un utilisateur"
-                    description: "Cette méthode permet d'ajouter un nouvel utilisateur."
-                    requestBody:
-                        required: true
-                        content:
-                            application/json:
-                                schema:
-                                    type: object
-                                    required:
-                                        - nom
-                                        - prenom
-                                        - email
-                                        - mdp
-                                        - telephone
-                                        - adresse
-                                        - date_naissance
-                                        - pseudo
-                                    properties:
-                                        nom:
-                                            type: string
-                                            example: "Dupont"
-                                        prenom:
-                                            type: string
-                                            example: "Pierre"
-                                        email:
-                                            type: string
-                                            example: "pierre.dupont@example.com"
-                                        mdp:
-                                            type: string
-                                            example: "password123"
-                                        telephone:
-                                            type: string
-                                            example: "0123456789"
-                                        adresse:
-                                            type: string
-                                            example: "123 rue de Paris"
-                                        date_naissance:
-                                            type: string
-                                            format: date
-                                            example: "1990-01-01"
-                                        pseudo:
-                                            type: string
-                                            example: "pierre_du"
-                    responses:
-                        201:
-                            description: "Utilisateur ajouté avec succès"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: object
-                                        properties:
-                                            message:
-                                                type: string
-                                                example: "Utilisateur ajouté avec succès"
-                        400:
-                            description: "Données manquantes"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: object
-                                        properties:
-                                            error:
-                                                type: string
-                                                example: "Données manquantes"
-
-            /utilisateur/{id}:
+            /api/utilisateurs/liste:
                 get:
-                    summary: "Récupérer un utilisateur par son ID"
-                    description: "Cette méthode permet de récupérer un utilisateur en fonction de son ID."
-                    parameters:
-                        - name: id
-                          in: path
-                          required: true
-                          description: "ID de l'utilisateur à récupérer"
-                          schema:
-                              type: integer
-                              example: 1
+                    tags: ["Utilisateurs"]
+                    summary: "Récupérer la liste des utilisateurs"
                     responses:
                         200:
-                            description: "Utilisateur trouvé"
+                            description: "Liste des utilisateurs récupérée avec succès"
                             content:
                                 application/json:
                                     schema:
-                                        type: object
+                                        type: array
+                                        items:
+                                            type: "object"
+                                            properties:
+                                                id:
+                                                    type: "integer"
+                                                    example: 1
+                                                nom:
+                                                    type: "string"
+                                                    example: "Dupont"
+                                                prenom:
+                                                    type: "string"
+                                                    example: "Jean"
+                                                email:
+                                                    type: "string"
+                                                    format: "email"
+                                                    example: "jean.dupont@example.com"
+                                                mdp:
+                                                    type: "string"
+                                                    exmple: "yoyo"
+                                                telephone:
+                                                    type: "string"
+                                                    example: "0612345678"
+                                                adresse:
+                                                    type: "string"
+                                                    example: "10 rue de Paris, 75000 Paris"
+                                                date_naissance:
+                                                    type: "string"
+                                                    format: "date"
+                                                    example: "1990-05-15"
+                                                pseudo:
+                                                    type: "string"
+                                                    example: "JeanD"
+                                                photo:
+                                                    type: "string"
+                                                    example: "https://example.com/photo.jpg"
+
+            /api/utilisateurs/details/{id}:
+                get:
+                    tags: ["Utilisateurs"]
+                    summary: "Obtenir les détails d'un utilisateur"
+                    parameters:
+                        - name: "id"
+                          in: "path"
+                          required: true
+                          description: "ID de l'utilisateur"
+                          schema:
+                              type: "integer"
+                    responses:
+                        200:
+                            description: "Détails de l'utilisateur"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: "object"
                                         properties:
-                                            utilisateur_id:
-                                                type: integer
+                                            id:
+                                                type: "integer"
                                                 example: 1
                                             nom:
-                                                type: string
+                                                type: "string"
                                                 example: "Dupont"
                                             prenom:
-                                                type: string
-                                                example: "Pierre"
+                                                type: "string"
+                                                example: "Jean"
                                             email:
-                                                type: string
-                                                example: "pierre.dupont@example.com"
+                                                type: "string"
+                                                format: "email"
+                                                example: "jean.dupont@example.com"
+                                            mdp:
+                                                type: "string"
+                                                example: "yoyo"
                                             telephone:
-                                                type: string
-                                                example: "0123456789"
+                                                type: "string"
+                                                example: "0612345678"
                                             adresse:
-                                                type: string
-                                                example: "123 rue de Paris"
+                                                type: "string"
+                                                example: "10 rue de Paris, 75000 Paris"
                                             date_naissance:
-                                                type: string
-                                                format: date
-                                                example: "1990-01-01"
+                                                type: "string"
+                                                format: "date"
+                                                example: "1990-05-15"
                                             pseudo:
-                                                type: string
-                                                example: "pierre_du"
+                                                type: "string"
+                                                example: "JeanD"
+                                            photo:
+                                                type: "string"
+                                                example: "https://example.com/photo.jpg"
                         404:
                             description: "Utilisateur non trouvé"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: object
-                                        properties:
-                                            error:
-                                                type: string
-                                                example: "Utilisateur non trouvé"
 
-            /utilisateur/{id}/roles:
-                get:
-                    summary: "Récupérer les rôles d'un utilisateur"
-                    description: "Cette méthode permet de récupérer les rôles d'un utilisateur en fonction de son ID."
-                    parameters:
-                        - name: id
-                          in: path
-                          required: true
-                          description: "ID de l'utilisateur"
-                          schema:
-                              type: integer
-                              example: 1
-                    responses:
-                        200:
-                            description: "Rôles récupérés avec succès"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: array
-                                        items:
-                                            type: object
-                                            properties:
-                                                role_id:
-                                                    type: integer
-                                                    example: 1
-                                                libelle:
-                                                    type: string
-                                                    example: "Admin"
-                        404:
-                            description: "Utilisateur non trouvé"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: object
-                                        properties:
-                                            error:
-                                                type: string
-                                                example: "Utilisateur non trouvé"
-
-            /utilisateur/{id}/covoiturages:
-                get:
-                    summary: "Récupérer les covoiturages d'un utilisateur"
-                    description: "Cette méthode permet de récupérer les covoiturages d'un utilisateur en fonction de son ID."
-                    parameters:
-                        - name: id
-                          in: path
-                          required: true
-                          description: "ID de l'utilisateur"
-                          schema:
-                              type: integer
-                              example: 1
-                    responses:
-                        200:
-                            description: "Covoiturages récupérés avec succès"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: array
-                                        items:
-                                            type: object
-                                            properties:
-                                                covoiturage_id:
-                                                    type: integer
-                                                    example: 1
-                                                date_depart:
-                                                    type: string
-                                                    format: date-time
-                                                    example: "2025-02-06T10:00:00"
-                                                lieu_depart:
-                                                    type: string
-                                                    example: "Paris"
-                                                lieu_arrivee:
-                                                    type: string
-                                                    example: "Lyon"
-                        404:
-                            description: "Utilisateur non trouvé"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: object
-                                        properties:
-                                            error:
-                                                type: string
-                                                example: "Utilisateur non trouvé"
-            /voiture/add:
+            /api/utilisateurs/ajouter:
                 post:
-                    summary: "Ajouter une voiture"
-                    description: "Cette méthode permet d'ajouter une nouvelle voiture."
+                    tags: ["Utilisateurs"]
+                    summary: "Créer un nouvel utilisateur"
                     requestBody:
                         required: true
                         content:
                             application/json:
                                 schema:
-                                    type: object
-                                    required:
-                                        - modele
-                                        - immatriculation
-                                        - energie
-                                        - couleur
-                                        - date_premiere_immatriculation
-                                        - nb_places
-                                        - utilisateur_id
-                                        - marque_id
+                                    type: "object"
                                     properties:
+                                        nom:
+                                            type: "string"
+                                            example: "Dupont"
+                                        prenom:
+                                            type: "string"
+                                            example: "Jean"
+                                        email:
+                                            type: "string"
+                                            format: "email"
+                                            example: "jean.dupont@example.com"
+                                        mdp:
+                                            type: "string"
+                                            example: "yoyo"
+                                        telephone:
+                                            type: "string"
+                                            example: "0612345678"
+                                        adresse:
+                                            type: "string"
+                                            example: "10 rue de Paris, 75000 Paris"
+                                        date_naissance:
+                                            type: "string"
+                                            format: "date"
+                                            example: "1990-05-15"
+                                        pseudo:
+                                            type: "string"
+                                            example: "JeanD"
+                                        photo:
+                                            type: "string"
+                                            example: "https://example.com/photo.jpg"
+                                        roles:
+                                            type: "array"
+                                            items:
+                                                type: "integer"
+                                            example: [1]
+
+                    responses:
+                        201:
+                            description: "Utilisateur créé avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: "object"
+                                        properties:
+                                            id:
+                                                type: "integer"
+                                                example: 1
+                                            nom:
+                                                type: "string"
+                                                example: "Dupont"
+                                            prenom:
+                                                type: "string"
+                                                example: "Jean"
+                                            email:
+                                                type: "string"
+                                                format: "email"
+                                                example: "jean.dupont@example.com"
+                                            mdp:
+                                                type: "mdp"
+                                                example: "yoyo"
+                                            telephone:
+                                                type: "string"
+                                                example: "0612345678"
+                                            adresse:
+                                                type: "string"
+                                                example: "10 rue de Paris, 75000 Paris"
+                                            date_naissance:
+                                                type: "string"
+                                                format: "date"
+                                                example: "1990-05-15"
+                                            pseudo:
+                                                type: "string"
+                                                example: "JeanD"
+                                            photo:
+                                                type: "string"
+                                                example: "https://example.com/photo.jpg"
+                                            roles:
+                                                type: "array"
+                                                items:
+                                                    type: "string"
+                                                example: ["conducteur"]
+
+                        400:
+                            description: "Données invalides"
+            /api/utilisateurs/modifier/{id}:
+                put:
+                    tags: ["Utilisateurs"]
+                    summary: "Mettre à jour un utilisateur"
+                    parameters:
+                        - name: "id"
+                          in: "path"
+                          required: true
+                          description: "ID de l'utilisateur"
+                          schema:
+                              type: "integer"
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: "object"
+                                    properties:
+                                        nom:
+                                            type: "string"
+                                            example: "Dupont"
+                                        prenom:
+                                            type: "string"
+                                            example: "Jean"
+                                        email:
+                                            type: "string"
+                                            format: "email"
+                                            example: "jean.dupont@example.com"
+                                        mdp:
+                                            type: "string"
+                                            example: "yoyo"
+                                        telephone:
+                                            type: "string"
+                                            example: "0612345678"
+                                        adresse:
+                                            type: "string"
+                                            example: "10 rue de Paris, 75000 Paris"
+                                        date_naissance:
+                                            type: "string"
+                                            format: "date"
+                                            example: "1990-05-15"
+                                        pseudo:
+                                            type: "string"
+                                            example: "JeanD"
+                                        photo:
+                                            type: "string"
+                                            example: "https://example.com/photo.jpg"
+                                        roles:
+                                            type: "array"
+                                            items:
+                                                type: "integer"
+                                            example: [2]
+
+                    responses:
+                        200:
+                            description: "Utilisateur mis à jour avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: "object"
+                                        properties:
+                                            id:
+                                                type: "integer"
+                                                example: 1
+                                            nom:
+                                                type: "string"
+                                                example: "Dupont"
+                                            prenom:
+                                                type: "string"
+                                                example: "Jean"
+                                            email:
+                                                type: "string"
+                                                format: "email"
+                                                example: "jean.dupont@example.com"
+                                            mdp:
+                                                type: "string"
+                                                example: "yoyo"
+                                            telephone:
+                                                type: "string"
+                                                example: "0612345678"
+                                            adresse:
+                                                type: "string"
+                                                example: "10 rue de Paris, 75000 Paris"
+                                            date_naissance:
+                                                type: "string"
+                                                format: "date"
+                                                example: "1990-05-15"
+                                            pseudo:
+                                                type: "string"
+                                                example: "JeanD"
+                                            photo:
+                                                type: "string"
+                                                example: "https://example.com/photo.jpg"
+                                            roles:
+                                                type: "array"
+                                                items:
+                                                    type: "string"
+                                                example: ["passager"]
+
+                        400:
+                            description: "Données invalides"
+                        404:
+                            description: "Utilisateur non trouvé"
+
+            /api/utilisateurs/supprimer/{id}:
+                delete:
+                    tags: ["Utilisateurs"]
+                    summary: "Supprimer un utilisateur"
+                    parameters:
+                        - name: "id"
+                          in: "path"
+                          required: true
+                          description: "ID de l'utilisateur"
+                          schema:
+                              type: "integer"
+                    responses:
+                        204:
+                            description: "Utilisateur supprimé avec succès"
+                        404:
+                            description: "Utilisateur non trouvé"
+            /api/voitures/liste:
+                get:
+                    tags: ["Voitures"]
+                    summary: "Obtenir la liste des voitures"
+                    responses:
+                        200:
+                            description: "Liste des voitures récupérée avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items:
+                                            type: "object"
+                                            properties:
+                                                id:
+                                                    type: "integer"
+                                                    example: 1
+                                                marque_id:
+                                                    type: "string"
+                                                    example: "Peugeot"
+                                                modele:
+                                                    type: "string"
+                                                    example: "Peugeot 208"
+                                                immatriculation:
+                                                    type: "string"
+                                                    example: "AB-123-CD"
+                                                energie:
+                                                    type: "string"
+                                                    example: "Diesel"
+                                                couleur:
+                                                    type: "string"
+                                                    example: "Rouge"
+                                                date_premiere_immatriculation:
+                                                    type: "string"
+                                                    format: "date"
+                                                    example: "2020-06-15"
+                                                nb_places:
+                                                    type: "integer"
+                                                    example: 5
+
+            /api/voitures/details/{id}:
+                get:
+                    tags: ["Voitures"]
+                    summary: "Obtenir les détails d'une voiture"
+                    parameters:
+                        - name: "id"
+                          in: "path"
+                          required: true
+                          description: "ID de la voiture"
+                          schema:
+                              type: "integer"
+                    responses:
+                        200:
+                            description: "Détails de la voiture"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: "object"
+                                        properties:
+                                            id:
+                                                type: "integer"
+                                                example: 1
+                                            Marque:
+                                                type: "string"
+                                                example: "Peugeot"
+                                            modele:
+                                                type: "string"
+                                                example: "Peugeot 208"
+                                            immatriculation:
+                                                type: "string"
+                                                example: "AB-123-CD"
+                                            energie:
+                                                type: "string"
+                                                example: "Diesel"
+                                            couleur:
+                                                type: "string"
+                                                example: "Rouge"
+                                            date_premiere_immatriculation:
+                                                type: "string"
+                                                format: "date"
+                                                example: "2020-06-15"
+                                            nb_places:
+                                                type: "integer"
+                                                example: 5
+                        404:
+                            description: "Voiture non trouvée"
+            /api/voitures/ajouter:
+                post:
+                    tags: ["Voitures"]
+                    summary: "Ajouter une nouvelle voiture"
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: "object"
+                                    properties:
+                                        marque_id:
+                                            type: "integer"
+                                            example: 1
                                         modele:
-                                            type: string
-                                            example: "Clio"
+                                            type: "string"
+                                            example: "Peugeot 208"
                                         immatriculation:
-                                            type: string
+                                            type: "string"
                                             example: "AB-123-CD"
                                         energie:
-                                            type: string
-                                            example: "Essence"
+                                            type: "string"
+                                            example: "Diesel"
                                         couleur:
-                                            type: string
+                                            type: "string"
                                             example: "Rouge"
                                         date_premiere_immatriculation:
-                                            type: string
-                                            format: date
-                                            example: "2018-05-15"
+                                            type: "string"
+                                            format: "date"
+                                            example: "2020-06-15"
                                         nb_places:
-                                            type: integer
+                                            type: "integer"
                                             example: 5
-                                        utilisateur_id:
-                                            type: integer
-                                            example: 1
-                                        marque_id:
-                                            type: integer
-                                            example: 2
                     responses:
                         201:
                             description: "Voiture ajoutée avec succès"
                             content:
                                 application/json:
                                     schema:
-                                        type: object
+                                        type: "object"
                                         properties:
-                                            message:
-                                                type: string
-                                                example: "Voiture ajoutée avec succès"
-                        400:
-                            description: "Données manquantes"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: object
-                                        properties:
-                                            error:
-                                                type: string
-                                                example: "Données manquantes"
-                        404:
-                            description: "Utilisateur ou marque non trouvée"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: object
-                                        properties:
-                                            error:
-                                                type: string
-                                                example: "Utilisateur ou marque non trouvée"
-
-            /voiture/{id}:
-                get:
-                    summary: "Récupérer une voiture par son ID"
-                    description: "Cette méthode permet de récupérer une voiture en fonction de son ID."
-                    parameters:
-                        - name: id
-                          in: path
-                          required: true
-                          description: "ID de la voiture à récupérer"
-                          schema:
-                              type: integer
-                              example: 1
-                    responses:
-                        200:
-                            description: "Voiture trouvée"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: object
-                                        properties:
-                                            voiture_id:
-                                                type: integer
+                                            id:
+                                                type: "integer"
                                                 example: 1
                                             modele:
-                                                type: string
-                                                example: "Clio"
+                                                type: "string"
+                                                example: "Peugeot 208"
                                             immatriculation:
-                                                type: string
+                                                type: "string"
                                                 example: "AB-123-CD"
                                             energie:
-                                                type: string
-                                                example: "Essence"
+                                                type: "string"
+                                                example: "Diesel"
                                             couleur:
-                                                type: string
+                                                type: "string"
                                                 example: "Rouge"
                                             date_premiere_immatriculation:
-                                                type: string
-                                                format: date
-                                                example: "2018-05-15"
+                                                type: "string"
+                                                format: "date"
+                                                example: "2020-06-15"
                                             nb_places:
-                                                type: integer
+                                                type: "integer"
                                                 example: 5
-                                            utilisateur_id:
-                                                type: integer
-                                                example: 1
-                                            marque_id:
-                                                type: integer
-                                                example: 2
-                        404:
-                            description: "Voiture non trouvée"
+                        400:
+                            description: "Données invalides"
+
+            /api/voitures/modifier/{id}:
+                put:
+                    tags: ["Voitures"]
+                    summary: "Modifier une voiture existante"
+                    parameters:
+                        - name: "id"
+                          in: "path"
+                          required: true
+                          description: "ID de la voiture"
+                          schema:
+                              type: "integer"
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: "object"
+                                    properties:
+                                        modele:
+                                            type: "string"
+                                            example: "Peugeot 208"
+                                        immatriculation:
+                                            type: "string"
+                                            example: "AB-123-CD"
+                                        energie:
+                                            type: "string"
+                                            example: "Diesel"
+                                        couleur:
+                                            type: "string"
+                                            example: "Rouge"
+                                        date_premiere_immatriculation:
+                                            type: "string"
+                                            format: "date"
+                                            example: "2020-06-15"
+                                        nb_places:
+                                            type: "integer"
+                                            example: 5
+                    responses:
+                        200:
+                            description: "Voiture modifiée avec succès"
                             content:
                                 application/json:
                                     schema:
-                                        type: object
+                                        type: "object"
                                         properties:
-                                            error:
-                                                type: string
-                                                example: "Voiture non trouvée"
+                                            id:
+                                                type: "integer"
+                                                example: 1
+                                            modele:
+                                                type: "string"
+                                                example: "Peugeot 208"
+                                            immatriculation:
+                                                type: "string"
+                                                example: "AB-123-CD"
+                                            energie:
+                                                type: "string"
+                                                example: "Diesel"
+                                            couleur:
+                                                type: "string"
+                                                example: "Rouge"
+                                            date_premiere_immatriculation:
+                                                type: "string"
+                                                format: "date"
+                                                example: "2020-06-15"
+                                            nb_places:
+                                                type: "integer"
+                                                example: 5
+                        400:
+                            description: "Données invalides"
+                        404:
+                            description: "Voiture non trouvée"
+            /api/voitures/supprimer/{id}:
+                delete:
+                    tags: ["Voitures"]
+                    summary: "Supprimer une voiture"
+                    parameters:
+                        - name: "id"
+                          in: "path"
+                          required: true
+                          description: "ID de la voiture"
+                          schema:
+                              type: "integer"
+                    responses:
+                        204:
+                            description: "Voiture supprimée avec succès"
+                        404:
+                            description: "Voiture non trouvée"
 
