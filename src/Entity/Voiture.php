@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\VoitureRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: VoitureRepository::class)]
 class Voiture
@@ -40,9 +42,42 @@ class Voiture
     #[ORM\JoinColumn(name: "utilisateur_id", referencedColumnName: "utilisateur_id", nullable: false)]
     private ?Utilisateur $utilisateur = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(name: "covoiturage_id", referencedColumnName: "covoiturage_id", nullable: false)]
-    private ?Covoiturage $covoiturage = null;
+    #[ORM\OneToMany(mappedBy: "voiture", targetEntity: Covoiturage::class, cascade: ["persist", "remove"])]
+    private Collection $covoiturages;
+
+    public function __construct()
+    {
+        $this->covoiturages = new ArrayCollection();
+    }
+
+    // Getter pour récupérer la liste des covoiturages
+    public function getCovoiturages(): Collection
+    {
+        return $this->covoiturages;
+    }
+
+    // Ajouter un covoiturage
+    public function addCovoiturage(Covoiturage $covoiturage): static
+    {
+        if (!$this->covoiturages->contains($covoiturage)) {
+            $this->covoiturages->add($covoiturage);
+            $covoiturage->setVoiture($this);
+        }
+
+        return $this;
+    }
+
+    // Supprimer un covoiturage
+    public function removeCovoiturage(Covoiturage $covoiturage): static
+    {
+        if ($this->covoiturages->removeElement($covoiturage)) {
+            if ($covoiturage->getVoiture() === $this) {
+                $covoiturage->setVoiture(null);
+            }
+        }
+
+        return $this;
+    }
 
     public function getVoitureId(): ?int
     {
@@ -141,16 +176,5 @@ class Voiture
     public function getUtilisateur(): ?Utilisateur
     {
     return $this->utilisateur;
-    }
-
-    public function setCovoiturage(Covoiturage $covoiturage): static
-    {
-        $this->covoiturage = $covoiturage;
-        return $this;
-    }
-
-    public function getCovoiturage(): ?Covoiturage
-    {
-        return $this->covoiturage;
     }
 }

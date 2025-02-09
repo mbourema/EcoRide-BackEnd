@@ -11,19 +11,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use DateTime;
 
 #[Route('/covoiturage')]
 class CovoiturageController extends AbstractController
 {
     #[Route('/add', name: 'covoiturage_add', methods: ['POST'])]
-    public function addCovoiturage(Request $request, EntityManagerInterface $em, SerializerInterface $serializer): JsonResponse
+    public function addCovoiturage(Request $request, EntityManagerInterface $em): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['voiture_id'], $data['conducteur_id'])) {
-            return new JsonResponse(['error' => 'voiture_id ou conducteur_id manquant'], 400);
+        if (!isset($data['voiture_id'], $data['conducteur_id'], $data['statut'], $data['prix_personne'])) {
+            return new JsonResponse(['error' => 'voiture_id, conducteur_id, statut ou prix_personne manquant'], 400);
         }
 
         $voiture = $em->getRepository(Voiture::class)->find($data['voiture_id']);
@@ -37,12 +36,15 @@ class CovoiturageController extends AbstractController
         }
 
         $covoiturage = new Covoiturage();
-        $serializer->deserialize($request->getContent(), Covoiturage::class, 'json', [
-            AbstractNormalizer::OBJECT_TO_POPULATE => $covoiturage
-        ]);
-
         $covoiturage->setVoiture($voiture);
         $covoiturage->setConducteur($conducteur);
+        $covoiturage->setLieuDepart($data['lieu_depart']);
+        $covoiturage->setLieuArrivee($data['lieu_arrivee']);
+        $covoiturage->setDateDepart(new DateTime($data['date_depart']));
+        $covoiturage->setDateArrivee(new DateTime($data['date_arrivee']));
+        $covoiturage->setNbPlaces($data['nb_places']);
+        $covoiturage->setStatut($data['statut']);
+        $covoiturage->setPrixPersonne($data['prix_personne']);
 
         if (isset($data['photo'])) {
             $covoiturage->setPhoto(base64_decode($data['photo']));
@@ -51,75 +53,87 @@ class CovoiturageController extends AbstractController
         $em->persist($covoiturage);
         $em->flush();
 
-        return new JsonResponse($serializer->serialize($covoiturage, 'json', ['groups' => 'covoiturage']), 201, [], true);
+        return new JsonResponse([
+            'id' => $covoiturage->getCovoiturageId(),
+            'lieu_depart' => $covoiturage->getLieuDepart(),
+            'lieu_arrivee' => $covoiturage->getLieuArrivee(),
+            'date_depart' => $covoiturage->getDateDepart()->format('Y-m-d H:i:s'),
+            'date_arrivee' => $covoiturage->getDateArrivee()->format('Y-m-d H:i:s'),
+            'nb_places' => $covoiturage->getNbPlaces(),
+            'statut' => $covoiturage->getStatut(),
+            'prix_personne' => $covoiturage->getPrixPersonne(),
+            'voiture_id' => $covoiturage->getVoiture()->getVoitureId(),
+            'conducteur_id' => $covoiturage->getConducteur()->getUtilisateurId(),
+        ], 201);
     }
 
     #[Route('/list', name: 'covoiturage_list', methods: ['GET'])]
-    public function listCovoiturages(CovoiturageRepository $repo, SerializerInterface $serializer): JsonResponse
+    public function listCovoiturages(CovoiturageRepository $repo): JsonResponse
     {
         $covoiturages = $repo->findAll();
-        return new JsonResponse($serializer->serialize($covoiturages, 'json', ['groups' => 'covoiturage']), 200, [], true);
+        $data = [];
+
+        foreach ($covoiturages as $covoiturage) {
+            $data[] = [
+                'id' => $covoiturage->getCovoiturageId(),
+                'lieu_depart' => $covoiturage->getLieuDepart(),
+                'lieu_arrivee' => $covoiturage->getLieuArrivee(),
+                'date_depart' => $covoiturage->getDateDepart()->format('Y-m-d H:i:s'),
+                'date_arrivee' => $covoiturage->getDateArrivee()->format('Y-m-d H:i:s'),
+                'nb_places' => $covoiturage->getNbPlaces(),
+                'statut' => $covoiturage->getStatut(),
+                'prix_personne' => $covoiturage->getPrixPersonne(),
+                'voiture_id' => $covoiturage->getVoiture()->getVoitureId(),
+                'conducteur_id' => $covoiturage->getConducteur()->getUtilisateurId(),
+            ];
+        }
+
+        return new JsonResponse($data, 200);
     }
 
     #[Route('/{id}', name: 'covoiturage_get', methods: ['GET'])]
-    public function getCovoiturage(int $id, CovoiturageRepository $repo, SerializerInterface $serializer): JsonResponse
+    public function getCovoiturage(int $id, CovoiturageRepository $repo): JsonResponse
     {
         $covoiturage = $repo->find($id);
         if (!$covoiturage) {
             return new JsonResponse(['error' => 'Covoiturage non trouvé'], 404);
         }
 
-        return new JsonResponse($serializer->serialize($covoiturage, 'json', ['groups' => 'covoiturage']), 200, [], true);
+        return new JsonResponse([
+            'id' => $covoiturage->getCovoiturageId(),
+            'lieu_depart' => $covoiturage->getLieuDepart(),
+            'lieu_arrivee' => $covoiturage->getLieuArrivee(),
+            'date_depart' => $covoiturage->getDateDepart()->format('Y-m-d H:i:s'),
+            'date_arrivee' => $covoiturage->getDateArrivee()->format('Y-m-d H:i:s'),
+            'nb_places' => $covoiturage->getNbPlaces(),
+            'statut' => $covoiturage->getStatut(),
+            'prix_personne' => $covoiturage->getPrixPersonne(),
+            'voiture_id' => $covoiturage->getVoiture()->getVoitureId(),
+            'conducteur_id' => $covoiturage->getConducteur()->getUtilisateurId(),
+        ], 200);
     }
 
     #[Route('/update/{id}', name: 'covoiturage_update', methods: ['PUT'])]
-    public function updateCovoiturage(int $id, Request $request, EntityManagerInterface $em, CovoiturageRepository $repo, SerializerInterface $serializer): JsonResponse
+    public function updateCovoiturage(int $id, Request $request, EntityManagerInterface $em, CovoiturageRepository $repo): JsonResponse
     {
         $covoiturage = $repo->find($id);
         if (!$covoiturage) {
             return new JsonResponse(['error' => 'Covoiturage non trouvé'], 404);
         }
-
-        $serializer->deserialize($request->getContent(), Covoiturage::class, 'json', [
-            AbstractNormalizer::OBJECT_TO_POPULATE => $covoiturage
-        ]);
 
         $data = json_decode($request->getContent(), true);
 
-        if (isset($data['voiture_id'])) {
-            $voiture = $em->getRepository(Voiture::class)->find($data['voiture_id']);
-            if ($voiture) {
-                $covoiturage->setVoiture($voiture);
-            }
+        if (isset($data['statut'])) {
+            $covoiturage->setStatut($data['statut']);
         }
-
-        if (isset($data['conducteur_id'])) {
-            $conducteur = $em->getRepository(Utilisateur::class)->find($data['conducteur_id']);
-            if ($conducteur) {
-                $covoiturage->setConducteur($conducteur);
-            }
-        }
-
-        if (isset($data['photo'])) {
-            $covoiturage->setPhoto(base64_decode($data['photo']));
+        if (isset($data['prix_personne'])) {
+            $covoiturage->setPrixPersonne($data['prix_personne']);
         }
 
         $em->flush();
 
-        return new JsonResponse($serializer->serialize($covoiturage, 'json', ['groups' => 'covoiturage']), 200, [], true);
-    }
-
-    #[Route('/delete/{id}', name: 'covoiturage_delete', methods: ['DELETE'])]
-    public function deleteCovoiturage(int $id, EntityManagerInterface $em, CovoiturageRepository $repo): JsonResponse
-    {
-        $covoiturage = $repo->find($id);
-        if (!$covoiturage) {
-            return new JsonResponse(['error' => 'Covoiturage non trouvé'], 404);
-        }
-
-        $em->remove($covoiturage);
-        $em->flush();
-
-        return new JsonResponse(['message' => 'Covoiturage supprimé avec succès']);
+        return new JsonResponse(['message' => 'Covoiturage mis à jour avec succès'], 200);
     }
 }
+
+

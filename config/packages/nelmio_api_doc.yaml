@@ -59,11 +59,9 @@ nelmio_api_doc:
                                                 voiture_id:
                                                     type: integer
                                                     example: 1
-                                                utilisateurs:
-                                                    type: array
-                                                    items:
-                                                        type: integer
-                                                    example: [2, 3, 5]
+                                                conducteur_id:
+                                                    type: integer
+                                                    example: 8
             /covoiturage/add:
                 post:
                     tags: ["Covoiturage"]
@@ -84,6 +82,7 @@ nelmio_api_doc:
                                         - nb_places
                                         - prix_personne
                                         - voiture_id
+                                        - conducteur_id
                                     properties:
                                         date_depart:
                                             type: string
@@ -112,11 +111,9 @@ nelmio_api_doc:
                                         voiture_id:
                                             type: integer
                                             example: 1
-                                        utilisateurs:
-                                            type: array
-                                            items:
-                                                type: integer
-                                            example: [2, 3, 5]
+                                        conducteur_id:
+                                            type: integer
+                                            example: 8
                     responses:
                         201:
                             description: "Covoiturage ajouté avec succès"
@@ -176,11 +173,9 @@ nelmio_api_doc:
                                                 type: number
                                                 format: float
                                                 example: 15.50
-                                            utilisateurs:
-                                                type: array
-                                                items:
-                                                    type: integer
-                                                example: [2, 3, 5]
+                                            conducteur_id:
+                                                type: integer
+                                                example: 1
                         404:
                             description: "Covoiturage non trouvé"
             /covoiturage/update/{id}:
@@ -230,32 +225,12 @@ nelmio_api_doc:
                                         voiture_id:
                                             type: integer
                                             example: 1
-                                        utilisateurs:
-                                            type: array
-                                            items:
-                                                type: integer
-                                            example: [2, 3, 5]
+                                        conducteur_id:
+                                            type: integer
+                                            example: 1
                     responses:
                         200:
                             description: "Covoiturage mis à jour avec succès"
-                        404:
-                            description: "Covoiturage non trouvé"
-            /covoiturage/delete/{id}:
-                delete:
-                    tags: ["Covoiturage"]
-                    summary: "Supprimer un covoiturage"
-                    description: "Cette méthode permet de supprimer un covoiturage par ID."
-                    parameters:
-                        - name: id
-                          in: path
-                          required: true
-                          description: "ID du covoiturage à supprimer"
-                          schema:
-                            type: integer
-                            example: 1
-                    responses:
-                        200:
-                            description: "Covoiturage supprimé avec succès"
                         404:
                             description: "Covoiturage non trouvé"
             # Ajout des routes pour AvisController
@@ -1674,6 +1649,9 @@ nelmio_api_doc:
                                                 id:
                                                     type: "integer"
                                                     example: 1
+                                                utilisateur_id:
+                                                    type: "integer"
+                                                    example: 1
                                                 marque_id:
                                                     type: "string"
                                                     example: "Peugeot"
@@ -1754,9 +1732,12 @@ nelmio_api_doc:
                                 schema:
                                     type: "object"
                                     properties:
-                                        marque_id:
+                                        utilisateur_id:
                                             type: "integer"
                                             example: 1
+                                        marque_id:
+                                            type: "integer"
+                                            example: 8
                                         modele:
                                             type: "string"
                                             example: "Peugeot 208"
@@ -1787,6 +1768,9 @@ nelmio_api_doc:
                                             id:
                                                 type: "integer"
                                                 example: 1
+                                            utilisateur_id:
+                                                type: "integer"
+                                                example: 8
                                             modele:
                                                 type: "string"
                                                 example: "Peugeot 208"
@@ -1830,6 +1814,9 @@ nelmio_api_doc:
                                         modele:
                                             type: "string"
                                             example: "Peugeot 208"
+                                        utilisateur_id:
+                                                type: "integer"
+                                                example: 9
                                         immatriculation:
                                             type: "string"
                                             example: "AB-123-CD"
@@ -1857,6 +1844,9 @@ nelmio_api_doc:
                                             id:
                                                 type: "integer"
                                                 example: 1
+                                            utilisateur_id:
+                                                type: "integer"
+                                                example: 9
                                             modele:
                                                 type: "string"
                                                 example: "Peugeot 208"

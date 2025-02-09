@@ -4,14 +4,13 @@ namespace App\Controller;
 
 use App\Entity\Voiture;
 use App\Entity\Marque;
+use App\Entity\Utilisateur;
 use App\Repository\VoitureRepository;
-use App\Form\VoitureType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 #[Route('/api/voitures')]
@@ -19,13 +18,11 @@ class VoitureController extends AbstractController
 {
     private $voitureRepository;
     private $entityManager;
-    private $serializer;
 
-    public function __construct(VoitureRepository $voitureRepository, EntityManagerInterface $entityManager, SerializerInterface $serializer)
+    public function __construct(VoitureRepository $voitureRepository, EntityManagerInterface $entityManager)
     {
         $this->voitureRepository = $voitureRepository;
         $this->entityManager = $entityManager;
-        $this->serializer = $serializer;
     }
 
     // Affichage de la liste des voitures
@@ -34,9 +31,12 @@ class VoitureController extends AbstractController
     {
         $voitures = $this->voitureRepository->findAll();
 
-        // Sérialiser la liste des voitures en JSON
-        $data = $this->serializer->normalize($voitures, null, ['groups' => 'voiture:read']);
-        
+        // Transformer les objets en tableau de données
+        $data = [];
+        foreach ($voitures as $voiture) {
+            $data[] = $this->transformVoitureToArray($voiture);
+        }
+
         return new JsonResponse($data, Response::HTTP_OK);
     }
 
@@ -44,9 +44,8 @@ class VoitureController extends AbstractController
     #[Route('/details/{id}', name: 'api_voitures_details', methods: ['GET'])]
     public function show(Voiture $voiture): JsonResponse
     {
-        // Sérialiser la voiture en JSON
-        $data = $this->serializer->normalize($voiture, null, ['groups' => 'voiture:read']);
-        
+        $data = $this->transformVoitureToArray($voiture);
+
         return new JsonResponse($data, Response::HTTP_OK);
     }
 
@@ -63,6 +62,13 @@ class VoitureController extends AbstractController
             return new JsonResponse(['error' => 'Marque non trouvée'], Response::HTTP_NOT_FOUND);
         }
 
+        // Récupérer l'utilisateur par son ID
+        $utilisateur = $this->entityManager->getRepository(Utilisateur::class)->find($data['utilisateur_id']);
+
+        if (!$utilisateur) {
+            return new JsonResponse(['error' => 'Utilisateur non trouvé'], Response::HTTP_NOT_FOUND);
+        }
+
         // Créer la voiture
         $voiture = new Voiture();
         $voiture->setModele($data['modele']);
@@ -71,25 +77,14 @@ class VoitureController extends AbstractController
         $voiture->setCouleur($data['couleur']);
         $voiture->setDatePremiereImmatriculation(new \DateTimeImmutable($data['date_premiere_immatriculation']));
         $voiture->setNbPlaces($data['nb_places']);
-
-        // Associer la marque à la voiture
         $voiture->setMarque($marque);
+        $voiture->setUtilisateur($utilisateur);
 
-        // Si l'utilisateur est connecté, l'associer
-        $utilisateur = $this->getUser();
-        if ($utilisateur) {
-            $voiture->setUtilisateur($utilisateur);
-        }
-
-        // Sauvegarder la voiture dans la base de données
+        // Sauvegarde en base
         $this->entityManager->persist($voiture);
         $this->entityManager->flush();
 
-        // Retourner une réponse JSON avec la voiture créée
-        return new JsonResponse(
-            $this->serializer->normalize($voiture, null, ['groups' => 'voiture:read']),
-            Response::HTTP_CREATED
-        );
+        return new JsonResponse($this->transformVoitureToArray($voiture), Response::HTTP_CREATED);
     }
 
     // Modification d'une voiture existante
@@ -102,15 +97,11 @@ class VoitureController extends AbstractController
         $voiture->setImmatriculation($data['immatriculation']);
         $voiture->setEnergie($data['energie']);
         $voiture->setCouleur($data['couleur']);
-        $voiture->setDatePremiereImmatriculation(new \DateTime($data['date_premiere_immatriculation']));
         $voiture->setNbPlaces($data['nb_places']);
 
         $this->entityManager->flush();
 
-        return new JsonResponse(
-            $this->serializer->normalize($voiture, null, ['groups' => 'voiture:read']),
-            Response::HTTP_OK
-        );
+        return new JsonResponse($this->transformVoitureToArray($voiture), Response::HTTP_OK);
     }
 
     // Suppression d'une voiture
@@ -122,5 +113,37 @@ class VoitureController extends AbstractController
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
+
+    // Fonction pour transformer une voiture en tableau associatif
+    // Fonction pour transformer une voiture en tableau associatif
+    private function transformVoitureToArray(Voiture $voiture): array
+    {
+        return [
+            'id' => $voiture->getVoitureId(), 
+            'modele' => $voiture->getModele(),
+            'immatriculation' => $voiture->getImmatriculation(),
+            'energie' => $voiture->getEnergie(),
+            'couleur' => $voiture->getCouleur(),
+            'date_premiere_immatriculation' => $voiture->getDatePremiereImmatriculation()->format('Y-m-d'),
+            'nb_places' => $voiture->getNbPlaces(),
+            'marque' => [
+                'id' => $voiture->getMarque()->getMarqueId(), 
+                'nom' => $voiture->getMarque()->getLibelle(),
+            ],
+            'utilisateur' => [
+                'id' => $voiture->getUtilisateur()->getUtilisateurId(), 
+                'nom' => $voiture->getUtilisateur()->getNom(),
+                'email' => $voiture->getUtilisateur()->getEmail(),
+            ],
+            'covoiturages' => array_map(fn($covoiturage) => [
+                'id' => $covoiturage->getCovoiturageId(),
+                'date_depart' => $covoiturage->getDateDepart()->format('Y-m-d H:i:s'),
+                'lieu_depart' => $covoiturage->getLieuDepart(),
+                'lieu_arrivee' => $covoiturage->getLieuArrivee(),
+                'places_disponibles' => $covoiturage->getNbPlaces(),
+            ], $voiture->getCovoiturages()->toArray()), // Ajout des covoiturages
+        ];
+    }
 }
+
 
