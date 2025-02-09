@@ -782,82 +782,6 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Aucune statistique trouvée"
-            # Routes pour EmployeController
-            /employe/add:
-                post:
-                    tags: ["Employe"]
-                    summary: "Ajouter un employé"
-                    description: "Cette méthode permet d'ajouter un nouvel employé."
-                    requestBody:
-                        required: true
-                        content:
-                            application/json:
-                                schema:
-                                    type: object
-                                    required:
-                                        - pseudo_id
-                                    properties:
-                                        pseudo_employe:
-                                            type: string
-                                            example: "Nicolas"
-                    responses:
-                        201:
-                            description: "Employé ajouté avec succès"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: object
-                                        properties:
-                                            message:
-                                                type: string
-                                                example: "Employé ajouté avec succès"
-                        400:
-                            description: "Données manquantes"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: object
-                                        properties:
-                                            error:
-                                                type: string
-                                                example: "Données manquantes"
-            /employe/{id}:
-                get:
-                    tags: ["Employe"]
-                    summary: "Récupérer un employé par son ID"
-                    description: "Cette méthode permet de récupérer un employé en fonction de son ID."
-                    parameters:
-                        - name: id
-                          in: path
-                          required: true
-                          description: "Id de l'employé à récupérer"
-                          schema:
-                              type: integer
-                              example: 3
-                    responses:
-                        200:
-                            description: "Employé trouvé"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: object
-                                        properties:
-                                            employe_id:
-                                                type: integer
-                                                example: 1
-                                            pseudo_employe:
-                                                type: string
-                                                example: "Nicolas"
-                        404:
-                            description: "Employé non trouvé"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: object
-                                        properties:
-                                            error:
-                                                type: string
-                                                example: "Employé non trouvé"
             # Routes pour MarqueController
             /marque/add:
                 post:
@@ -948,13 +872,17 @@ nelmio_api_doc:
                                     type: object
                                     required:
                                         - utilisateur_id
+                                        - covoiturage_id
                                         - montant
                                         - date_paiement
                                         - avancement
                                     properties:
                                         utilisateur_id:
                                             type: integer
-                                            example: 123
+                                            example: 1
+                                        covoiturage_id:
+                                            type: integer
+                                            example: 1
                                         montant:
                                             type: number
                                             format: float
@@ -998,8 +926,8 @@ nelmio_api_doc:
                           required: true
                           description: "ID du paiement à récupérer"
                           schema:
-                              type: integer
-                              example: 123
+                            type: integer
+                            example: 123
                     responses:
                         200:
                             description: "Paiement trouvé"
@@ -1013,7 +941,10 @@ nelmio_api_doc:
                                                 example: 123
                                             utilisateur_id:
                                                 type: integer
-                                                example: 123
+                                                example: 1
+                                            covoiturage_id:
+                                                type: integer
+                                                example: 1
                                             montant:
                                                 type: number
                                                 format: float
@@ -1035,44 +966,18 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Paiement non trouvé"
-            /paiement/list:
-                get:
+                put:
                     tags: ["Paiement"]
-                    summary: "Lister tous les paiements"
-                    description: "Cette méthode permet de récupérer la liste de tous les paiements."
-                    responses:
-                        200:
-                            description: "Liste des paiements"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: array
-                                        items:
-                                            type: object
-                                            properties:
-                                                paiement_id:
-                                                    type: integer
-                                                    example: 123
-                                                utilisateur_id:
-                                                    type: integer
-                                                    example: 123
-                                                montant:
-                                                    type: number
-                                                    format: float
-                                                    example: 250.50
-                                                date_paiement:
-                                                    type: string
-                                                    format: date-time
-                                                    example: "2025-02-06T15:00:00"
-                                                avancement:
-                                                    type: string
-                                                    example: "complet"
-            # Routes pour RoleController
-            /role/add:
-                post:
-                    tags: ["Role"]
-                    summary: "Ajouter un rôle"
-                    description: "Cette méthode permet d'ajouter un nouveau rôle."
+                    summary: "Mettre à jour un paiement"
+                    description: "Cette méthode permet de mettre à jour les informations d'un paiement existant."
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: "ID du paiement à mettre à jour"
+                          schema:
+                            type: integer
+                            example: 123
                     requestBody:
                         required: true
                         content:
@@ -1080,14 +985,19 @@ nelmio_api_doc:
                                 schema:
                                     type: object
                                     required:
-                                        - libelle
+                                        - montant
+                                        - avancement
                                     properties:
-                                        libelle:
+                                        montant:
+                                            type: number
+                                            format: float
+                                            example: 250.50
+                                        avancement:
                                             type: string
-                                            example: "admin"
+                                            example: "complet"
                     responses:
-                        201:
-                            description: "Rôle ajouté avec succès"
+                        200:
+                            description: "Paiement mis à jour avec succès"
                             content:
                                 application/json:
                                     schema:
@@ -1095,7 +1005,30 @@ nelmio_api_doc:
                                         properties:
                                             message:
                                                 type: string
-                                                example: "Rôle ajouté avec succès"
+                                                example: "Paiement mis à jour avec succès"
+                                            paiement:
+                                                type: object
+                                                properties:
+                                                    paiement_id:
+                                                        type: integer
+                                                        example: 123
+                                                    utilisateur_id:
+                                                        type: integer
+                                                        example: 1
+                                                    covoiturage_id:
+                                                        type: integer
+                                                        example: 1
+                                                    montant:
+                                                        type: number
+                                                        format: float
+                                                        example: 250.50
+                                                    date_paiement:
+                                                        type: string
+                                                        format: date-time
+                                                        example: "2025-02-06T15:00:00"
+                                                    avancement:
+                                                        type: string
+                                                        example: "complet"
                         400:
                             description: "Données manquantes"
                             content:
@@ -1106,6 +1039,17 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Données manquantes"
+                        404:
+                            description: "Paiement ou utilisateur non trouvé"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Paiement ou utilisateur non trouvé"
+
             /role/{id}:
                 get:
                     tags: ["Role"]
@@ -1178,17 +1122,13 @@ nelmio_api_doc:
                                     type: object
                                     required:
                                         - utilisateur_id
-                                        - employe_id
                                         - raison
                                         - date_debut
                                         - sanction
                                     properties:
                                         utilisateur_id:
                                             type: integer
-                                            example: 1
-                                        employe_id:
-                                            type: integer
-                                            example: 2
+                                            example: 8
                                         raison:
                                             type: string
                                             example: "Violation des règles"
@@ -1251,9 +1191,6 @@ nelmio_api_doc:
                                             utilisateur_id:
                                                 type: integer
                                                 example: 1
-                                            employe_id:
-                                                type: integer
-                                                example: 2
                                             raison:
                                                 type: string
                                                 example: "Violation des règles"
@@ -1278,44 +1215,6 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Suspension non trouvée"
-            /suspension/list:
-                get:
-                    tags: ["Suspension"]
-                    summary: "Lister toutes les suspensions"
-                    description: "Cette méthode permet de récupérer la liste de toutes les suspensions."
-                    responses:
-                        200:
-                            description: "Liste des suspensions"
-                            content:
-                                application/json:
-                                    schema:
-                                        type: array
-                                        items:
-                                            type: object
-                                            properties:
-                                                suspension_id:
-                                                    type: integer
-                                                    example: 1
-                                                utilisateur_id:
-                                                    type: integer
-                                                    example: 1
-                                                employe_id:
-                                                    type: integer
-                                                    example: 2
-                                                raison:
-                                                    type: string
-                                                    example: "Violation des règles"
-                                                date_debut:
-                                                    type: string
-                                                    format: date-time
-                                                    example: "2025-02-06T10:00:00"
-                                                date_fin:
-                                                    type: string
-                                                    format: date-time
-                                                    example: "2025-02-10T10:00:00"
-                                                sanction:
-                                                    type: string
-                                                    example: "Suspension temporaire"
             # Routes pour UtilisateurController
             /api/utilisateurs/liste:
                 get:

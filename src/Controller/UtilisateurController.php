@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Utilisateur;
 use App\Entity\Role;
+use App\Entity\Covoiturage;
 use App\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -154,18 +155,34 @@ class UtilisateurController extends AbstractController
 
         // Sérialisation des covoiturages
         'covoiturages' => $utilisateur->getCovoiturages()->map(fn($covoiturage) => [
-            'id' => $covoiturage->getId(),
+            'id' => $covoiturage->getCovoiturageId(),
             'depart' => $covoiturage->getLieuDepart(),
             'arrivee' => $covoiturage->getLieuArrivee(),
-            'date' => $covoiturage->getDate()->format('Y-m-d H:i:s'),
+            'date' => $covoiturage->getDateDepart()->format('Y-m-d H:i:s'),
         ])->toArray(),
 
         // Sérialisation des voitures
         'voitures' => $utilisateur->getVoitures()->map(fn($voiture) => [
-            'id' => $voiture->getId(),
+            'id' => $voiture->getVoitureId(),
             'marque' => $voiture->getMarque(),
             'modele' => $voiture->getModele(),
-            'annee' => $voiture->getAnnee(),
+            'annee' => $voiture->getDatePremiereImmatriculation(),
+        ])->toArray(),
+
+        // Sérialisation des suspensions
+        'suspensions' => $utilisateur->getSuspensions()->isEmpty() ? [] : $utilisateur->getSuspensions()->map(fn($suspension) => [
+            'id' => $suspension->getSuspensionId(),
+            'raison' => $suspension->getRaison(),
+            'debut' => $suspension->getDateDebut(),
+            'fin' => $suspension->getDateFin(),
+        ])->toArray(),
+
+        // Sérialisation des paiements
+        'paiements' => $utilisateur->getPaiements()->isEmpty() ? [] : $utilisateur ->getPaiements()->map(fn($paiement) => [
+            'id' => $paiement->getPaiementId(),
+            'montant' => $paiement->getMontant(),
+            'date' => $paiement->getDatePaiement(),
+            'avancement' => $paiement->getAvancement(),
         ])->toArray(),
     ];
 }
@@ -188,18 +205,34 @@ class UtilisateurController extends AbstractController
 
             // Sérialisation des covoiturages
             'covoiturages' => $utilisateur->getCovoiturages()->map(fn($covoiturage) => [
-                'id' => $covoiturage->getId(),
+                'id' => $covoiturage->getCovoiturageId(),
                 'depart' => $covoiturage->getLieuDepart(),
                 'arrivee' => $covoiturage->getLieuArrivee(),
-                'date' => $covoiturage->getDate()->format('Y-m-d H:i:s'),
+                'date' => $covoiturage->getDateDepart()->format('Y-m-d H:i:s'),
             ])->toArray(),
 
             // Sérialisation des voitures
             'voitures' => $utilisateur->getVoitures()->map(fn($voiture) => [
-                'id' => $voiture->getId(),
+                'id' => $voiture->getVoitureId(),
                 'marque' => $voiture->getMarque(),
                 'modele' => $voiture->getModele(),
-                'annee' => $voiture->getAnnee(),
+                'annee' => $voiture->getDatePremiereImmatriculation(),
+            ])->toArray(),
+
+            // Sérialisation des suspensions
+            'suspensions' => $utilisateur->getSuspensions()->isEmpty() ? [] : $utilisateur->getSuspensions()->map(fn($suspension) => [
+                'id' => $suspension->getSuspensionId(),
+                'raison' => $suspension->getRaison(),
+                'debut' => $suspension->getDateDebut(),
+                'fin' => $suspension->getDateFin(),
+            ])->toArray(),
+
+            // Sérialisation des paiements
+            'paiements' => $utilisateur->getPaiements()->isEmpty() ? [] : $utilisateur ->getPaiements()->map(fn($paiement) => [
+                'id' => $paiement->getPaiementId(),
+                'montant' => $paiement->getMontant(),
+                'date' => $paiement->getDatePaiement(),
+                'avancement' => $paiement->getAvancement(),
             ])->toArray(),
         ];
     }

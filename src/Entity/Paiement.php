@@ -28,6 +28,10 @@ class Paiement
     #[ORM\Column(length: 255)]
     private ?string $avancement = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(name: "covoiturage_id", referencedColumnName: "covoiturage_id", nullable: false)]
+    private ?Covoiturage $covoiturage_id = null;
+
     public function getPaiementId(): ?int
     {
         return $this->paiement_id;
@@ -38,9 +42,21 @@ class Paiement
         return $this->utilisateur_id;
     }
 
-    public function setUtilisateurId(Utilisateur $utilisateur): static
+    public function setUtilisateurId(Utilisateur $utilisateur_id): static
     {
-        $this->utilisateur_id = $utilisateur;
+        $this->utilisateur_id = $utilisateur_id;
+
+        return $this;
+    }
+
+    public function getCovoiturageId(): ?Covoiturage
+    {
+        return $this->covoiturage_id;
+    }
+
+    public function setCovoiturageId(Covoiturage $covoiturage_id): static
+    {
+        $this->covoiturage_id = $covoiturage_id;
 
         return $this;
     }

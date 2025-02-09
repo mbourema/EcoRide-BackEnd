@@ -1,8 +1,10 @@
 <?php
+
 namespace App\Controller;
 
 use App\Entity\Paiement;
-use App\Entity\Utilisateur;  // N'oublie pas d'importer l'entité Utilisateur
+use App\Entity\Utilisateur;
+use App\Entity\Covoiturage;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,7 +19,7 @@ class PaiementController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         // Vérification des données requises
-        if (!isset($data['utilisateur_id'], $data['montant'], $data['date_paiement'], $data['avancement'])) {
+        if (!isset($data['utilisateur_id'], $data['covoiturage_id'], $data['montant'], $data['date_paiement'], $data['avancement'])) {
             return new JsonResponse(['error' => 'Données manquantes'], 400);
         }
 
@@ -27,9 +29,17 @@ class PaiementController extends AbstractController
             return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
         }
 
+        $covoiturage = $em->getRepository(Covoiturage::class)->find($data['covoiturage_id']);
+        if (!$covoiturage) {
+            return new JsonResponse(['error' => 'Covoiturage non trouvé'], 404);
+        }
+
+        //Récupération du covoiturage
+
         // Création du paiement
         $paiement = new Paiement();
         $paiement->setUtilisateurId($utilisateur);
+        $paiement->setCovoiturageId($covoiturage);
         $paiement->setMontant((float) $data['montant']);
         $paiement->setDatePaiement(new \DateTime($data['date_paiement']));
         $paiement->setAvancement($data['avancement']);
@@ -51,26 +61,51 @@ class PaiementController extends AbstractController
 
         return new JsonResponse([
             'paiement_id' => $paiement->getPaiementId(),
-            'utilisateur_id' => $paiement->getUtilisateurId()->getUtilisateurId(), // Ou getId() si nécessaire
+            'utilisateur_id' => $paiement->getUtilisateurId()->getUtilisateurId(),
+            'covoiturage_id' => $paiement->getCovoiturageId()->getCovoiturageId(),
             'montant' => $paiement->getMontant(),
             'date_paiement' => $paiement->getDatePaiement()->format('Y-m-d H:i:s'),
             'avancement' => $paiement->getAvancement(),
         ]);
     }
 
-    #[Route('/paiement/list', methods: ['GET'])]
-    public function listPaiements(EntityManagerInterface $em): JsonResponse
+    // Route PUT pour modifier un paiement
+    #[Route('/paiement/{id}', methods: ['PUT'])]
+    public function updatePaiement(int $id, Request $request, EntityManagerInterface $em): JsonResponse
     {
-        $paiements = $em->getRepository(Paiement::class)->findAll();
+        // Récupération du paiement existant
+        $paiement = $em->getRepository(Paiement::class)->find($id);
 
-        $paiementArray = array_map(fn($paiement) => [
-            'paiement_id' => $paiement->getPaiementId(),
-            'utilisateur_id' => $paiement->getUtilisateurId()->getUtilisateurId(),  // Ou getId()
-            'montant' => $paiement->getMontant(),
-            'date_paiement' => $paiement->getDatePaiement()->format('Y-m-d H:i:s'),
-            'avancement' => $paiement->getAvancement(),
-        ], $paiements);
+        if (!$paiement) {
+            return new JsonResponse(['error' => 'Paiement non trouvé'], 404);
+        }
 
-        return new JsonResponse($paiementArray);
+        // Récupération des données envoyées dans la requête
+        $data = json_decode($request->getContent(), true);
+
+        // Mise à jour des données du paiement
+        if (isset($data['montant'])) {
+            $paiement->setMontant((float) $data['montant']);
+        }
+        if (isset($data['avancement'])) {
+            $paiement->setAvancement($data['avancement']);
+        }
+
+        // Sauvegarde des modifications en base de données
+        $em->flush();
+
+        // Retour des données mises à jour
+        return new JsonResponse([
+            'message' => 'Paiement mis à jour avec succès',
+            'paiement' => [
+                'paiement_id' => $paiement->getPaiementId(),
+                'utilisateur_id' => $paiement->getUtilisateurId()->getUtilisateurId(),
+                'covoiturage_id' => $paiement->getCovoiturageId()->getCovoiturageId(),
+                'montant' => $paiement->getMontant(),
+                'date_paiement' => $paiement->getDatePaiement()->format('Y-m-d H:i:s'),
+                'avancement' => $paiement->getAvancement(),
+            ]
+        ], 200);
     }
 }
+

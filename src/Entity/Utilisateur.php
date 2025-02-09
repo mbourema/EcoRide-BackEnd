@@ -62,11 +62,21 @@ class Utilisateur
     #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: Voiture::class)]
     private Collection $voitures;
 
+    // Relation avec les suspensions
+    #[ORM\OneToMany(mappedBy: 'utilisateur_id', targetEntity: Suspension::class)]
+    private Collection $suspensions;
+
+    // Relation avec les paiements
+    #[ORM\OneToMany(mappedBy: 'utilisateur_id', targetEntity: Paiement::class)]
+    private Collection $paiements;
+
     public function __construct()
     {
         $this->covoiturages = new ArrayCollection();
         $this->roles = new ArrayCollection();
         $this->voitures = new ArrayCollection();
+        $this->suspensions = new ArrayCollection();
+        $this->paiements = new ArrayCollection();
     }
 
     // Getters et setters pour chaque propriété
@@ -256,6 +266,58 @@ class Utilisateur
             // Définit l'utilisateur de la voiture à null si nécessaire
             if ($voiture->getUtilisateur() === $this) {
                 $voiture->setUtilisateur(null);
+            }
+        }
+        return $this;
+    }
+
+    // Gestion des suspensions
+
+    public function getSuspensions(): Collection
+    {
+        return $this->suspensions;
+    }
+
+    public function addSuspension(Suspension $suspension): static
+    {
+    if (!$this->suspensions->contains($suspension)) {
+        $this->suspensions[] = $suspension;
+        $suspension->setUtilisateur($this);  // Associe l'utilisateur à cette suspension
+    }
+    return $this;
+    }
+
+    public function removeSuspension(Suspension $suspension): static
+    {
+        if ($this->suspensions->removeElement($suspension)) {
+            if ($suspension->getUtilisateur() === $this) {
+                $suspension->setUtilisateur(null);
+            }
+        }
+        return $this;
+    }
+
+    // Gestion des paiements
+
+    public function getPaiements(): Collection
+    {
+        return $this->paiements;
+    }
+
+    public function addPaiement(Paiement $paiement): static
+    {
+    if (!$this->paiements->contains($paiement)) {
+        $this->paiements[] = $paiement;
+        $paiement->setUtilisateur($this);  // Associe l'utilisateur à ce paiement
+    }
+    return $this;
+    }
+
+    public function removePaiement(Paiement $paiement): static
+    {
+        if ($this->paiements->removeElement($paiement)) {
+            if ($paiement->getUtilisateur() === $this) {
+                $paiement->setUtilisateur(null);
             }
         }
         return $this;

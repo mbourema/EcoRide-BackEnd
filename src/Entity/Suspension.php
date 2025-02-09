@@ -22,7 +22,7 @@ class Suspension
     #[ORM\Column(length: 255)]
     private ?string $raison = null;
 
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date_debut = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
@@ -40,6 +40,12 @@ class Suspension
     {
         return $this->utilisateur_id;
     }
+
+    public function setUtilisateurId(Utilisateur $utilisateur_id): static
+    {
+    $this->utilisateur_id = $utilisateur_id;
+    return $this;
+    } 
 
     public function getRaison(): ?string
     {
