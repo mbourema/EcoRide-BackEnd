@@ -241,28 +241,47 @@ nelmio_api_doc:
                                 schema:
                                     type: object
                                     required:
+                                        - utilisateur_id_passager
+                                        - pseudo_passager
                                         - covoiturage_id
-                                        - passager_id
-                                        - conducteur_id
+                                        - pseudo_conducteur
+                                        - email_passager
+                                        - email_conducteur
+                                        - date_depart
+                                        - date_arrivee
                                         - note
-                                        - commentaire
+                                        - signale
                                     properties:
+                                        utilisateur_id_passager:
+                                            type: integer
+                                            example: 1
+                                        pseudo_passager:
+                                            type: string
+                                            example: Paul24
                                         covoiturage_id:
                                             type: integer
                                             example: 1
-                                        passager_id:
-                                            type: integer
-                                            example: 2
-                                        conducteur_id:
-                                            type: integer
-                                            example: 3
+                                        pseudo_conducteur:
+                                            type: string
+                                            example: Fab28
+                                        email_passager:
+                                            type: string
+                                            example: paul24@test.com
+                                        email_conducteur:
+                                            type: string
+                                            example: fab28@test.com
+                                        date_depart:
+                                                type: string
+                                                format: date-time
+                                                example: "2025-03-01T08:00:00"
+                                        date_arrivee:
+                                                type: string
+                                                format: date-time
+                                                example: "2025-03-01T10:00:00"
                                         note:
                                             type: number
                                             format: float
                                             example: 4.5
-                                        commentaire:
-                                            type: string
-                                            example: "Très bon trajet, conducteur agréable."
                                         signale:
                                             type: boolean
                                             example: false
@@ -287,6 +306,7 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Donnees manquantes"
+            /avis/conducteur/{id}:
             /avis/list:
                 get:
                     tags: ["Avis"]
@@ -302,29 +322,36 @@ nelmio_api_doc:
                                         items:
                                             type: object
                                             properties:
-                                                id:
+                                                utilisateur_id_passager:
                                                     type: integer
                                                     example: 1
+                                                pseudo_passager:
+                                                    type: string
+                                                    example: Paul24
                                                 covoiturage_id:
                                                     type: integer
                                                     example: 1
-                                                passager_id:
-                                                    type: integer
-                                                    example: 2
-                                                conducteur_id:
-                                                    type: integer
-                                                    example: 3
+                                                pseudo_conducteur:
+                                                    type: string
+                                                    example: Fab28
+                                                email_passager:
+                                                    type: string
+                                                    example: paul24@test.com
+                                                email_conducteur:
+                                                    type: string
+                                                    example: fab28@test.com
+                                                date_depart:
+                                                    type: string
+                                                    format: date-time
+                                                    example: "2025-03-01T08:00:00"
+                                                date_arrivee:
+                                                    type: string
+                                                    format: date-time
+                                                    example: "2025-03-01T10:00:00"
                                                 note:
                                                     type: number
                                                     format: float
                                                     example: 4.5
-                                                commentaire:
-                                                    type: string
-                                                    example: "Très bon trajet, conducteur agréable."
-                                                date:
-                                                    type: string
-                                                    format: date-time
-                                                    example: "2025-02-06T12:00:00"
                                                 signale:
                                                     type: boolean
                                                     example: false

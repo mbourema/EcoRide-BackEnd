@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 
-#[Route('/api/avis')]
+#[Route('/avis')]
 class AvisController extends AbstractController
 {
     private DocumentManager $documentManager;
@@ -33,7 +33,7 @@ class AvisController extends AbstractController
     }
 
     // Ajouter un avis
-    #[Route('/ajouter', name: 'api_avis_ajouter', methods: ['POST'])]
+    #[Route('/add', name: 'api_avis_ajouter', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -102,7 +102,7 @@ class AvisController extends AbstractController
     }
 
     // Récupérer tous les avis d'un covoiturage
-    #[Route('/covoiturage/{id}', name: 'api_avis_covoiturage', methods: ['GET'])]
+    #[Route('/conducteur/{id}', name: 'api_avis_covoiturage', methods: ['GET'])]
     public function getAvisByCovoiturage(int $id): JsonResponse
     {
         $avisRepository = $this->documentManager->getRepository(Avis::class);
