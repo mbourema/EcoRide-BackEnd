@@ -62,6 +62,12 @@ nelmio_api_doc:
                                                 conducteur_id:
                                                     type: integer
                                                     example: 8
+                                                pseudo_conducteur:
+                                                    type: string
+                                                    example: "SpaaceTree"
+                                                email_conducteur:
+                                                    type: string
+                                                    example: "test@test.com"
             /covoiturage/add:
                 post:
                     tags: ["Covoiturage"]
@@ -83,6 +89,7 @@ nelmio_api_doc:
                                         - prix_personne
                                         - voiture_id
                                         - conducteur_id
+                                        - pseudo_conducteur
                                     properties:
                                         date_depart:
                                             type: string
@@ -114,6 +121,12 @@ nelmio_api_doc:
                                         conducteur_id:
                                             type: integer
                                             example: 8
+                                        pseudo_conducteur:
+                                            type: string
+                                            example: "SpaaceTree"
+                                        email_conducteur:
+                                                    type: string
+                                                    example: "test@test.com"
                     responses:
                         201:
                             description: "Covoiturage ajouté avec succès"
@@ -176,6 +189,12 @@ nelmio_api_doc:
                                             conducteur_id:
                                                 type: integer
                                                 example: 1
+                                            pseudo_conducteur:
+                                                type: string
+                                                example: "SpaaceTree"
+                                            email_conducteur:
+                                                    type: string
+                                                    example: "test@test.com"
                         404:
                             description: "Covoiturage non trouvé"
             /covoiturage/update/{id}:
@@ -198,36 +217,12 @@ nelmio_api_doc:
                                 schema:
                                     type: object
                                     properties:
-                                        date_depart:
-                                            type: string
-                                            format: date-time
-                                            example: "2025-03-01T08:00:00"
-                                        lieu_depart:
-                                            type: string
-                                            example: "Paris"
-                                        date_arrivee:
-                                            type: string
-                                            format: date-time
-                                            example: "2025-03-01T10:00:00"
-                                        lieu_arrivee:
-                                            type: string
-                                            example: "Lyon"
                                         statut:
                                             type: string
                                             example: "Disponible"
                                         nb_places:
                                             type: integer
                                             example: 4
-                                        prix_personne:
-                                            type: number
-                                            format: float
-                                            example: 15.50
-                                        voiture_id:
-                                            type: integer
-                                            example: 1
-                                        conducteur_id:
-                                            type: integer
-                                            example: 1
                     responses:
                         200:
                             description: "Covoiturage mis à jour avec succès"

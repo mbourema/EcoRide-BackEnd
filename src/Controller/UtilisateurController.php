@@ -153,8 +153,8 @@ class UtilisateurController extends AbstractController
         // Sérialisation des rôles
         'roles' => $utilisateur->getRoles()->map(fn($role) => $role->getLibelle())->toArray(),
 
-        // Sérialisation des covoiturages
-        'covoiturages' => $utilisateur->getCovoiturages()->map(fn($covoiturage) => [
+        // Sérialisation des covoiturages pour récupérer l'id et les infos du covoiturage
+        'covoiturages' => $utilisateur->getCovoituragesAsConducteur()->map(fn($covoiturage) => [
             'id' => $covoiturage->getCovoiturageId(),
             'depart' => $covoiturage->getLieuDepart(),
             'arrivee' => $covoiturage->getLieuArrivee(),
@@ -203,8 +203,8 @@ class UtilisateurController extends AbstractController
             // Sérialisation des rôles
             'roles' => $utilisateur->getRoles()->map(fn($role) => $role->getLibelle())->toArray(),
 
-            // Sérialisation des covoiturages
-            'covoiturages' => $utilisateur->getCovoiturages()->map(fn($covoiturage) => [
+            // Sérialisation des covoiturages pour récupérer l'id et les infos du covoiturage
+            'covoiturages' => $utilisateur->getCovoituragesAsConducteur()->map(fn($covoiturage) => [
                 'id' => $covoiturage->getCovoiturageId(),
                 'depart' => $covoiturage->getLieuDepart(),
                 'arrivee' => $covoiturage->getLieuArrivee(),

@@ -49,9 +49,17 @@ class Utilisateur
     #[ORM\Column(type: 'blob', nullable: true)]
     private $photo;
 
-    // Relation avec les covoiturages
+    // Relation avec les covoiturages en tant que conducteur
     #[ORM\OneToMany(mappedBy: 'conducteur', targetEntity: Covoiturage::class)]
-    private Collection $covoiturages;
+    private Collection $covoituragesAsConducteur;
+
+    // Relation avec les covoiturages par pseudo
+    #[ORM\OneToMany(mappedBy: 'pseudo', targetEntity: Covoiturage::class)]
+    private Collection $covoituragesAsPseudo;
+
+    //Relation avec les covoiturages par email
+    #[ORM\OneToMany(mappedBy: 'email', targetEntity: Covoiturage::class)]
+    private Collection $covoituragesAsEmail;
 
     // Relation avec les rôles
     #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'utilisateurs')]
@@ -70,9 +78,11 @@ class Utilisateur
     #[ORM\OneToMany(mappedBy: 'utilisateur_id', targetEntity: Paiement::class)]
     private Collection $paiements;
 
+
     public function __construct()
     {
-        $this->covoiturages = new ArrayCollection();
+        $this->covoituragesAsConducteur = new ArrayCollection();
+        $this->covoituragesAsPseudo = new ArrayCollection();
         $this->roles = new ArrayCollection();
         $this->voitures = new ArrayCollection();
         $this->suspensions = new ArrayCollection();
@@ -196,31 +206,10 @@ class Utilisateur
         return $this;
     }
 
-    // Gestion des covoiturages
-
-    public function getCovoiturages(): Collection
+    // Getter pour les covoiturages en tant que conducteur
+    public function getCovoituragesAsConducteur(): Collection
     {
-        return $this->covoiturages;
-    }
-
-    public function addCovoiturage(Covoiturage $covoiturage): static
-    {
-        if (!$this->covoiturages->contains($covoiturage)) {
-            $this->covoiturages[] = $covoiturage;
-            $covoiturage->setConducteur($this);  // Associe l'utilisateur à ce covoiturage
-        }
-        return $this;
-    }
-
-    public function removeCovoiturage(Covoiturage $covoiturage): static
-    {
-        if ($this->covoiturages->removeElement($covoiturage)) {
-            // Si l'utilisateur est le conducteur du covoiturage, on le dissocie
-            if ($covoiturage->getConducteur() === $this) {
-                $covoiturage->setConducteur(null);
-            }
-        }
-        return $this;
+        return $this->covoituragesAsConducteur;
     }
 
     // Gestion des rôles

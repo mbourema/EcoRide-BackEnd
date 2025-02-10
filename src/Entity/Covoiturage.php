@@ -41,9 +41,17 @@ class Covoiturage
     #[ORM\JoinColumn(name: "voiture_id", referencedColumnName: "voiture_id", nullable: false)]
     private ?Voiture $voiture = null;
 
-    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: 'covoiturages', cascade: ['persist'])]
-    #[ORM\JoinColumn(name: "conducteur_id", referencedColumnName: "utilisateur_id", nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: 'covoituragesAsConducteur')]
+    #[ORM\JoinColumn(name: 'conducteur_id', referencedColumnName: 'utilisateur_id', nullable: false)]
     private ?Utilisateur $conducteur = null;
+    
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: 'covoituragesAsPseudo')]
+    #[ORM\JoinColumn(name: 'pseudo_conducteur', referencedColumnName: 'utilisateur_id', nullable: false)]
+    private ?Utilisateur $pseudo = null;
+
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: 'covoituragesAsEmail')]
+    #[ORM\JoinColumn(name: 'email_conducteur', referencedColumnName: 'utilisateur_id', nullable: false)]
+    private ?Utilisateur $email = null;
 
     #[ORM\Column(type: Types::BLOB, nullable: true)]
     private $photo;
@@ -149,6 +157,28 @@ class Covoiturage
     public function setConducteur(Utilisateur $conducteur): static
     {
         $this->conducteur = $conducteur;
+        return $this;
+    }
+
+    public function getPseudo(): ?Utilisateur
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(Utilisateur $pseudo): static
+    {
+        $this->pseudo = $pseudo;
+        return $this;
+    }
+
+    public function getEmail(): ?Utilisateur
+    {
+        return $this->email;
+    }
+
+    public function setEmail(Utilisateur $email): static
+    {
+        $this->email = $email;
         return $this;
     }
 

@@ -10,62 +10,135 @@ class Avis
     #[MongoDB\Id]
     private ?string $id = null;
 
-    #[MongoDB\Field(type: "string")]
-    private string $covoiturageId;
+    #[MongoDB\Field(type: "integer")] // A recuperer dans la classe Covoiturage.php (utilisateur_id)
+    private int $utilisateur_id_passager;
 
-    #[MongoDB\Field(type: "string")]
-    private string $passagerId;
+    #[MongoDB\Field(type: "string")] // A recuperer dans la classe Utilisateur.php (pseudo)
+    private string $pseudo_passager;
 
-    #[MongoDB\Field(type: "string")]
-    private string $conducteurId;
+    #[MongoDB\Field(type: "integer")] // A recuperer dans la classe Covoiturage.php (covoiturage_id)
+    private int $covoiturage_id;
 
-    #[MongoDB\Field(type: "float")]
+    #[MongoDB\Field(type: "string")] // A recuperer dans la classe Covoiturage.php (pseudo)
+    private string $pseudo_conducteur;
+
+    #[MonDB\Field(type: "string")] // A recuperer dans la classe Utilisateur.php
+    private string $email_passager;
+
+    #[MonDB\Field(type: "string")] // A recuperer dans la classe Covoiturage.php
+    private string $email_conducteur;
+
+    #[MongoDB\Field(type: "date")] // A recuperer dans la classe Covoiturage.php
+    private \DateTime $date_depart;
+
+    #[MongoDB\Field(type: "date")] // A recuperer dans la classe Covoiturage.php
+    private \DateTime $date_arrivee;
+
+    #[MongoDB\Field(type: "float")] // Sur 5 
     private float $note;
 
-    #[MongoDB\Field(type: "string")]
+    #[MonDB\Field(type: "string")] // Facultatif
     private string $commentaire;
-
-    #[MongoDB\Field(type: "date")]
-    private \DateTime $date;
 
     #[MongoDB\Field(type: "bool")]
     private bool $signale = false;
+
+    #[MonDB\Field(type: "string")] // Si $signale == true
+    private string $justification;
+
+    #[MongoDB\Field(type: "bool")]
+    private bool $validation = true;
 
     public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function getCovoiturageId(): ?string
+    public function getUtilisateurIdPassager(): ?int
     {
-        return $this->covoiturageId;
+        return $this->utilisateur_id_passager;
     }
 
-    public function setCovoiturageId(string $covoiturageId): self
+    public function setUtilisateurIdPassager(int $utilisateur_id_passager): self
     {
-        $this->covoiturageId = $covoiturageId;
+        $this->utilisateur_id_passager = $utilisateur_id_passager;
         return $this;
     }
 
-    public function getPassagerId(): ?string
+    public function getPseudoPassager(): ?string
     {
-        return $this->passagerId;
+        return $this->pseudo_passager;
     }
 
-    public function setPassagerId(string $passagerId): self
+    public function setPseudoPassager(string $pseudo_passager): self
     {
-        $this->passagerId = $passagerId;
+        $this->pseudo_passager = $pseudo_passager;
         return $this;
     }
 
-    public function getConducteurId(): ?string
+    public function getCovoiturageId(): ?int
     {
-        return $this->conducteurId;
+        return $this->covoiturage_id;
     }
 
-    public function setConducteurId(string $conducteurId): self
+    public function setCovoiturageId(int $conducteurId): self
     {
-        $this->conducteurId = $conducteurId;
+        $this->covoiturage_id = $covoiturage_id;
+        return $this;
+    }
+
+    public function getPseudoConducteur(): ?string
+    {
+        return $this->pseudo_conducteur;
+    }
+
+    public function setPseudoConducteur(string $pseudo_conducteur): self
+    {
+        $this->pseudo_conducteur = $pseudo_conducteur;
+        return $this;
+    }
+
+    public function getEmailPassager(): ?string
+    {
+        return $this->email_passager;
+    }
+
+    public function setEmailPassager(string $email_passager): self
+    {
+        $this->email_passager = $email_passager;
+        return $this;
+    }
+
+    public function getEmailConducteur(): ?string
+    {
+        return $this->email_conducteur;
+    }
+
+    public function setEmailConducteur(string $email_conducteur): self
+    {
+        $this->email_conducteur = $email_conducteur;
+        return $this;
+    }
+
+    public function getDateDepart(): \DateTime
+    {
+        return $this->date_depart;
+    }
+
+    public function setDateDepart(\DateTime $date_depart): self
+    {
+        $this->date_depart = $date_depart;
+        return $this;
+    }
+
+    public function getDateArrivee(): \DateTime
+    {
+        return $this->date_arrivee;
+    }
+
+    public function setDateArrivee(\DateTime $date_arrivee): self
+    {
+        $this->date_arrivee = $date_arrivee;
         return $this;
     }
 
@@ -80,28 +153,6 @@ class Avis
         return $this;
     }
 
-    public function getCommentaire(): string
-    {
-        return $this->commentaire;
-    }
-
-    public function setCommentaire(string $commentaire): self
-    {
-        $this->commentaire = $commentaire;
-        return $this;
-    }
-
-    public function getDate(): \DateTime
-    {
-        return $this->date;
-    }
-
-    public function setDate(\DateTime $date): self
-    {
-        $this->date = $date;
-        return $this;
-    }
-
     public function getSignale(): bool
     {
         return $this->signale;
@@ -110,6 +161,28 @@ class Avis
     public function setSignale(bool $signale): self
     {
         $this->signale = $signale;
+        return $this;
+    }
+
+    public function getJustification(): string
+    {
+        return $this->justification;
+    }
+
+    public function setJustification(string $justification): self
+    {
+        $this->justification = $justification;
+        return $this;
+    }
+
+    public function getValidation(): bool
+    {
+        return $this->signale;
+    }
+
+    public function setValidation(bool $validation): self
+    {
+        $this->validation = $validation;
         return $this;
     }
 }
