@@ -36,92 +36,132 @@ class AvisController extends AbstractController
     #[Route('/add', name: 'api_avis_ajouter', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+    $data = json_decode($request->getContent(), true);
 
-        // Vérification que les données sont présentes
-        if (
-            !isset($data['utilisateur_id_passager']) || 
-            !isset($data['covoiturage_id']) || 
-            !isset($data['note'])
-        ) {
+    if (!isset($data['utilisateur_id_passager'], $data['covoiturage_id'], $data['note'])) {
+        return new JsonResponse(['error' => 'Des champs obligatoires sont manquants'], Response::HTTP_BAD_REQUEST);
+    }
+
+    // Récupérer l'utilisateur passager
+    $passager = $this->utilisateurRepository->find($data['utilisateur_id_passager']);
+    if (!$passager) {
+        return new JsonResponse(['error' => 'Utilisateur passager non trouvé.'], Response::HTTP_NOT_FOUND);
+    }
+
+    // Récupérer le covoiturage
+    $covoiturage = $this->covoiturageRepository->find($data['covoiturage_id']);
+    if (!$covoiturage) {
+        return new JsonResponse(['error' => 'Covoiturage non trouvé.'], Response::HTTP_NOT_FOUND);
+    }
+
+    // Récupérer l'ID du conducteur
+    $conducteurId = $covoiturage->getConducteur();
+    if (!$conducteurId) {
+        return new JsonResponse(['error' => 'Conducteur non trouvé.'], Response::HTTP_NOT_FOUND);
+    }
+
+    // Récupérer le conducteur dans la table utilisateur
+    $conducteur = $this->utilisateurRepository->find($conducteurId);
+    if (!$conducteur) {
+        return new JsonResponse(['error' => 'Conducteur introuvable dans la base utilisateur.'], Response::HTTP_NOT_FOUND);
+    }
+
+    // Créer l'avis
+    $avis = new Avis();
+    $avis->setUtilisateurIdPassager($passager->getUtilisateurId());
+    $avis->setPseudoPassager($passager->getPseudo());
+    $avis->setEmailPassager($passager->getEmail());
+
+    $avis->setCovoiturageId($covoiturage->getCovoiturageId());
+    $avis->setPseudoConducteur($conducteur->getPseudo());
+    $avis->setEmailConducteur($conducteur->getEmail());  
+
+    $avis->setDateDepart($covoiturage->getDateDepart());
+    $avis->setDateArrivee($covoiturage->getDateArrivee());
+
+    $avis->setNote($data['note']);
+    $avis->setCommentaire($data['commentaire'] ?? '');
+
+    $avis->setSignale($data['signale'] ?? false);
+    $avis->setJustification($data['justification'] ?? '');
+    $avis->setValidation($data['validation'] ?? false);
+
+    // Sauvegarde dans MongoDB
+    $this->documentManager->persist($avis);
+    $this->documentManager->flush();
+
+    return new JsonResponse(['message' => 'Avis ajouté avec succès.', 'id' => $avis->getId()], Response::HTTP_CREATED);
+    }
+
+    // Modifier la validation d'un avis à partir de son ID
+    #[Route('/update/{id}', name: 'api_avis_modifier', methods: ['PATCH'])]
+    public function updateValidation(string $id, Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        
+        if (!isset($data['validation'])) {
             return new JsonResponse(
-                ['error' => 'Les champs utilisateur_id_passager, covoiturage_id et note sont obligatoires.'],
+                ['error' => 'Le champ validation est manquant.'],
                 Response::HTTP_BAD_REQUEST
             );
         }
 
-        // Récupérer l'utilisateur passager depuis MariaDB
-        $utilisateur = $this->utilisateurRepository->find($data['utilisateur_id_passager']);
-        if (!$utilisateur) {
+        $avis = $this->documentManager->getRepository(Avis::class)->find($id);
+
+        if (!$avis) {
             return new JsonResponse(
-                ['error' => 'Utilisateur non trouvé.'],
+                ['error' => 'Avis non trouvé.'],
                 Response::HTTP_NOT_FOUND
             );
         }
 
-        // Récupérer le covoiturage depuis MariaDB
-        $covoiturage = $this->covoiturageRepository->find($data['covoiturage_id']);
-        if (!$covoiturage) {
-            return new JsonResponse(
-                ['error' => 'Covoiturage non trouvé.'],
-                Response::HTTP_NOT_FOUND
-            );
-        }
-
-        // Créer l'avis
-        $avis = new Avis();
-        $avis->setUtilisateurIdPassager($data['utilisateur_id_passager']);
-        $avis->setPseudoPassager($utilisateur->getPseudo());
-        $avis->setEmailPassager($utilisateur->getEmail());
-
-        $avis->setCovoiturageId($data['covoiturage_id']);
-        $avis->setPseudoConducteur($covoiturage->getUtilisateur()->getPseudo());
-        $avis->setEmailConducteur($covoiturage->getUtilisateur()->getEmail());
-
-        // Informations supplémentaires venant du covoiturage
-        $avis->setDateDepart($covoiturage->getDateDepart());
-        $avis->setDateArrivee($covoiturage->getDateArrivee());
-
-        // Note et commentaire
-        $avis->setNote($data['note']);
-        $avis->setCommentaire($data['commentaire'] ?? '');
-
-        // Signaler ou valider l'avis (dépend de la logique métier)
-        $avis->setSignale($data['signale'] ?? false);
-        $avis->setJustification($data['justification'] ?? '');
-        $avis->setValidation($data['validation'] ?? true);
-
-        // Sauvegarder l'avis dans MongoDB
-        $this->documentManager->persist($avis);
+        $avis->setValidation((bool) $data['validation']);
         $this->documentManager->flush();
 
         return new JsonResponse(
-            ['message' => 'Avis ajouté avec succès.', 'id' => $avis->getId()],
-            Response::HTTP_CREATED
+            ['message' => 'Validation de l\'avis mise à jour avec succès.'],
+            Response::HTTP_OK
         );
     }
 
-    // Récupérer tous les avis d'un covoiturage
-    #[Route('/conducteur/{id}', name: 'api_avis_covoiturage', methods: ['GET'])]
-    public function getAvisByCovoiturage(int $id): JsonResponse
+    // Récupérer tous les avis d'un conducteur via son pseudo
+    #[Route('/list/conducteur/{pseudo}', name: 'api_avis_conducteur_liste', methods: ['GET'])]
+    public function getAvisByConducteur(string $pseudo): JsonResponse
     {
-        $avisRepository = $this->documentManager->getRepository(Avis::class);
+    $avisList = $this->documentManager->getRepository(Avis::class)
+        ->findBy(['pseudo_conducteur' => $pseudo]);
 
-        $avisList = $avisRepository->findBy(['covoiturage_id' => $id]);
+    if (!$avisList) {
+        return new JsonResponse(
+            ['error' => 'Aucun avis trouvé pour ce conducteur.'],
+            Response::HTTP_NOT_FOUND
+        );
+    }
 
-        $data = [];
-        foreach ($avisList as $avis) {
-            $data[] = [
-                'id' => $avis->getId(),
-                'utilisateur_id_passager' => $avis->getUtilisateurIdPassager(),
-                'pseudo_passager' => $avis->getPseudoPassager(),
-                'note' => $avis->getNote(),
-                'commentaire' => $avis->getCommentaire(),
-                'signale' => $avis->getSignale(),
-                'validation' => $avis->getValidation(),
-            ];
+    $avisArray = array_map(function (Avis $avis) {
+        // Crée d'abord le tableau avec les données de base de l'avis
+        $avisData = [
+            'id' => $avis->getId(),
+            'pseudo_passager' => $avis->getPseudoPassager(),
+            'covoiturage_id' => $avis->getCovoiturageId(),
+            'pseudo_conducteur' => $avis->getPseudoConducteur(),
+            'email_conducteur' => $avis->getEmailConducteur(),
+            'email_passager' => $avis->getEmailPassager(),
+            'date_depart' => $avis->getDateDepart()->format('Y-m-d H:i:s'),
+            'date_arrivee' => $avis->getDateArrivee()->format('Y-m-d H:i:s'),
+            'note' => $avis->getNote(),
+        ];
+
+        // Si le commentaire existe, on l'ajoute au tableau
+        $commentaire = $avis->getCommentaire();
+        if (!empty($commentaire)) {
+            $avisData['commentaire'] = $commentaire;
         }
 
-        return new JsonResponse($data, Response::HTTP_OK);
+        return $avisData;
+    }, $avisList);
+
+    return new JsonResponse($avisArray, Response::HTTP_OK);
     }
 }
+

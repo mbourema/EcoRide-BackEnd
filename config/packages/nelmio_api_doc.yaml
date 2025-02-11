@@ -198,7 +198,7 @@ nelmio_api_doc:
                         404:
                             description: "Covoiturage non trouvé"
             /covoiturage/update/{id}:
-                put:
+                patch:
                     tags: ["Covoiturage"]
                     summary: "Mettre à jour un covoiturage"
                     description: "Cette méthode permet de mettre à jour les informations d'un covoiturage."
@@ -251,25 +251,26 @@ nelmio_api_doc:
                                         - date_arrivee
                                         - note
                                         - signale
+                                        - commentaire
                                     properties:
                                         utilisateur_id_passager:
                                             type: integer
-                                            example: 1
+                                            example: 2
                                         pseudo_passager:
                                             type: string
-                                            example: Paul24
+                                            example: Jean2
                                         covoiturage_id:
                                             type: integer
-                                            example: 1
+                                            example: 2
                                         pseudo_conducteur:
                                             type: string
-                                            example: Fab28
+                                            example: "JeanD"
                                         email_passager:
                                             type: string
-                                            example: paul24@test.com
+                                            example: "jean2.dupont@example.com"
                                         email_conducteur:
                                             type: string
-                                            example: fab28@test.com
+                                            example: "jean.dupont@example.com"
                                         date_depart:
                                                 type: string
                                                 format: date-time
@@ -285,6 +286,12 @@ nelmio_api_doc:
                                         signale:
                                             type: boolean
                                             example: false
+                                        commentaire:
+                                            type: string
+                                            example: "cetait cool"
+                                        justification:
+                                            type: string
+                                            example: "Conducteur froid"
                     responses:
                         201:
                             description: "Avis ajouté avec succès"
@@ -306,15 +313,71 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Donnees manquantes"
-            /avis/conducteur/{id}:
-            /avis/list:
-                get:
+            /avis/update/{id}:
+                patch:
                     tags: ["Avis"]
-                    summary: "Récupérer la liste des avis"
-                    description: "Cette méthode permet de récupérer tous les avis pour les covoiturages."
+                    summary: "Mettre à jour la validation d'un avis"
+                    description: "Cette méthode permet à un employé du site de modifier la validation d'un avis après soumission."
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: "L'ID de l'avis à mettre à jour"
+                          schema:
+                              type: string
+                              example: "65dfb2e8d8f91a001c3e3a92"
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required:
+                                        - validation
+                                    properties:
+                                        validation:
+                                            type: boolean
+                                            description: "Statut de validation de l'avis"
+                                            example: true
                     responses:
                         200:
-                            description: "Liste des avis"
+                            description: "Validation mise à jour avec succès"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: "Validation de l'avis mise à jour avec succès."
+                        400:
+                            description: "Requête invalide (champs manquants ou incorrects)"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Le champ validation est manquant."
+                        404:
+                            description: "Avis non trouvé"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            error:
+                                                type: string
+                                                example: "Avis non trouvé."
+            /avis/list/conducteur/{pseudo}:
+                get:
+                    tags: ["Avis"]
+                    summary: "Récupérer la liste de tout les avis d'un conducteur"
+                    description: "Cette méthode permet de récupérer tous les avis d'un conducteur à partir de son pseudo"
+                    responses:
+                        200:
+                            description: "Liste des avis du conducteur"
                             content:
                                 application/json:
                                     schema:
@@ -322,7 +385,7 @@ nelmio_api_doc:
                                         items:
                                             type: object
                                             properties:
-                                                utilisateur_id_passager:
+                                                id:
                                                     type: integer
                                                     example: 1
                                                 pseudo_passager:
@@ -334,12 +397,6 @@ nelmio_api_doc:
                                                 pseudo_conducteur:
                                                     type: string
                                                     example: Fab28
-                                                email_passager:
-                                                    type: string
-                                                    example: paul24@test.com
-                                                email_conducteur:
-                                                    type: string
-                                                    example: fab28@test.com
                                                 date_depart:
                                                     type: string
                                                     format: date-time
@@ -348,13 +405,13 @@ nelmio_api_doc:
                                                     type: string
                                                     format: date-time
                                                     example: "2025-03-01T10:00:00"
+                                                commentaire:
+                                                    type: string
+                                                    example: "Très bon trajet"
                                                 note:
                                                     type: number
                                                     format: float
                                                     example: 4.5
-                                                signale:
-                                                    type: boolean
-                                                    example: false
             # Routes pour CommandeController
             /commande/add:
                 post:

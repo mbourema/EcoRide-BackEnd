@@ -47,11 +47,11 @@ class Covoiturage
     
     #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: 'covoituragesAsPseudo')]
     #[ORM\JoinColumn(name: 'pseudo_conducteur', referencedColumnName: 'utilisateur_id', nullable: false)]
-    private ?Utilisateur $pseudo = null;
+    public ?Utilisateur $pseudo = null;
 
     #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: 'covoituragesAsEmail')]
     #[ORM\JoinColumn(name: 'email_conducteur', referencedColumnName: 'utilisateur_id', nullable: false)]
-    private ?Utilisateur $email = null;
+    public ?Utilisateur $email = null;
 
     #[ORM\Column(type: Types::BLOB, nullable: true)]
     private $photo;

@@ -37,28 +37,20 @@ class CovoiturageController extends AbstractController
         return new JsonResponse(['error' => 'Conducteur non trouvé'], 404);
     }
 
-    // Recherche de l'utilisateur par pseudo
-    $pseudo_conducteur = $data['pseudo_conducteur'];  // pseudo transmis dans le body de la requête
-    $utilisateur1 = $em->getRepository(Utilisateur::class)->findOneBy(['pseudo' => $pseudo_conducteur]);
+    // Recherche de l'utilisateur par pseudo et email
+    $pseudoConducteur = $em->getRepository(Utilisateur::class)->findOneBy(['pseudo' => $data['pseudo_conducteur']]);
+    $emailConducteur = $em->getRepository(Utilisateur::class)->findOneBy(['email' => $data['email_conducteur']]);
 
-    if (!$utilisateur1) {
-        return new JsonResponse(['error' => 'Pseudo non trouvé'], 404);
-    }
-
-    // Recherche de l'utilisateur par email
-    $email_conducteur = $data['email_conducteur'];  // email transmis dans le body de la requête
-    $utilisateur2 = $em->getRepository(Utilisateur::class)->findOneBy(['email' => $email_conducteur]);
-
-    if (!$utilisateur2) {
-        return new JsonResponse(['error' => 'Email non trouvé'], 404);
+    if (!$pseudoConducteur || !$emailConducteur) {
+        return new JsonResponse(['error' => 'Invalid pseudo_conducteur or email_conducteur'], 400);
     }
 
     // Création du covoiturage
     $covoiturage = new Covoiturage();
     $covoiturage->setVoiture($voiture);
     $covoiturage->setConducteur($conducteur);
-    $covoiturage->setPseudo($utilisateur1);
-    $covoiturage->setEmail($utilisateur2);
+    $covoiturage->setPseudo($pseudoConducteur);
+    $covoiturage->setEmail($emailConducteur);
     $covoiturage->setLieuDepart($data['lieu_depart']);
     $covoiturage->setLieuArrivee($data['lieu_arrivee']);
     $covoiturage->setDateDepart(new DateTime($data['date_depart']));
@@ -142,7 +134,7 @@ class CovoiturageController extends AbstractController
         ], 200);
     }
 
-    #[Route('/update/{id}', name: 'covoiturage_update', methods: ['PUT'])]
+    #[Route('/update/{id}', name: 'covoiturage_update', methods: ['PATCH'])]
     public function updateCovoiturage(int $id, Request $request, EntityManagerInterface $em, CovoiturageRepository $repo): JsonResponse
     {
         $covoiturage = $repo->find($id);

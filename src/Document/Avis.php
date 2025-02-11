@@ -10,7 +10,7 @@ class Avis
     #[MongoDB\Id]
     private ?string $id = null;
 
-    #[MongoDB\Field(type: "integer")] // A recuperer dans la classe Covoiturage.php (utilisateur_id)
+    #[MongoDB\Field(type: "integer")] // A recuperer dans la classe Utilisateur.php (utilisateur_id)
     private int $utilisateur_id_passager;
 
     #[MongoDB\Field(type: "string")] // A recuperer dans la classe Utilisateur.php (pseudo)
@@ -19,13 +19,13 @@ class Avis
     #[MongoDB\Field(type: "integer")] // A recuperer dans la classe Covoiturage.php (covoiturage_id)
     private int $covoiturage_id;
 
-    #[MongoDB\Field(type: "string")] // A recuperer dans la classe Covoiturage.php (pseudo)
+    #[MongoDB\Field(type: "string")] // A recuperer dans la classe Utilisateur.php après avoir récupéré l'id dans Covoiturage.php (pseudo)
     private string $pseudo_conducteur;
 
-    #[MonDB\Field(type: "string")] // A recuperer dans la classe Utilisateur.php
+    #[MongoDB\Field(type: "string")] // A recuperer dans la classe Utilisateur.php
     private string $email_passager;
 
-    #[MonDB\Field(type: "string")] // A recuperer dans la classe Covoiturage.php
+    #[MongoDB\Field(type: "string")] // A recuperer dans la classe Utilisateur.php après avoir récupéré l'id dans Covoiturage.php
     private string $email_conducteur;
 
     #[MongoDB\Field(type: "date")] // A recuperer dans la classe Covoiturage.php
@@ -37,17 +37,17 @@ class Avis
     #[MongoDB\Field(type: "float")] // Sur 5 
     private float $note;
 
-    #[MonDB\Field(type: "string")] // Facultatif
+    #[MongoDB\Field(type: "string")] // Facultatif
     private string $commentaire;
 
     #[MongoDB\Field(type: "bool")]
     private bool $signale = false;
 
-    #[MonDB\Field(type: "string")] // Si $signale == true
+    #[MongoDB\Field(type: "string")] // Si $signale == true
     private string $justification;
 
     #[MongoDB\Field(type: "bool")]
-    private bool $validation = true;
+    private bool $validation = false;
 
     public function getId(): ?string
     {
@@ -81,7 +81,7 @@ class Avis
         return $this->covoiturage_id;
     }
 
-    public function setCovoiturageId(int $conducteurId): self
+    public function setCovoiturageId(int $covoiturage_id): self
     {
         $this->covoiturage_id = $covoiturage_id;
         return $this;
@@ -153,6 +153,17 @@ class Avis
         return $this;
     }
 
+    public function getCommentaire(): string
+    {
+        return $this->commentaire;
+    }
+
+    public function setCommentaire(string $commentaire): self
+    {
+        $this->commentaire = $commentaire;
+        return $this;
+    }
+
     public function getSignale(): bool
     {
         return $this->signale;
@@ -177,7 +188,7 @@ class Avis
 
     public function getValidation(): bool
     {
-        return $this->signale;
+        return $this->validation;
     }
 
     public function setValidation(bool $validation): self
