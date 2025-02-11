@@ -61,6 +61,16 @@ class UtilisateurController extends AbstractController
         $utilisateur->setAdresse($data['adresse']);
         $utilisateur->setDateNaissance(new \DateTime($data['date_naissance']));
         $utilisateur->setPseudo($data['pseudo']);
+        if (isset($data['fumeur'])) {
+            $utilisateur->setFumeur($data['fumeur']);
+        }
+        if (isset($data['animal'])) {
+            $utilisateur->setAnimal($data['animal']);
+        }
+        if (isset($data['preference'])) {
+            $utilisateur->setPreference($data['preference']);
+        }
+        
 
         if (isset($data['photo'])) {
             $utilisateur->setPhoto($data['photo']);
@@ -100,6 +110,16 @@ class UtilisateurController extends AbstractController
         $utilisateur->setAdresse($data['adresse']);
         $utilisateur->setDateNaissance(new \DateTime($data['date_naissance']));
         $utilisateur->setPseudo($data['pseudo']);
+        if (isset($data['fumeur'])) {
+            $utilisateur->setFumeur($data['fumeur']);
+        }
+        if (isset($data['animal'])) {
+            $utilisateur->setAnimal($data['animal']);
+        }
+        if (isset($data['preference'])) {
+            $utilisateur->setPreference($data['preference']);
+        }
+        
 
         if (isset($data['photo'])) {
             $utilisateur->setPhoto($data['photo']);
@@ -149,6 +169,9 @@ class UtilisateurController extends AbstractController
         'date_naissance' => $utilisateur->getDateNaissance()->format('Y-m-d'),
         'pseudo' => $utilisateur->getPseudo(),
         'photo' => $utilisateur->getPhoto(),
+        'fumeur' => $utilisateur->getFumeur(),
+        'animal' => $utilisateur->getAnimal(),
+        'preference' => $utilisateur->getPreference(),
 
         // Sérialisation des rôles
         'roles' => $utilisateur->getRoles()->map(fn($role) => $role->getLibelle())->toArray(),
@@ -199,6 +222,9 @@ class UtilisateurController extends AbstractController
             'date_naissance' => $utilisateur->getDateNaissance()->format('Y-m-d'),
             'pseudo' => $utilisateur->getPseudo(),
             'photo' => $utilisateur->getPhoto() ? base64_encode(stream_get_contents($utilisateur->getPhoto())) : null,
+            'fumeur' => $utilisateur->getFumeur(),
+            'animal' => $utilisateur->getAnimal(),
+            'preference' => $utilisateur->getPreference(),
 
             // Sérialisation des rôles
             'roles' => $utilisateur->getRoles()->map(fn($role) => $role->getLibelle())->toArray(),

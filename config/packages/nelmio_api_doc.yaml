@@ -1324,7 +1324,7 @@ nelmio_api_doc:
                                                     example: "jean.dupont@example.com"
                                                 mdp:
                                                     type: "string"
-                                                    exmple: "yoyo"
+                                                    example: "yoyo"
                                                 telephone:
                                                     type: "string"
                                                     example: "0612345678"
@@ -1341,7 +1341,15 @@ nelmio_api_doc:
                                                 photo:
                                                     type: "string"
                                                     example: "https://example.com/photo.jpg"
-
+                                                fumeur:
+                                                    type: "boolean"
+                                                    example: false
+                                                animal:
+                                                    type: "boolean"
+                                                    example: false
+                                                preference:
+                                                    type: "string"
+                                                    example: ""
             /api/utilisateurs/details/{id}:
                 get:
                     tags: ["Utilisateurs"]
@@ -1393,6 +1401,15 @@ nelmio_api_doc:
                                             photo:
                                                 type: "string"
                                                 example: "https://example.com/photo.jpg"
+                                            fumeur:
+                                                type: "boolean"
+                                                example: false
+                                            animal:
+                                                type: "boolean"
+                                                example: false
+                                            preference:
+                                                type: "string"
+                                                example: ""
                         404:
                             description: "Utilisateur non trouvé"
 
@@ -1441,6 +1458,15 @@ nelmio_api_doc:
                                             items:
                                                 type: "integer"
                                             example: [1]
+                                        fumeur:
+                                            type: "boolean"
+                                            example: false
+                                        animal:
+                                            type: "boolean"
+                                            example: false
+                                        preference:
+                                            type: "string"
+                                            example: ""
 
                     responses:
                         201:
@@ -1487,6 +1513,15 @@ nelmio_api_doc:
                                                 items:
                                                     type: "string"
                                                 example: ["conducteur"]
+                                            fumeur:
+                                                type: "boolean"
+                                                example: false
+                                            animal:
+                                                type: "boolean"
+                                                example: false
+                                            preference:
+                                                type: "string"
+                                                example: ""
 
                         400:
                             description: "Données invalides"
@@ -1542,6 +1577,15 @@ nelmio_api_doc:
                                             items:
                                                 type: "integer"
                                             example: [2]
+                                        fumeur:
+                                            type: "boolean"
+                                            example: false
+                                        animal:
+                                            type: "boolean"
+                                            example: false
+                                        preference:
+                                            type: "string"
+                                            example: ""
 
                     responses:
                         200:
@@ -1588,6 +1632,15 @@ nelmio_api_doc:
                                                 items:
                                                     type: "string"
                                                 example: ["passager"]
+                                            fumeur:
+                                                type: "boolean"
+                                                example: false
+                                            animal:
+                                                type: "boolean"
+                                                example: false
+                                            preference:
+                                                type: "string"
+                                                example: ""
 
                         400:
                             description: "Données invalides"

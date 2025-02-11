@@ -49,6 +49,15 @@ class Utilisateur
     #[ORM\Column(type: 'blob', nullable: true)]
     private $photo;
 
+    #[ORM\Column(type: 'boolean', options: ["default" => false])]
+    private ?bool $fumeur = false;
+
+    #[ORM\Column(type: 'boolean', options: ["default" => false])]
+    private ?bool $animal = false;
+
+    #[ORM\Column(length: 100)]
+    private ?string $preference = '';
+
     // Relation avec les covoiturages en tant que conducteur
     #[ORM\OneToMany(mappedBy: 'conducteur', targetEntity: Covoiturage::class)]
     private Collection $covoituragesAsConducteur;
@@ -87,6 +96,9 @@ class Utilisateur
         $this->voitures = new ArrayCollection();
         $this->suspensions = new ArrayCollection();
         $this->paiements = new ArrayCollection();
+        $this->fumeur = false;
+        $this->animal = false;
+        $this->preference = "";
     }
 
     // Getters et setters pour chaque propriété
@@ -203,6 +215,39 @@ class Utilisateur
     public function setPhoto($photo): static
     {
         $this->photo = $photo;
+        return $this;
+    }
+
+    public function getFumeur(): ?bool
+    {
+        return $this->fumeur;
+    }
+
+    public function setFumeur(bool $fumeur): static
+    {
+        $this->fumeur = $fumeur;
+        return $this;
+    }
+    
+    public function getAnimal(): ?bool
+    {
+        return $this->animal;
+    }
+
+    public function setAnimal(bool $animal): static
+    {
+        $this->animal = $animal;
+        return $this;
+    }
+    
+    public function getPreference(): string
+    {
+        return $this->preference ?? '';
+    }
+
+    public function setPreference(string $preference): static
+    {
+        $this->preference = $preference;
         return $this;
     }
 
