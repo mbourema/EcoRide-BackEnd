@@ -1,39 +1,77 @@
 security:
-    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
-    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+        App\Entity\Utilisateur:
+            algorithm: auto
+
     providers:
-        users_in_memory: { memory: null }
+        app_user_provider:
+            entity:
+                class: App\Entity\Utilisateur
+                property: email
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        
+        api_doc:
+            pattern: ^/api/doc
+            security: false  # Désactive totalement la sécurité sur /api/doc
+
+        # Firewall API (gestion des tokens)
+        api:
+            pattern: ^/
+            stateless: true
+            provider: app_user_provider
+            lazy: true
+            custom_authenticators:
+                - App\Security\ApiTokenAuthentificatorAuthenticator
+
         main:
             lazy: true
-            provider: users_in_memory
-
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#the-firewall
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-
-    # Easy way to control access for large sections of your site
-    # Note: Only the *first* access control that matches will be used
+            provider: app_user_provider
+            stateless: false  # false ici car c'est pour login/logout
+            json_login:
+                check_path: api_utilisateurs_connexion
+                username_path: email
+                password_path: mdp
+                success_handler: App\Security\LoginSuccessHandler
+                failure_handler: App\Security\LoginFailureHandler
+            logout:
+                path: app_logout
+                
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/api/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }  # Autorise l'accès public à la doc
+        - { path: ^/api/utilisateurs/ajouter, roles: PUBLIC_ACCESS }
+        - { path: ^/api/utilisateurs/connexion, roles: PUBLIC_ACCESS }
+        - { path: ^/avis/add, roles: [ROLE_PASSAGER, ROLE_ADMIN] }
+        - { path: ^/avis/update/\d+, roles: [ROLE_EMPLOYE, ROLE_ADMIN] }
+        - { path: "^/avis/list/conducteur/[a-zA-Z0-9_-]+", roles: [ROLE_PASSAGER, ROLE_EMPLOYE, ROLE_ADMIN, ROLE_CONDUCTEUR] }
+        - { path: ^/covoiturage/add, roles: [ROLE_CONDUCTEUR, ROLE_ADMIN] }
+        - { path: ^/covoiturage/list, roles: [ROLE_PASSAGER, ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ ADMIN] }
+        - { path: ^/covoiturage/\d+, roles: [ROLE_EMPLOYE, ROLE_CONDUCTEUR, ROLE_ ADMIN, ROLE_PASSAGER] }
+        - { path: ^/covoiturage/update/\d+, roles: [ROLE_EMPLOYE, ROLE_CONDUCTEUR, ROLE_ ADMIN, ROLE_PASSAGER] }
+        - { path: ^/marque/add, roles: ROLE_ADMIN }
+        - { path: ^/marque/\d+, roles: ROLE_ADMIN }
+        - { path: ^/paiement/add, roles: [ROLE_PASSAGER, ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ ADMIN] }
+        - { path: ^/paiement/\d+, roles: [ROLE_EMPLOYE, ROLE_ ADMIN], methods: [GET] }
+        - { path: ^/paiement/\d+, roles: [ROLE_EMPLOYE, ROLE_ ADMIN], methods: [PATCH] }
+        - { path: ^/role/add, roles: ROLE_ADMIN }
+        - { path: ^/role/\d+, roles: ROLE_ADMIN }
+        - { path: ^/role/list, roles: ROLE_ADMIN }
+        - { path: ^/suspension/add, roles: [ROLE_EMPLOYE, ROLE_ ADMIN] }
+        - { path: ^/suspension/\d+, roles: [ROLE_EMPLOYE, ROLE_ ADMIN] }
+        - { path: ^/api/utilisateurs/liste, roles: [ROLE_EMPLOYE, ROLE_ ADMIN] }
+        - { path: ^/api/utilisateurs/details/\d+, roles: [ROLE_PASSAGER, ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ ADMIN] }
+        - { path: ^/api/utilisateurs/modifier/\d+, roles: [ROLE_PASSAGER, ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ ADMIN] }
+        - { path: ^/api/utilisateurs/supprimer/\d+, roles: [ROLE_PASSAGER, ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ ADMIN] }
+        - { path: ^/api/voitures/liste, roles: [ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ ADMIN] }
+        - { path: ^/api/voitures/details/\d+, roles: [ROLE_PASSAGER, ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ ADMIN] }
+        - { path: ^/api/voitures/ajouter, roles: [ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ ADMIN] }
+        - { path: ^/api/voitures/modifier/\d+, roles: [ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ ADMIN] }
+        - { path: ^/api/voitures/supprimer/\d+, roles: [ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ ADMIN] }
 
-when@test:
-    security:
-        password_hashers:
-            # By default, password hashers are resource intensive and take time. This is
-            # important to generate secure password hashes. In tests however, secure hashes
-            # are not important, waste resources and increase test times. The following
-            # reduces the work factor to the lowest possible values.
-            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
-                algorithm: auto
-                cost: 4 # Lowest possible value for bcrypt
-                time_cost: 3 # Lowest possible value for argon
-                memory_cost: 10 # Lowest possible value for argon
+
+
+

@@ -70,7 +70,7 @@ class PaiementController extends AbstractController
     }
 
     // Route PUT pour modifier un paiement
-    #[Route('/paiement/{id}', methods: ['PUT'])]
+    #[Route('/paiement/{id}', methods: ['PATCH'])]
     public function updatePaiement(int $id, Request $request, EntityManagerInterface $em): JsonResponse
     {
         // Récupération du paiement existant

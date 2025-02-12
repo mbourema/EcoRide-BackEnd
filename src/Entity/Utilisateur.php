@@ -10,9 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Role;
 use App\Entity\Covoiturage;
 use App\Entity\Voiture;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
-class Utilisateur
+class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -58,6 +60,9 @@ class Utilisateur
     #[ORM\Column(length: 100)]
     private ?string $preference = '';
 
+    #[ORM\Column(length: 255)]
+    private ?string $api_token = null;
+
     // Relation avec les covoiturages en tant que conducteur
     #[ORM\OneToMany(mappedBy: 'conducteur', targetEntity: Covoiturage::class)]
     private Collection $covoituragesAsConducteur;
@@ -91,7 +96,6 @@ class Utilisateur
     public function __construct()
     {
         $this->covoituragesAsConducteur = new ArrayCollection();
-        $this->covoituragesAsPseudo = new ArrayCollection();
         $this->roles = new ArrayCollection();
         $this->voitures = new ArrayCollection();
         $this->suspensions = new ArrayCollection();
@@ -99,9 +103,8 @@ class Utilisateur
         $this->fumeur = false;
         $this->animal = false;
         $this->preference = "";
+        $this->api_token = bin2hex(random_bytes(20));
     }
-
-    // Getters et setters pour chaque propriété
 
     public function getUtilisateurId(): ?int
     {
@@ -251,6 +254,46 @@ class Utilisateur
         return $this;
     }
 
+    public function getApiToken(): ?string
+    {
+        return $this->api_token;
+    }
+
+    // Fonction pour définir la classe implémentant User Interface 
+
+    public function getUserIdentifier(): string
+    {
+    return $this->email; 
+    }
+
+    public function getRoles(): array
+    {
+    $roles = $this->roles->map(fn($role) => $role->getLibelle())->toArray();
+    $roles[] = 'ROLE_PASSAGER'; // Ajout d'un rôle par défaut
+    return array_unique($roles);
+    }
+
+    // Dans l'entité Utilisateur
+    public function setRoles(Collection $roles): void
+    {
+        $this->roles = $roles;
+    }
+
+    public function getPassword(): ?string
+    {
+    return $this->mdp;
+    }
+
+    public function getSalt(): ?string
+    {
+    return null; 
+    }
+
+    public function eraseCredentials(): void
+    {
+    
+    }
+
     // Getter pour les covoiturages en tant que conducteur
     public function getCovoituragesAsConducteur(): Collection
     {
@@ -259,7 +302,7 @@ class Utilisateur
 
     // Gestion des rôles
 
-    public function getRoles(): Collection
+    public function getRole(): Collection
     {
         return $this->roles;
     }

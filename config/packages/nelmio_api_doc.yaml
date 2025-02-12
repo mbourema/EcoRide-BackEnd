@@ -1045,7 +1045,7 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Paiement non trouvé"
-                put:
+                patch:
                     tags: ["Paiement"]
                     summary: "Mettre à jour un paiement"
                     description: "Cette méthode permet de mettre à jour les informations d'un paiement existant."
@@ -1523,6 +1523,82 @@ nelmio_api_doc:
                                                 type: "string"
                                                 example: ""
 
+                        400:
+                            description: "Données invalides"
+            /api/utilisateurs/connexion:
+                post:
+                    tags: ["Utilisateurs"]
+                    summary: "Se connecter"
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: "object"
+                                    properties:
+                                        email:
+                                            type: "string"
+                                            example: "SpaaceTree"
+                                        mdp:
+                                            type: "string"
+                                            example: "lepassword"
+                    responses:
+                        201:
+                            description: "Connecté !"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: "object"
+                                        properties:
+                                            id:
+                                                type: "integer"
+                                                example: 1
+                                            nom:
+                                                type: "string"
+                                                example: "Dupont"
+                                            prenom:
+                                                type: "string"
+                                                example: "Jean"
+                                            email:
+                                                type: "string"
+                                                format: "email"
+                                                example: "jean.dupont@example.com"
+                                            mdp:
+                                                type: "mdp"
+                                                example: "yoyo"
+                                            telephone:
+                                                type: "string"
+                                                example: "0612345678"
+                                            adresse:
+                                                type: "string"
+                                                example: "10 rue de Paris, 75000 Paris"
+                                            date_naissance:
+                                                type: "string"
+                                                format: "date"
+                                                example: "1990-05-15"
+                                            pseudo:
+                                                type: "string"
+                                                example: "JeanD"
+                                            photo:
+                                                type: "string"
+                                                example: "https://example.com/photo.jpg"
+                                            roles:
+                                                type: "array"
+                                                items:
+                                                    type: "string"
+                                                example: ["conducteur"]
+                                            fumeur:
+                                                type: "boolean"
+                                                example: false
+                                            animal:
+                                                type: "boolean"
+                                                example: false
+                                            preference:
+                                                type: "string"
+                                                example: ""
+                                            api_token:
+                                                type: "string"
+                                                example: "34KKDds3455klmKON907"
                         400:
                             description: "Données invalides"
             /api/utilisateurs/modifier/{id}:

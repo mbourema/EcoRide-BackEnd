@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[Route('/api/utilisateurs')]
 class UtilisateurController extends AbstractController
@@ -29,6 +30,7 @@ class UtilisateurController extends AbstractController
     #[Route('/liste', name: 'api_utilisateurs_liste', methods: ['GET'])]
     public function index(): JsonResponse
     {
+
         $utilisateurs = $this->utilisateurRepository->findAll();
         $data = [];
 
@@ -92,6 +94,17 @@ class UtilisateurController extends AbstractController
         return new JsonResponse($this->formatUtilisateur($utilisateur), Response::HTTP_CREATED);
     }
 
+    // Connexion d'un utilisateur
+    #[Route('/connexion', name: 'api_utilisateurs_connexion', methods: ['POST'])]
+    public function login(#[CurrentUser] ?Utilisateur $utilisateur, Request $request): JsonResponse
+    {
+        if (null === $utilisateur){
+            return new JsonResponse(['message' => 'Informations manquantes'], Response::HTTP_UNAUTHORIZED);
+        }
+        
+        return new JsonResponse($this->formatUtilisateur($utilisateur), Response::HTTP_OK);
+    }
+
     // Modification d'un utilisateur
     #[Route('/modifier/{id}', name: 'api_utilisateurs_modifier', methods: ['PUT'])]
     public function update(Request $request, Utilisateur $utilisateur): JsonResponse
@@ -127,12 +140,12 @@ class UtilisateurController extends AbstractController
 
         // Mise à jour des rôles
         if (isset($data['roles']) && is_array($data['roles'])) {
-            // Supprime les anciens rôles
-            foreach ($utilisateur->getRoles() as $role) {
+            // Suppression des anciens roles
+            foreach ($utilisateur->getRole() as $role) {
                 $utilisateur->removeRole($role);
             }
 
-            // Ajoute les nouveaux rôles
+            // Ajout des nouveaux rôles
             foreach ($data['roles'] as $roleNom) {
                 $role = $this->entityManager->getRepository(Role::class)->findOneBy(['role_id' => $roleNom]);
                 if ($role) {
@@ -157,7 +170,7 @@ class UtilisateurController extends AbstractController
     }
 
     private function formatUtilisateur(Utilisateur $utilisateur): array
-{
+    {
     return [
         'id' => $utilisateur->getUtilisateurId(),
         'nom' => $utilisateur->getNom(),
@@ -172,9 +185,11 @@ class UtilisateurController extends AbstractController
         'fumeur' => $utilisateur->getFumeur(),
         'animal' => $utilisateur->getAnimal(),
         'preference' => $utilisateur->getPreference(),
+        'api_token' => $utilisateur->getApiToken(),
 
         // Sérialisation des rôles
-        'roles' => $utilisateur->getRoles()->map(fn($role) => $role->getLibelle())->toArray(),
+        'roles' => $utilisateur->getRoles(),
+
 
         // Sérialisation des covoiturages pour récupérer l'id et les infos du covoiturage
         'covoiturages' => $utilisateur->getCovoituragesAsConducteur()->map(fn($covoiturage) => [
@@ -208,7 +223,7 @@ class UtilisateurController extends AbstractController
             'avancement' => $paiement->getAvancement(),
         ])->toArray(),
     ];
-}
+    }
     private function formatUtilisateurGet(Utilisateur $utilisateur): array
     {
         return [
@@ -225,9 +240,11 @@ class UtilisateurController extends AbstractController
             'fumeur' => $utilisateur->getFumeur(),
             'animal' => $utilisateur->getAnimal(),
             'preference' => $utilisateur->getPreference(),
+            'api_token' => $utilisateur->getApiToken(),
 
-            // Sérialisation des rôles
-            'roles' => $utilisateur->getRoles()->map(fn($role) => $role->getLibelle())->toArray(),
+            // Sérialisation des rôles 
+            'roles' => $utilisateur->getRoles(),
+
 
             // Sérialisation des covoiturages pour récupérer l'id et les infos du covoiturage
             'covoiturages' => $utilisateur->getCovoituragesAsConducteur()->map(fn($covoiturage) => [

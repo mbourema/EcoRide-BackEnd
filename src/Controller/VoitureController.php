@@ -31,7 +31,7 @@ class VoitureController extends AbstractController
     {
         $voitures = $this->voitureRepository->findAll();
 
-        // Transformer les objets en tableau de données
+        
         $data = [];
         foreach ($voitures as $voiture) {
             $data[] = $this->transformVoitureToArray($voiture);
@@ -69,7 +69,7 @@ class VoitureController extends AbstractController
             return new JsonResponse(['error' => 'Utilisateur non trouvé'], Response::HTTP_NOT_FOUND);
         }
 
-        // Créer la voiture
+        
         $voiture = new Voiture();
         $voiture->setModele($data['modele']);
         $voiture->setImmatriculation($data['immatriculation']);
@@ -80,7 +80,7 @@ class VoitureController extends AbstractController
         $voiture->setMarque($marque);
         $voiture->setUtilisateur($utilisateur);
 
-        // Sauvegarde en base
+        
         $this->entityManager->persist($voiture);
         $this->entityManager->flush();
 
@@ -114,7 +114,6 @@ class VoitureController extends AbstractController
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
-    // Fonction pour transformer une voiture en tableau associatif
     // Fonction pour transformer une voiture en tableau associatif
     private function transformVoitureToArray(Voiture $voiture): array
     {

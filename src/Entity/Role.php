@@ -12,8 +12,8 @@ use App\Entity\Utilisateur;
 class Role
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'NONE')] // Désactive l'auto-incrémentation pour role_id
-    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private ?int $role_id = null;
 
     #[ORM\Column(length: 50, unique: true)]
@@ -24,7 +24,7 @@ class Role
 
     public function __construct()
     {
-        $this->utilisateurs = new ArrayCollection(); // Initialiser la collection
+        $this->utilisateurs = new ArrayCollection(); 
     }
 
     public function getRoleId(): ?int
@@ -52,37 +52,6 @@ class Role
     public function getUtilisateurs(): Collection
     {
         return $this->utilisateurs;
-    }
-
-    // Méthode pour pré-initialiser les rôles en base de données
-    public static function initializeRoles(EntityManagerInterface $em): void
-    {
-        // Récupérer les rôles existants, s'il y en a
-        $existingRoles = $em->getRepository(Role::class)->findAll();
-
-        // Si les rôles sont déjà initialisés, ne rien faire
-        if (count($existingRoles) > 0) {
-            return;
-        }
-
-        // Initialiser les rôles fixes
-        $rolesData = [
-            ['role_id' => 1, 'libelle' => 'Admin'],
-            ['role_id' => 2, 'libelle' => 'Employe'],
-            ['role_id' => 3, 'libelle' => 'Conducteur'],
-            ['role_id' => 4, 'libelle' => 'Passager'],
-        ];
-
-        foreach ($rolesData as $data) {
-            $role = new Role();
-            $role->role_id = $data['role_id'];
-            $role->libelle = $data['libelle'];
-
-            $em->persist($role);
-        }
-
-        // Sauvegarder en base de données
-        $em->flush();
     }
 }
 

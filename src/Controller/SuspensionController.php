@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Suspension;
-use App\Entity\Utilisateur; // Assure-toi que l'entité Utilisateur est bien importée
+use App\Entity\Utilisateur;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
