@@ -1,0 +1,9 @@
+
+database:
+    type: postgresql:16
+    disk: 1024
+
+
+mongodb:
+    type: mongodb:4.0.3
+
