@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use DateTime;
+use Symfony\Component\HttpFoundation\Response;
 
 #[Route('/covoiturage')]
 class CovoiturageController extends AbstractController
@@ -21,8 +22,8 @@ class CovoiturageController extends AbstractController
     {
     $data = json_decode($request->getContent(), true);
 
-    if (!isset($data['voiture_id'], $data['conducteur_id'], $data['statut'], $data['prix_personne'])) {
-        return new JsonResponse(['error' => 'voiture_id, conducteur_id, statut ou prix_personne manquant'], 400);
+    if (!isset($data['voiture_id'], $data['conducteur_id'], $data['prix_personne'])) {
+        return new JsonResponse(['error' => 'voiture_id, conducteur_id ou prix_personne manquant'], 400);
     }
 
     // Recherche de la voiture
@@ -45,6 +46,13 @@ class CovoiturageController extends AbstractController
         return new JsonResponse(['error' => 'Invalid pseudo_conducteur or email_conducteur'], 400);
     }
 
+    if ($data['nb_places'] > 0){
+        $statut = $data['statut'] ?? 'Disponible';
+    }
+    else {
+        $statut = $data['statut'] ?? 'Indisponible';
+    }
+    
     // Création du covoiturage
     $covoiturage = new Covoiturage();
     $covoiturage->setVoiture($voiture);
@@ -56,7 +64,7 @@ class CovoiturageController extends AbstractController
     $covoiturage->setDateDepart(new DateTime($data['date_depart']));
     $covoiturage->setDateArrivee(new DateTime($data['date_arrivee']));
     $covoiturage->setNbPlaces($data['nb_places']);
-    $covoiturage->setStatut($data['statut']);
+    $covoiturage->setStatut($statut);
     $covoiturage->setPrixPersonne($data['prix_personne']);
 
     // Optionnel : Gestion de la photo (si présente)
@@ -134,26 +142,23 @@ class CovoiturageController extends AbstractController
         ], 200);
     }
 
-    #[Route('/update/{id}', name: 'covoiturage_update', methods: ['PATCH'])]
-    public function updateCovoiturage(int $id, Request $request, EntityManagerInterface $em, CovoiturageRepository $repo): JsonResponse
+    #[Route('/delete/{id}', name: 'covoiturage_delete', methods: ['DELETE'])]
+    public function deleteCovoiturage(int $id, EntityManagerInterface $em): JsonResponse
     {
-        $covoiturage = $repo->find($id);
-        if (!$covoiturage) {
-            return new JsonResponse(['error' => 'Covoiturage non trouvé'], 404);
-        }
+    // Recherche du covoiturage par ID
+    $covoiturage = $em->getRepository(Covoiturage::class)->find($id);
 
-        $data = json_decode($request->getContent(), true);
+    // Vérifie si le covoiturage existe
+    if (!$covoiturage) {
+        return new JsonResponse(['message' => 'Covoiturage introuvable'], Response::HTTP_NOT_FOUND);
+    }
 
-        if (isset($data['statut'])) {
-            $covoiturage->setStatut($data['statut']);
-        }
-        if (isset($data['nb_places'])) {
-            $covoiturage->setPrixPersonne($data['nb_places']);
-        }
+    // Suppression du covoiturage
+    $em->remove($covoiturage);
+    $em->flush();
 
-        $em->flush();
-
-        return new JsonResponse(['message' => 'Covoiturage mis à jour avec succès'], 200);
+    // Réponse après suppression réussie
+    return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }
 

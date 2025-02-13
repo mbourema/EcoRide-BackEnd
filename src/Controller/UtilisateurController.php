@@ -96,13 +96,29 @@ class UtilisateurController extends AbstractController
 
     // Connexion d'un utilisateur
     #[Route('/connexion', name: 'api_utilisateurs_connexion', methods: ['POST'])]
-    public function login(#[CurrentUser] ?Utilisateur $utilisateur, Request $request): JsonResponse
+    public function login(Request $request): JsonResponse
     {
-        if (null === $utilisateur){
-            return new JsonResponse(['message' => 'Informations manquantes'], Response::HTTP_UNAUTHORIZED);
-        }
-        
-        return new JsonResponse($this->formatUtilisateur($utilisateur), Response::HTTP_OK);
+    $data = json_decode($request->getContent(), true);
+
+    // Vérifie si l'email ou le mot de passe est manquant
+    if (empty($data['email']) || empty($data['mdp'])) {
+        return new JsonResponse(['message' => 'Informations manquantes'], Response::HTTP_UNAUTHORIZED);
+    }
+
+    // Recherche l'utilisateur dans la base de données par email
+    $utilisateur = $this->entityManager->getRepository(Utilisateur::class)->findOneBy(['email' => $data['email']]);
+
+    if (!$utilisateur) {
+        return new JsonResponse(['message' => 'L\'email n\'existe pas'], Response::HTTP_UNAUTHORIZED);
+    }
+
+    // Vérifie la validité du mot de passe en utilisant password_verify
+    if (!password_verify($data['mdp'], $utilisateur->getMdp())) {
+        return new JsonResponse(['message' => 'Le mot de passe ne correspond pas'], Response::HTTP_UNAUTHORIZED);
+    }
+
+    // Si l'utilisateur existe et le mot de passe est correct
+    return new JsonResponse($this->formatUtilisateurGet($utilisateur), Response::HTTP_OK);
     }
 
     // Modification d'un utilisateur

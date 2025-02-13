@@ -30,8 +30,8 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 50, unique: true)]
     private ?string $email = null;
 
-    #[ORM\Column(type: 'integer', options: ["default" => 20])]
-    private int $nbCredit = 20;
+    #[ORM\Column(type: 'float', options: ["default" => 20])]
+    private float $nbCredit = 20;
 
     #[ORM\Column(length: 255)]
     private ?string $mdp = null;
@@ -144,12 +144,12 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getNbCredit(): int
+    public function getNbCredit(): float
     {
         return $this->nbCredit;
     }
 
-    public function setNbCredit(int $nbCredit): static
+    public function setNbCredit(float $nbCredit): static
     {
         $this->nbCredit = $nbCredit;
         return $this;

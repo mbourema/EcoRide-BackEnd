@@ -124,6 +124,59 @@ class AvisController extends AbstractController
         );
     }
 
+    // Récupérer les avis complets à partir de la base de donnée
+    #[Route('/fulllist/conducteur/{pseudo}', name: 'api_avis_conducteur_liste_full', methods: ['GET'])]
+    public function getFullAvisByConducteur(string $pseudo): JsonResponse
+    {
+    // Récupérer les avis du conducteur
+    $avisList2 = $this->documentManager->getRepository(Avis::class)
+        ->findBy(['pseudo_conducteur' => $pseudo]);
+
+    // Vérifier si des avis ont été trouvés
+    if (!$avisList2) {
+        return new JsonResponse(
+            ['error' => 'Aucun avis trouvé pour ce conducteur.'],
+            Response::HTTP_NOT_FOUND
+        );
+    }
+
+        
+        $avisArray2 = array_map(function (Avis $avis) {
+        
+        $avisData2 = [
+            'id' => $avis->getId(),
+            'pseudo_passager' => $avis->getPseudoPassager(),
+            'covoiturage_id' => $avis->getCovoiturageId(),
+            'pseudo_conducteur' => $avis->getPseudoConducteur(),
+            'email_conducteur' => $avis->getEmailConducteur(),
+            'email_passager' => $avis->getEmailPassager(),
+            'date_depart' => $avis->getDateDepart()->format('Y-m-d H:i:s'),
+            'date_arrivee' => $avis->getDateArrivee()->format('Y-m-d H:i:s'),
+            'note' => $avis->getNote(),
+            'validation' => $avis->getValidation(),
+            'signale' => $avis->getSignale(),
+        ];
+
+        // Si le commentaire existe, on l'ajoute au tableau
+        $commentaire = $avis->getCommentaire();
+        if (!empty($commentaire)) {
+            $avisData2['commentaire'] = $commentaire;
+        }
+
+        // Si le champ justification existe, on l'ajoute au tableau
+        $justification = $avis->getJustification();
+        if (!empty($justification)) {
+            $avisData2['justification'] = $justification;
+        }
+
+        return $avisData2;
+    }, $avisList2);
+
+    // Retourne la réponse avec les données des avis
+    return new JsonResponse($avisArray2, Response::HTTP_OK);
+}
+
+
     // Récupérer tous les avis d'un conducteur via son pseudo
     #[Route('/list/conducteur/{pseudo}', name: 'api_avis_conducteur_liste', methods: ['GET'])]
     public function getAvisByConducteur(string $pseudo): JsonResponse
@@ -164,4 +217,5 @@ class AvisController extends AbstractController
     return new JsonResponse($avisArray, Response::HTTP_OK);
     }
 }
+
 
