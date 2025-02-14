@@ -27,22 +27,20 @@ security:
             lazy: true
             custom_authenticators:
                 - App\Security\ApiTokenAuthentificatorAuthenticator
-
+                
         main:
             lazy: true
             provider: app_user_provider
-            stateless: false  # false ici car c'est pour login/logout
+            stateless: false 
             json_login:
                 check_path: api_utilisateurs_connexion
                 username_path: email
                 password_path: mdp
-                success_handler: App\Security\LoginSuccessHandler
-                failure_handler: App\Security\LoginFailureHandler
             logout:
                 path: app_logout
-                
+
     access_control:
-        - { path: ^/api/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }  # Autorise l'accès public à la doc
+        - { path: ^/api/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY } 
         - { path: ^/api/utilisateurs/ajouter, roles: PUBLIC_ACCESS }
         - { path: ^/api/utilisateurs/connexion, roles: PUBLIC_ACCESS }
         - { path: ^/avis/add, roles: [ROLE_PASSAGER, ROLE_ADMIN] }
