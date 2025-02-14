@@ -13,17 +13,23 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\LimiterInterface;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
+
 
 #[Route('/api/utilisateurs')]
 class UtilisateurController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
     private UtilisateurRepository $utilisateurRepository;
+    private LimiterInterface $limiter;
 
-    public function __construct(EntityManagerInterface $entityManager, UtilisateurRepository $utilisateurRepository)
+    public function __construct(EntityManagerInterface $entityManager, UtilisateurRepository $utilisateurRepository, RateLimiterFactory $anonymousApiLimiter)
     {
         $this->entityManager = $entityManager;
         $this->utilisateurRepository = $utilisateurRepository;
+        $this->limiter = $anonymousApiLimiter->create();
     }
 
     // Liste des utilisateurs
@@ -94,30 +100,28 @@ class UtilisateurController extends AbstractController
         return new JsonResponse($this->formatUtilisateur($utilisateur), Response::HTTP_CREATED);
     }
 
-    // Connexion d'un utilisateur
     #[Route('/connexion', name: 'api_utilisateurs_connexion', methods: ['POST'])]
-    public function login(Request $request): JsonResponse
+    public function login(Request $request, UtilisateurRepository $utilisateurRepository): JsonResponse
     {
+    
+    $limit = $this->limiter->consume(1);
+
+    if (!$limit->isAccepted()) {
+        return new JsonResponse(['message' => 'Trop de tentatives, veuillez réessayer plus tard.'], Response::HTTP_TOO_MANY_REQUESTS);
+    }
+
     $data = json_decode($request->getContent(), true);
 
-    // Vérifie si l'email ou le mot de passe est manquant
     if (empty($data['email']) || empty($data['mdp'])) {
         return new JsonResponse(['message' => 'Informations manquantes'], Response::HTTP_UNAUTHORIZED);
     }
 
-    // Recherche l'utilisateur dans la base de données par email
-    $utilisateur = $this->entityManager->getRepository(Utilisateur::class)->findOneBy(['email' => $data['email']]);
+    $utilisateur = $utilisateurRepository->findOneBy(['email' => $data['email']]);
 
-    if (!$utilisateur) {
-        return new JsonResponse(['message' => 'L\'email n\'existe pas'], Response::HTTP_UNAUTHORIZED);
+    if (!$utilisateur || !password_verify($data['mdp'], $utilisateur->getMdp())) {
+        return new JsonResponse(['message' => 'Email ou mot de passe incorrect'], Response::HTTP_UNAUTHORIZED);
     }
 
-    // Vérifie la validité du mot de passe en utilisant password_verify
-    if (!password_verify($data['mdp'], $utilisateur->getMdp())) {
-        return new JsonResponse(['message' => 'Le mot de passe ne correspond pas'], Response::HTTP_UNAUTHORIZED);
-    }
-
-    // Si l'utilisateur existe et le mot de passe est correct
     return new JsonResponse($this->formatUtilisateurGet($utilisateur), Response::HTTP_OK);
     }
 
