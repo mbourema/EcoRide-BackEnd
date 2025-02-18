@@ -2,7 +2,7 @@
 # Files in the packages/ subdirectory configure your dependencies.
 
 parameters:
-    photos_upload_dir: '%kernel.project_dir%/public/uploads/photos'
+    uploads_directory: '%kernel.project_dir%/public/uploads/photos'
     env(MONGODB_URL): ''
     env(MONGODB_DB): ''
 
