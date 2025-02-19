@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250217192847 extends AbstractMigration
+final class Version20250219105237 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,12 +20,14 @@ final class Version20250217192847 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE utilisateur CHANGE nb_credit nb_credit DOUBLE PRECISION DEFAULT 20 NOT NULL, CHANGE photo photo VARCHAR(255) DEFAULT NULL');
+        $this->addSql('ALTER TABLE paiement ADD credit_total_plateforme INT NOT NULL');
+        $this->addSql('ALTER TABLE utilisateur CHANGE nb_credit nb_credit DOUBLE PRECISION DEFAULT 20 NOT NULL');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE utilisateur CHANGE nb_credit nb_credit DOUBLE PRECISION DEFAULT \'20\' NOT NULL, CHANGE photo photo LONGBLOB DEFAULT NULL');
+        $this->addSql('ALTER TABLE paiement DROP credit_total_plateforme');
+        $this->addSql('ALTER TABLE utilisateur CHANGE nb_credit nb_credit DOUBLE PRECISION DEFAULT \'20\' NOT NULL');
     }
 }

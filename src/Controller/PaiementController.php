@@ -111,7 +111,8 @@ class PaiementController extends AbstractController
     
         // Si l'avancement est "OK", on met à jour le crédit de l'utilisateur
         if ($paiement->getAvancement() == "OK") {
-            $utilisateur->setNbCredit($utilisateur->getNbCredit() + $paiement->getMontant());
+            $utilisateur->setNbCredit($utilisateur->getNbCredit() + ($paiement->getMontant() - 2));
+            $paiement->setCreditTotalPlateforme($paiement->getCreditTotalPlateforme() + 2);
         }
     
         // Sauvegarde des modifications en base de données
