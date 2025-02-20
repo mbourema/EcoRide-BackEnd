@@ -53,9 +53,6 @@ class Covoiturage
     #[ORM\JoinColumn(name: 'email_conducteur', referencedColumnName: 'utilisateur_id', nullable: false)]
     public ?Utilisateur $email = null;
 
-    #[ORM\Column(type: Types::BLOB, nullable: true)]
-    private $photo;
-
     public function getCovoiturageId(): ?int
     {
         return $this->covoiturage_id;
@@ -182,15 +179,10 @@ class Covoiturage
         return $this;
     }
 
-    public function getPhoto()
+    public function getPhoto(): ?string
     {
-        return $this->photo;
+    return $this->conducteur ? $this->conducteur->getPhoto() : null;
     }
 
-    public function setPhoto($photo): static
-    {
-        $this->photo = $photo;
-        return $this;
-    }
 }
 
