@@ -78,6 +78,7 @@
         "post-update-cmd": [
             "@auto-scripts"
         ]
+
     },
     "conflict": {
         "symfony/symfony": "*"
@@ -99,4 +100,3 @@
         "symfony/phpunit-bridge": "^7.2"
     }
 }
-
