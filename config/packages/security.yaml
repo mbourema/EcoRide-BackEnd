@@ -46,26 +46,27 @@ security:
         - { path: ^/avis/add, roles: [ROLE_PASSAGER, ROLE_ADMIN] }
         - { path: ^/avis/update/\d+, roles: [ROLE_EMPLOYE, ROLE_ADMIN] }
         - { path: "^/avis/list/conducteur/[a-zA-Z0-9_-]+", roles: [ROLE_PASSAGER, ROLE_EMPLOYE, ROLE_ADMIN, ROLE_CONDUCTEUR] }
-        - { path: "^/avis/fulllist/conducteur/[a-zA-Z0-9_-]+", roles: [ROLE_EMPLOYE, ROLE_CONDUCTEUR] }
+        - { path: "^/avis/fulllist/conducteur/[a-zA-Z0-9_-]+", roles: [] }
         - { path: ^/covoiturage/add, roles: [ROLE_CONDUCTEUR, ROLE_ADMIN] }
-        - { path: ^/covoiturage/list, roles: [ROLE_PASSAGER, ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN] }
+        - { path: ^/covoiturage/list, roles: [] }
         - { path: ^/covoiturage/\d+, roles: [ROLE_EMPLOYE, ROLE_CONDUCTEUR, ROLE_ADMIN, ROLE_PASSAGER] }
         - { path: ^/covoiturage/delete/\d+, roles: [ROLE_EMPLOYE, ROLE_CONDUCTEUR, ROLE_ADMIN] }
         - { path: ^/marque/add, roles: ROLE_ADMIN }
-        - { path: ^/marque/\d+, roles: ROLE_ADMIN }
+        - { path: ^/marque/\d+, roles: [] }
         - { path: ^/paiement/add, roles: [ROLE_PASSAGER, ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN] }
-        - { path: ^/paiement/\d+, roles: [ROLE_EMPLOYE, ROLE_ADMIN], methods: [GET] }
+        - { path: ^/paiement/\d+, roles: [ROLE_EMPLOYE, ROLE_ADMIN, ROLE_PASSAGER, ROLE_CONDUCTEUR], methods: [GET] }
         - { path: ^/paiement/\d+, roles: [ROLE_EMPLOYE, ROLE_ADMIN], methods: [PATCH] }
+        - { path: ^/paiements/, roles: [ROLE_PASSAGER, ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN], methods: [GET] }
         - { path: ^/role/\d+, roles: ROLE_ADMIN }
         - { path: ^/role/list, roles: ROLE_ADMIN }
         - { path: ^/suspension/add, roles: [ROLE_EMPLOYE, ROLE_ADMIN] }
         - { path: ^/suspension/\d+, roles: [ROLE_EMPLOYE, ROLE_ADMIN] }
         - { path: ^/api/utilisateurs/liste, roles: [ROLE_EMPLOYE, ROLE_ADMIN] }
-        - { path: ^/api/utilisateurs/details/\d+, roles: [ROLE_PASSAGER, ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN] }
+        - { path: ^/api/utilisateurs/details/\d+, roles: [] }
         - { path: ^/api/utilisateurs/modifier/\d+, roles: [ROLE_PASSAGER, ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN] }
         - { path: ^/api/utilisateurs/supprimer/\d+, roles: [ROLE_PASSAGER, ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN] }
         - { path: ^/api/voitures/liste, roles: [ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN, ROLE_PASSAGER] }
-        - { path: ^/api/voitures/details/\d+, roles: [ROLE_PASSAGER, ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN] }
+        - { path: ^/api/voitures/details/\d+, roles: [] }
         - { path: ^/api/voitures/ajouter, roles: [ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN] }
         - { path: ^/api/voitures/modifier/\d+, roles: [ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN] }
         - { path: ^/api/voitures/supprimer/\d+, roles: [ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN] }

@@ -28,6 +28,10 @@ class Paiement
     #[ORM\Column(length: 255)]
     private ?string $avancement = null;
 
+    #[ORM\Column]
+    private ?int $creditTotalPlateforme = 0;
+
+
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: "covoiturage_id", referencedColumnName: "covoiturage_id", nullable: false)]
     private ?Covoiturage $covoiturage_id = null;
@@ -72,6 +76,19 @@ class Paiement
 
         return $this;
     }
+
+    public function getCreditTotalPlateforme(): ?int
+    {
+        return $this->creditTotalPlateforme;
+    }
+
+    public function setCreditTotalPlateforme(int $creditTotalPlateforme): static
+    {
+    $this->creditTotalPlateforme = $creditTotalPlateforme;
+
+    return $this;
+    }
+
 
     public function getDatePaiement(): ?\DateTimeInterface
     {

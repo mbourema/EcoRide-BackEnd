@@ -57,8 +57,49 @@ class PaiementController extends AbstractController
         $em->persist($paiement);
         $em->flush();
 
-        return new JsonResponse(['message' => 'Paiement ajouté avec succès'], 201);
+        return new JsonResponse([
+            'message' => 'Paiement ajouté avec succès',
+            'paiement_id' => $paiement->getPaiementId()  // Renvoi de l'ID du paiement
+        ], 201);
     }
+    // Route pour récupérer la liste de tous les paiements
+    #[Route('/paiements', methods: ['GET'])]
+    public function getAllPaiements(EntityManagerInterface $em): JsonResponse
+    {
+    // Récupération de tous les paiements
+    $paiements = $em->getRepository(Paiement::class)->findAll();
+
+    if (!$paiements) {
+        return new JsonResponse(['message' => 'Aucun paiement trouvé'], 404);
+    }
+
+    // Préparer la liste des paiements à renvoyer
+    $paiementsData = [];
+    foreach ($paiements as $paiement) {
+        // Calculer le crédit total de la plateforme
+        $creditTotalPlateforme = $paiement->getCreditTotalPlateforme();
+
+        // Vérification si l'avancement est "OK" pour ajouter des crédits supplémentaires
+        if ($paiement->getAvancement() === "OK") {
+            $creditTotalPlateforme += 2;  // Ajouter 2 crédits si l'avancement est "OK"
+        }
+
+        $paiementsData[] = [
+            'paiement_id' => $paiement->getPaiementId(),
+            'utilisateur_id' => $paiement->getUtilisateurId()->getUtilisateurId(),
+            'covoiturage_id' => $paiement->getCovoiturageId()->getCovoiturageId(),
+            'montant' => $paiement->getMontant(),
+            'date_paiement' => $paiement->getDatePaiement()->format('Y-m-d H:i:s'),
+            'avancement' => $paiement->getAvancement(),
+            'credit_total_plateforme' => $creditTotalPlateforme,  // Ajouter le champ pour le total des crédits
+        ];
+    }
+
+    // Retourner les paiements sous forme de JSON
+    return new JsonResponse($paiementsData, 200);
+}
+
+
 
     #[Route('/paiement/{id}', methods: ['GET'])]
     public function getPaiement(int $id, EntityManagerInterface $em): JsonResponse
@@ -111,7 +152,8 @@ class PaiementController extends AbstractController
     
         // Si l'avancement est "OK", on met à jour le crédit de l'utilisateur
         if ($paiement->getAvancement() == "OK") {
-            $utilisateur->setNbCredit($utilisateur->getNbCredit() + $paiement->getMontant());
+            $utilisateur->setNbCredit($utilisateur->getNbCredit() + ($paiement->getMontant() - 2));
+            $paiement->setCreditTotalPlateforme($paiement->getCreditTotalPlateforme() + 2);
         }
     
         // Sauvegarde des modifications en base de données

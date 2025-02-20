@@ -48,8 +48,8 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 50, unique: true)]
     private ?string $pseudo = null;
 
-    #[ORM\Column(type: 'blob', nullable: true)]
-    private $photo;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $photo = null;
 
     #[ORM\Column(type: 'boolean', options: ["default" => false])]
     private ?bool $fumeur = false;
@@ -210,12 +210,12 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPhoto()
+    public function getPhoto(): ?string
     {
         return $this->photo;
     }
 
-    public function setPhoto($photo): static
+    public function setPhoto(?string $photo): static
     {
         $this->photo = $photo;
         return $this;

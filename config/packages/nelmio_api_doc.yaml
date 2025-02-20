@@ -528,6 +528,9 @@ nelmio_api_doc:
                                             message:
                                                 type: string
                                                 example: "Paiement ajouté avec succès"
+                                            paiement_id:
+                                                type: integer
+                                                example: 123
                         400:
                             description: "Données manquantes"
                             content:
@@ -667,7 +670,51 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Paiement ou utilisateur non trouvé"
-
+            /paiements:
+                get:
+                    tags: ["Paiement"]
+                    summary: "Récupérer la liste de tous les paiements"
+                    description: "Cette méthode permet de récupérer la liste de tous les paiements effectués."
+                    responses:
+                        200:
+                            description: "Liste des paiements"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                paiement_id:
+                                                    type: integer
+                                                    example: 123
+                                                utilisateur_id:
+                                                    type: integer
+                                                    example: 1
+                                                covoiturage_id:
+                                                    type: integer
+                                                    example: 1
+                                                montant:
+                                                    type: number
+                                                    format: float
+                                                    example: 250.50
+                                                date_paiement:
+                                                    type: string
+                                                    format: date-time
+                                                    example: "2025-02-06T15:00:00"
+                                                avancement:
+                                                    type: string
+                                                    example: "complet"
+                        404:
+                            description: "Aucun paiement trouvé"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            message:
+                                                type: string
+                                                example: "Aucun paiement trouvé"
             /role/{id}:
                 get:
                     tags: ["Role"]

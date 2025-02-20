@@ -112,6 +112,7 @@ class CovoiturageController extends AbstractController
                 'conducteur_id' => $covoiturage->getConducteur()->getUtilisateurId(),
                 'pseudo_conducteur' => $covoiturage->getPseudo()->getPseudo(),
                 'email_conducteur' => $covoiturage->getEmail()->getEmail(),
+                'photo_conducteur' => $covoiturage->getPhoto(),
             ];
         }
 
@@ -139,6 +140,7 @@ class CovoiturageController extends AbstractController
             'conducteur_id' => $covoiturage->getConducteur()->getUtilisateurId(),
             'pseudo_conducteur' => $covoiturage->getPseudo()->getPseudo(),
             'email_conducteur' => $covoiturage->getEmail()->getEmail(),
+            'photo_conducteur' => $covoiturage->getPhoto(),
         ], 200);
     }
 
