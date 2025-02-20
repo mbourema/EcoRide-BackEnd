@@ -73,10 +73,12 @@
         },
         "post-install-cmd": [
             "@auto-scripts"
+            "if [ \"$APP_ENV\" != \"prod\" ]; then composer install --no-dev; fi"
         ],
         "post-update-cmd": [
             "@auto-scripts"
         ]
+
     },
     "conflict": {
         "symfony/symfony": "*"
