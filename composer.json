@@ -72,13 +72,12 @@
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
         "post-install-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
             "if [ \"$APP_ENV\" != \"prod\" ]; then composer install --no-dev; fi"
         ],
         "post-update-cmd": [
             "@auto-scripts"
         ]
-
     },
     "conflict": {
         "symfony/symfony": "*"
@@ -100,3 +99,4 @@
         "symfony/phpunit-bridge": "^7.2"
     }
 }
+
