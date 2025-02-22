@@ -1,0 +1,17 @@
+# .htaccess pour Symfony
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Assurez-vous que le fichier existe, sinon redirigez vers index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Redirige toutes les requêtes vers index.php
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
+
+# Si le module mod_rewrite n'est pas activé, vous pouvez rediriger vers index.php
+<IfModule !mod_rewrite.c>
+    ErrorDocument 404 /index.php
+</IfModule>
