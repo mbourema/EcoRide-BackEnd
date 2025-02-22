@@ -3,7 +3,7 @@ doctrine_mongodb:
     auto_generate_hydrator_classes: true
     connections:
         default:
-            server: 'mongodb://localhost:27017'
+            server: 'mongodb+srv://mehdibourema:BOureeema1?@ecoridecluster.9yv5c.mongodb.net/?retryWrites=true&w=majority&appName=EcorideCluster'
             options: {}
     default_database: 'EcoRide'
     document_managers:
