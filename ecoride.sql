@@ -19,9 +19,9 @@
 -- Current Database: `ecoride`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `ecoride` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
+-- CREATE DATABASE /*!32312 IF NOT EXISTS*/ `ecoride` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
 
-USE `ecoride`;
+USE `oa4bra1fcel4ttmw`;
 
 --
 -- Table structure for table `covoiturage`
