@@ -4,8 +4,8 @@ framework:
 
     # Note that the session will be started ONLY if you read or write from it.
     session: true
-    
-    trusted_hosts: ['^ecoride-backend-spaacetree\.com$', '^www\.ecoride-backend-spaacetree\.com$']
+
+    trusted_hosts: ['^ecoride-backend-spaacetree\.com$', '^www\.ecoride-backend-spaacetree\.com$', '^127\.0\.0\.1$', '^localhost$']
 
 
     #esi: true
