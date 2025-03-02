@@ -56,7 +56,7 @@ security:
         - { path: ^/paiement/add, roles: [ROLE_PASSAGER, ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN] }
         - { path: ^/paiement/\d+, roles: [ROLE_EMPLOYE, ROLE_ADMIN, ROLE_PASSAGER, ROLE_CONDUCTEUR], methods: [GET] }
         - { path: ^/paiement/\d+, roles: [ROLE_EMPLOYE, ROLE_ADMIN], methods: [PATCH] }
-        - { path: ^/paiements/, roles: [], methods: [GET] }
+        - { path: ^/paiements/, roles: [ROLE_ADMIN], methods: [GET] }
         - { path: ^/role/\d+, roles: ROLE_ADMIN }
         - { path: ^/role/list, roles: ROLE_ADMIN }
         - { path: ^/suspension/add, roles: [ROLE_EMPLOYE, ROLE_ADMIN] }
