@@ -2,14 +2,14 @@ nelmio_cors:
     defaults:
         origin_regex: true
         allow_origin: ['http://localhost:8080', 'https://ecoridespaacetree.alwaysdata.net', 'https://ecoridespaacetree.netlify.app']
-        allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE', 'PATCH']
+        allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
         allow_headers: ['Content-Type', 'Authorization', 'X-Requested-With', 'Origin', 'Accept', 'X-AUTH-TOKEN']
         expose_headers: ['Link']
         max_age: 3600
     paths:
         '^/': # Application des règles CORS à toutes les routes
             allow_origin: ['http://localhost:8080', 'https://ecoridespaacetree.alwaysdata.net', 'https://ecoridespaacetree.netlify.app']
-            allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE', 'PATCH']
+            allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
             allow_headers: ['Content-Type', 'Authorization', 'X-Requested-With', 'Origin', 'Accept', 'X-AUTH-TOKEN']
             expose_headers: ['Link']
             allow_credentials: true
