@@ -51,12 +51,12 @@ security:
         - { path: ^/covoiturage/list, roles: [] }
         - { path: ^/covoiturage/\d+, roles: [ROLE_EMPLOYE, ROLE_CONDUCTEUR, ROLE_ADMIN, ROLE_PASSAGER] }
         - { path: ^/covoiturage/delete/\d+, roles: [ROLE_EMPLOYE, ROLE_CONDUCTEUR, ROLE_ADMIN] }
-        - { path: ^/marque/add, roles: [] }
+        - { path: ^/marque/add, roles: ROLE_ADMIN }
         - { path: ^/marque/\d+, roles: [] }
         - { path: ^/paiement/add, roles: [ROLE_PASSAGER, ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN] }
         - { path: ^/paiement/\d+, roles: [ROLE_EMPLOYE, ROLE_ADMIN, ROLE_PASSAGER, ROLE_CONDUCTEUR], methods: [GET] }
         - { path: ^/paiement/\d+, roles: [ROLE_EMPLOYE, ROLE_ADMIN], methods: [PATCH] }
-        - { path: ^/paiements/, roles: ROLE_ADMIN }
+        - { path: ^/paiements/, roles: [] }
         - { path: ^/role/\d+, roles: ROLE_ADMIN }
         - { path: ^/role/list, roles: ROLE_ADMIN }
         - { path: ^/suspension/add, roles: [ROLE_EMPLOYE, ROLE_ADMIN] }
