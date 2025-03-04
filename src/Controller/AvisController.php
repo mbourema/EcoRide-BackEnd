@@ -134,10 +134,7 @@ class AvisController extends AbstractController
 
     // Vérifier si des avis ont été trouvés
     if (!$avisList2) {
-        return new JsonResponse(
-            ['error' => 'Aucun avis trouvé pour ce conducteur.'],
-            Response::HTTP_NOT_FOUND
-        );
+        return new JsonResponse([], Response::HTTP_OK);
     }
 
         
