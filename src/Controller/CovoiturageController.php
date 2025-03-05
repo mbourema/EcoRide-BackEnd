@@ -48,13 +48,14 @@ class CovoiturageController extends AbstractController
 
     $dateDepart = new DateTime($data['date_depart']);
     $dateActuelle = new DateTime();
+    $dateActuelle->setTime(0, 0); // Mettre l'heure à 00:00 pour éviter les problèmes de comparaison a cause de l'heure
 
-    if ($data['nb_places'] > 0 && $dateDepart >= $dateActuelle){
-        $statut = $data['statut'] ?? 'Disponible';
+    if ($data['nb_places'] > 0 && $dateDepart->getTimestamp() >= $dateActuelle->getTimestamp()) {
+        $statut = 'Disponible';
+    } else {
+        $statut = 'Indisponible';
     }
-    else {
-        $statut = $data['statut'] ?? 'Indisponible';
-    }
+
     
     // Création du covoiturage
     $covoiturage = new Covoiturage();
@@ -98,29 +99,42 @@ class CovoiturageController extends AbstractController
     #[Route('/list', name: 'covoiturage_list', methods: ['GET'])]
     public function listCovoiturages(CovoiturageRepository $repo): JsonResponse
     {
-        $covoiturages = $repo->findAll();
-        $data = [];
+    $covoiturages = $repo->findAll();
+    $data = [];
 
-        foreach ($covoiturages as $covoiturage) {
-            $data[] = [
-                'id' => $covoiturage->getCovoiturageId(),
-                'lieu_depart' => $covoiturage->getLieuDepart(),
-                'lieu_arrivee' => $covoiturage->getLieuArrivee(),
-                'date_depart' => $covoiturage->getDateDepart()->format('Y-m-d H:i:s'),
-                'date_arrivee' => $covoiturage->getDateArrivee()->format('Y-m-d H:i:s'),
-                'nb_places' => $covoiturage->getNbPlaces(),
-                'statut' => $covoiturage->getStatut(),
-                'prix_personne' => $covoiturage->getPrixPersonne(),
-                'voiture_id' => $covoiturage->getVoiture()->getVoitureId(),
-                'conducteur_id' => $covoiturage->getConducteur()->getUtilisateurId(),
-                'pseudo_conducteur' => $covoiturage->getPseudo()->getPseudo(),
-                'email_conducteur' => $covoiturage->getEmail()->getEmail(),
-                'photo_conducteur' => $covoiturage->getPhoto(),
-            ];
+    $dateActuelle = new DateTime();
+    $dateActuelle->setTime(0, 0); // Ignorer l'heure pour comparer uniquement les dates
+
+    foreach ($covoiturages as $covoiturage) {
+        $dateDepart = $covoiturage->getDateDepart();
+
+        // Vérification du statut selon la logique définie
+        if ($covoiturage->getNbPlaces() > 0 && $dateDepart->getTimestamp() >= $dateActuelle->getTimestamp()) {
+            $statut = 'Disponible';
+        } else {
+            $statut = 'Indisponible';
         }
 
-        return new JsonResponse($data, 200);
+        $data[] = [
+            'id' => $covoiturage->getCovoiturageId(),
+            'lieu_depart' => $covoiturage->getLieuDepart(),
+            'lieu_arrivee' => $covoiturage->getLieuArrivee(),
+            'date_depart' => $dateDepart->format('Y-m-d H:i:s'),
+            'date_arrivee' => $covoiturage->getDateArrivee()->format('Y-m-d H:i:s'),
+            'nb_places' => $covoiturage->getNbPlaces(),
+            'statut' => $statut, // Mise à jour dynamique du statut
+            'prix_personne' => $covoiturage->getPrixPersonne(),
+            'voiture_id' => $covoiturage->getVoiture()->getVoitureId(),
+            'conducteur_id' => $covoiturage->getConducteur()->getUtilisateurId(),
+            'pseudo_conducteur' => $covoiturage->getPseudo()->getPseudo(),
+            'email_conducteur' => $covoiturage->getEmail()->getEmail(),
+            'photo_conducteur' => $covoiturage->getPhoto(),
+        ];
     }
+
+    return new JsonResponse($data, 200);
+}
+
 
     #[Route('/{id}', name: 'covoiturage_get', methods: ['GET'])]
     public function getCovoiturage(int $id, CovoiturageRepository $repo): JsonResponse
