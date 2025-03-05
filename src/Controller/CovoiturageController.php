@@ -46,7 +46,10 @@ class CovoiturageController extends AbstractController
         return new JsonResponse(['error' => 'Invalid pseudo_conducteur or email_conducteur'], 400);
     }
 
-    if ($data['nb_places'] > 0){
+    $dateDepart = new DateTime($data['date_depart']);
+    $dateActuelle = new DateTime();
+
+    if ($data['nb_places'] > 0 && $dateDepart >= $dateActuelle){
         $statut = $data['statut'] ?? 'Disponible';
     }
     else {
