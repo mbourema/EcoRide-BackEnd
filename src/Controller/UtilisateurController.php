@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\RateLimiter\LimiterInterface;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 #[Route('/api/utilisateurs')]
 class UtilisateurController extends AbstractController
@@ -21,12 +23,75 @@ class UtilisateurController extends AbstractController
     private EntityManagerInterface $entityManager;
     private UtilisateurRepository $utilisateurRepository;
     private LimiterInterface $limiter;
+    private MailerInterface $mailer;
 
-    public function __construct(EntityManagerInterface $entityManager, UtilisateurRepository $utilisateurRepository, RateLimiterFactory $anonymousApiLimiter)
+    public function __construct(EntityManagerInterface $entityManager, UtilisateurRepository $utilisateurRepository, RateLimiterFactory $anonymousApiLimiter, MailerInterface $mailer)
     {
         $this->entityManager = $entityManager;
         $this->utilisateurRepository = $utilisateurRepository;
         $this->limiter = $anonymousApiLimiter->create();
+        $this->mailer = $mailer;
+    }
+
+    #[Route('/reinistialiser-mot-de-passe', name: 'api_utilisateurs_reinitialiser', methods: ['POST'])]
+    public function reinitialiserMDP(Request $request): JsonResponse {
+        $data = json_decode($request -> getContent(), true);
+        $email = $data['email'] ?? '';
+
+        $utilisateur = $this->utilisateurRepository->findOneBy(['email' => $email]);
+
+        if(!$utilisateur) {
+            return new JsonResponse(['message' => 'Utilisateur non trouvé'], Response::HTTP_NOT_FOUND);
+        }
+
+        $token = bin2hex(random_bytes(20));
+        $utilisateur->setResetPasswordToken($token);
+        $utilisateur->setResetPasswordTokenExpiration(new \DateTime('+1 hour'));
+        $this->entityManager->flush();
+
+        $resetPasswordLink = $this->generateUrl(
+            'app_reset_password',
+            ['token' => $token],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        $emailMessage = (new Email())
+            ->from('spaacetree@gmail.com')
+            ->to($utilisateur->getEmail())
+            ->subject('Réinitialisation du mot de passe')
+            ->text("Bonjour, voici votre lien de réinitialisation du mot de passe : $resetPasswordLink");
+
+        $this->mailer->send($emailMessage);
+
+        return new JsonResponse(['message' => 'Email de réinitialisation envoyé'], Response::HTTP_OK);
+
+    }
+
+    #[Route('/reset-password/{token}', name: 'app_reset_password', methods: ['GET', 'POST'])]
+    public function resetPassword(string $token, Request $request, UtilisateurRepository $utilisateurRepository): JsonResponse
+    {
+
+    $utilisateur = $utilisateurRepository->findOneBy(['resetPasswordToken' => $token]);
+
+    if (!$utilisateur || $utilisateur->getResetPasswordTokenExpiration() < new \DateTime()) {
+        return new JsonResponse(['message' => 'Le lien de réinitialisation est invalide ou expiré.'], Response::HTTP_BAD_REQUEST);
+    }
+
+    if ($request->isMethod('POST')) {
+        $data = json_decode($request->getContent(), true);
+        $newPassword = $data['mdp'] ?? '';
+
+        if ($newPassword) {
+            $utilisateur->setMdp(password_hash($data['mdp'], PASSWORD_BCRYPT));
+            $utilisateur->setResetPasswordToken(null); // Supprimer le token après utilisation
+            $utilisateur->setResetPasswordTokenExpiration(null); // Supprimer la date d'expiration
+            $this->entityManager->flush();
+
+            return new JsonResponse(['message' => 'Mot de passe réinitialisé avec succès'], Response::HTTP_OK);
+        }
+    }
+
+    return new JsonResponse(['message' => 'Merci de soumettre un nouveau mot de passe.'], Response::HTTP_OK);
     }
 
     // Liste des utilisateurs
