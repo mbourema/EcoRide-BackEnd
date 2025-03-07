@@ -63,6 +63,12 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $api_token = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $resetPasswordToken;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $resetPasswordTokenExpiration = null;
+
     // Relation avec les covoiturages en tant que conducteur
     #[ORM\OneToMany(mappedBy: 'conducteur', targetEntity: Covoiturage::class)]
     private Collection $covoituragesAsConducteur;
@@ -397,6 +403,30 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
                 $paiement->setUtilisateur(null);
             }
         }
+        return $this;
+    }
+
+    public function getResetPasswordToken(): ?string
+    {
+        return $this->resetPasswordToken;
+    }
+
+    public function setResetPasswordToken(?string $resetPasswordToken): self
+    {
+        $this->resetPasswordToken = $resetPasswordToken;
+
+        return $this;
+    }
+
+    public function getResetPasswordTokenExpiration(): ?\DateTimeInterface
+    {
+        return $this->resetPasswordTokenExpiration;
+    }
+
+    public function setResetPasswordTokenExpiration(?\DateTimeInterface $resetPasswordTokenExpiration): self
+    {
+        $this->resetPasswordTokenExpiration = $resetPasswordTokenExpiration;
+
         return $this;
     }
 }

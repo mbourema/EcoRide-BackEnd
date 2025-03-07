@@ -881,6 +881,93 @@ nelmio_api_doc:
                                                 type: string
                                                 example: "Suspension non trouvée"
             # Routes pour UtilisateurController
+            /api/utilisateurs/reinistialiser-mot-de-passe:
+                post:
+                    tags: ["Utilisateurs"]
+                    summary: "Demande de réinitialisation du mot de passe"
+                    description: "Envoie un email avec un lien de réinitialisation contenant un token unique."
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: "object"
+                                    properties:
+                                        email:
+                                            type: "string"
+                                            format: "email"
+                                            example: "utilisateur@example.com"
+                    responses:
+                        200:
+                            description: "Email de réinitialisation envoyé"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: "object"
+                                        properties:
+                                            message:
+                                                type: "string"
+                                                example: "Email de réinitialisation envoyé"
+                        404:
+                            description: "Utilisateur non trouvé"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: "object"
+                                        properties:
+                                            message:
+                                                type: "string"
+                                                example: "Utilisateur non trouvé"
+
+            /api/utilisateurs/reset-password/{token}:
+                post:
+                    tags: ["Utilisateurs"]
+                    summary: "Réinitialiser le mot de passe"
+                    description: "Permet de réinitialiser le mot de passe en fournissant un nouveau mot de passe et un token valide."
+                    parameters:
+                        - name: "token"
+                          in: "path"
+                          required: true
+                          schema:
+                            type: "string"
+                          description: "Token unique envoyé par email"
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: "object"
+                                    properties:
+                                        mdp:
+                                            type: "string"
+                                            example: "nouveauMotDePasse123!"
+                    responses:
+                        200:
+                            description: "Réponse en cas de succès ou si un mot de passe doit être soumis"
+                            content:
+                                application/json:
+                                    schema:
+                                        oneOf:
+                                            - type: "object"
+                                              properties:
+                                                message:
+                                                    type: "string"
+                                                    example: "Mot de passe réinitialisé avec succès"
+                                            - type: "object"
+                                              properties:
+                                                message:
+                                                    type: "string"
+                                                    example: "Merci de soumettre un nouveau mot de passe."
+                        400:
+                            description: "Lien de réinitialisation invalide ou expiré"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: "object"
+                                        properties:
+                                            message:
+                                                type: "string"
+                                                example: "Le lien de réinitialisation est invalide ou expiré."
             /api/utilisateurs/liste:
                 get:
                     tags: ["Utilisateurs"]
