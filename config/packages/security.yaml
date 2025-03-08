@@ -61,6 +61,8 @@ security:
         - { path: ^/role/list, roles: ROLE_ADMIN }
         - { path: ^/suspension/add, roles: [ROLE_EMPLOYE, ROLE_ADMIN] }
         - { path: ^/suspension/\d+, roles: [ROLE_EMPLOYE, ROLE_ADMIN] }
+        - { path: ^/api/utilisateurs/reinistialiser-mot-de-passe, roles: [] }
+        - { path: ^/api/utilisateurs/reset-password/\d+, roles: [] }
         - { path: ^/api/utilisateurs/liste, roles: [] }
         - { path: ^/api/utilisateurs/details/\d+, roles: [] }
         - { path: ^/api/utilisateurs/modifier/\d+, roles: [ROLE_PASSAGER, ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN] }
