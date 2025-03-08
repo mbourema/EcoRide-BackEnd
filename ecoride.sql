@@ -16,14 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `ecoride`
---
-
--- CREATE DATABASE /*!32312 IF NOT EXISTS*/ `ecoride` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
-
-USE `oa4bra1fcel4ttmw`;
-
---
 -- Table structure for table `covoiturage`
 --
 
@@ -62,31 +54,6 @@ CREATE TABLE `covoiturage` (
 LOCK TABLES `covoiturage` WRITE;
 /*!40000 ALTER TABLE `covoiturage` DISABLE KEYS */;
 /*!40000 ALTER TABLE `covoiturage` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `doctrine_migration_versions`
---
-
-DROP TABLE IF EXISTS `doctrine_migration_versions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `doctrine_migration_versions` (
-  `version` varchar(191) NOT NULL,
-  `executed_at` datetime DEFAULT NULL,
-  `execution_time` int(11) DEFAULT NULL,
-  PRIMARY KEY (`version`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `doctrine_migration_versions`
---
-
-LOCK TABLES `doctrine_migration_versions` WRITE;
-/*!40000 ALTER TABLE `doctrine_migration_versions` DISABLE KEYS */;
-INSERT INTO `doctrine_migration_versions` VALUES ('DoctrineMigrations\\Version20250220173419','2025-02-20 18:34:43',1378);
-/*!40000 ALTER TABLE `doctrine_migration_versions` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -223,6 +190,8 @@ CREATE TABLE `utilisateur` (
   `animal` tinyint(1) NOT NULL DEFAULT 0,
   `preference` varchar(100) NOT NULL,
   `api_token` varchar(255) NOT NULL,
+  `reset_password_token` varchar(255) DEFAULT NULL,
+  `reset_password_token_expiration` date DEFAULT NULL,
   PRIMARY KEY (`utilisateur_id`),
   UNIQUE KEY `UNIQ_1D1C63B3E7927C74` (`email`),
   UNIQUE KEY `UNIQ_1D1C63B386CC499D` (`pseudo`)
@@ -235,7 +204,7 @@ CREATE TABLE `utilisateur` (
 
 LOCK TABLES `utilisateur` WRITE;
 /*!40000 ALTER TABLE `utilisateur` DISABLE KEYS */;
-INSERT INTO `utilisateur` VALUES (1,'Admin','Admin','admin.admin@admin.com',20,'$2y$10$GqtAx7Ah76JLUzD8eR8UuOjG4bFbQp60qeO3xfaKCFu3IgTjIeqdK','0612345678','10 rue de Paris, 75000 Paris','1990-05-15','JeanD','https://example.com/photo.jpg',0,0,'','c273e8c04247b2e8f831337e235a27f0cbaa3fc1');
+INSERT INTO `utilisateur` VALUES (1,'Bourema','Mehdi','mehdibourema@outlook.fr',20,'$2y$10$Tdltoi72zfTnUXEGutw73OOQnBhI6lx4LCePDdPBHwCtmVRvvSjbm','0612345678','10 rue de Paris, 75000 Paris','1990-05-15','JeanD','https://example.com/photo.jpg',0,0,'','f33ea250d5e19ca62cf51a908c617db0851f209f','e2e9b1e4502be46d44de00c70391cf2c59753e3d','2025-03-07');
 /*!40000 ALTER TABLE `utilisateur` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -263,7 +232,7 @@ CREATE TABLE `utilisateur_role` (
 
 LOCK TABLES `utilisateur_role` WRITE;
 /*!40000 ALTER TABLE `utilisateur_role` DISABLE KEYS */;
-INSERT INTO `utilisateur_role` VALUES (1,1);
+INSERT INTO `utilisateur_role` VALUES (1,3);
 /*!40000 ALTER TABLE `utilisateur_role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -311,4 +280,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-02-22 17:11:27
+-- Dump completed on 2025-03-07 23:26:37
