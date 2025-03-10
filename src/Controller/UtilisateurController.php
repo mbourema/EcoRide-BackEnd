@@ -50,7 +50,7 @@ class UtilisateurController extends AbstractController
         $utilisateur->setResetPasswordTokenExpiration(new \DateTime('+1 hour'));
         $this->entityManager->flush();
 
-        $resetPasswordLink = 'https://ecoridespaacetree.netlify.app/mdp?token=' . urlencode($token);
+        $resetPasswordLink = 'https://ecoridespaacetree.netlify.app/mdp?' . urlencode($token);
 
         $emailMessage = (new Email())
             ->from('spaacetree@gmail.com')
