@@ -13,21 +13,16 @@ use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use App\Repository\UtilisateurRepository;
-use App\Repository\RoleRepository;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
-use Doctrine\Common\Collections\ArrayCollection;
-
 
 class ApiTokenAuthentificatorAuthenticator extends AbstractAuthenticator
 {
     private $roleRepository;
 
     public function __construct(
-        private UtilisateurRepository $repository, 
-        RoleRepository $roleRepository
+        private UtilisateurRepository $repository
     ) {
-        $this->roleRepository = $roleRepository;
     }
 
     public function supports(Request $request): ?bool
@@ -49,14 +44,11 @@ class ApiTokenAuthentificatorAuthenticator extends AbstractAuthenticator
         throw new UserNotFoundException('User not found');
     }
 
-
     $userBadge = new UserBadge($user->getEmail());
 
 
     return new SelfValidatingPassport($userBadge);
     }
-
-        
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
