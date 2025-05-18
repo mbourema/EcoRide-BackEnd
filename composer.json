@@ -10,6 +10,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "aws/aws-sdk-php": "^3.343.9",
+        "doctrine/annotations": "^2.0",
         "doctrine/dbal": "^4.2.3",
         "doctrine/doctrine-bundle": "^2.14",
         "doctrine/doctrine-migrations-bundle": "^3.4.2",
@@ -35,6 +36,7 @@
         "symfony/security-core": "7.2.*",
         "symfony/serializer": "7.2.*",
         "symfony/twig-bundle": "7.2.*",
+        "symfony/validator": "7.2.*",
         "symfony/yaml": "7.2.*",
         "twig/extra-bundle": "^2.12|^3.21",
         "twig/twig": "^2.12|^3.21.1"
@@ -95,6 +97,10 @@
         "phpunit/phpunit": "^9.6.23",
         "symfony/browser-kit": "7.2.*",
         "symfony/css-selector": "7.2.*",
-        "symfony/phpunit-bridge": "^7.2.6"
+        "symfony/debug-bundle": "7.2.*",
+        "symfony/monolog-bundle": "^3.0",
+        "symfony/phpunit-bridge": "^7.2.6",
+        "symfony/stopwatch": "7.2.*",
+        "symfony/web-profiler-bundle": "7.2.*"
     }
 }

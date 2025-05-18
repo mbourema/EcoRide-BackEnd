@@ -17,6 +17,7 @@ use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\HttpFoundation\Cookie;
 
 #[Route('/api/utilisateurs')]
 class UtilisateurController extends AbstractController
@@ -180,7 +181,18 @@ class UtilisateurController extends AbstractController
             return new JsonResponse(['message' => 'Email ou mot de passe incorrect'], Response::HTTP_UNAUTHORIZED);
         }
 
-        return new JsonResponse($this->formatUtilisateurGet($utilisateur), Response::HTTP_OK);
+        $token = $utilisateur->getApiToken();
+
+        $cookie = Cookie::create('API_TOKEN', $token)
+            ->withSecure(true)
+            ->withHttpOnly(true)
+            ->withSameSite('None')
+            ->withPath('/');
+
+        $response = new JsonResponse($this->formatUtilisateur($utilisateur), Response::HTTP_OK);
+        $response->headers->setCookie($cookie);
+
+        return $response;
     }
 
     // Modification d'un utilisateur

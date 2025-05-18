@@ -30,17 +30,16 @@ class ApiTokenAuthentificatorAuthenticator extends AbstractAuthenticator
         $this->roleRepository = $roleRepository;
     }
 
-    public function supports(Request $request): ?bool
+    public function supports(Request $request): bool
     {
-        return $request->headers->has('X-AUTH-TOKEN');
+        return $request->cookies->has('API_TOKEN');
     }
 
     public function authenticate(Request $request): Passport
     {
-    $apiToken = $request->headers->get('X-AUTH-TOKEN');
-    
-    if (null === $apiToken) {
-        throw new CustomUserMessageAuthenticationException('No API token provided');
+        $apiToken = $request->cookies->get('API_TOKEN');
+        if (!$apiToken) {
+            throw new CustomUserMessageAuthenticationException('No API token provided');
     }
 
     $user = $this->repository->findOneBy(['api_token' => $apiToken]);
