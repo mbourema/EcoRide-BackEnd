@@ -1,0 +1,19 @@
+{# templates/email_reset.twig #}
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <style>
+      body { background-color: #7FDCC3; margin:0; padding-bottom:10px; }
+      h1 { text-align:center;}
+      p { font-size:1.2rem; color:#fff; text-align:center; margin:1em 0; }
+    </style>
+  </head>
+  <body>
+    <img src="cid:heroImage" alt="Bannière" width="600" style="display:block;width:100%;height:400px;">
+    <h1>Réinitialisation du mot de passe</h1>
+    <p>Bonjour {{ utilisateur }},</p>
+    <p>Voici votre lien de réinitialisation du mot de passe :</p>
+    <p><a href="{{ resetPasswordLink }}">{{ resetPasswordLink }}</a></p>
+  </body>
+</html>

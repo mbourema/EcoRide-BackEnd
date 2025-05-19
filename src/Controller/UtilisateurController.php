@@ -18,6 +18,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
 #[Route('/api/utilisateurs')]
 class UtilisateurController extends AbstractController
@@ -53,13 +54,23 @@ class UtilisateurController extends AbstractController
 
         $resetPasswordLink = 'https://ecoridespaacetree.netlify.app/mdp?' . urlencode($token);
 
-        $emailMessage = (new Email())
+        $email = (new TemplatedEmail())
             ->from('spaacetree@gmail.com')
             ->to($utilisateur->getEmail())
             ->subject('Réinitialisation du mot de passe')
-            ->text("Bonjour, voici votre lien de réinitialisation du mot de passe : $resetPasswordLink");
+            ->htmlTemplate('email_reset.twig')
+            ->embedFromPath(
+                // chemin physique vers l’image
+                \dirname(__DIR__, 2).'/public/images/hero.avif',
+                // alias CID utilisé dans le template
+                'heroImage'
+            )
+            ->context([
+                'utilisateur' => $utilisateur->getPseudo(),
+                'resetPasswordLink' => $resetPasswordLink,
+            ]);
 
-        $this->mailer->send($emailMessage);
+        $this->mailer->send($email);
 
         return new JsonResponse(['message' => 'Email de réinitialisation envoyé'], Response::HTTP_OK);
 

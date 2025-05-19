@@ -27,17 +27,6 @@ security:
             lazy: true
             custom_authenticators:
                 - App\Security\ApiTokenAuthentificatorAuthenticator
-                
-        main:
-            lazy: true
-            provider: app_user_provider
-            stateless: false 
-            json_login:
-                check_path: api_utilisateurs_connexion
-                username_path: email
-                password_path: mdp
-            logout:
-                path: app_logout
 
     access_control:
         - { path: ^/api/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY } 
