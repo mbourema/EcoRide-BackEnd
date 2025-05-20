@@ -17,6 +17,10 @@ services:
         arguments:
             $repository: '@App\Repository\UtilisateurRepository'
             $roleRepository: '@App\Repository\RoleRepository'
+    
+    App\EventListener\ApiTokenVerifierListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
 
     # makes classes in src/ available to be used as services
     App\:
