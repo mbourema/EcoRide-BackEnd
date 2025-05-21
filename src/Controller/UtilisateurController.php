@@ -117,13 +117,16 @@ class UtilisateurController extends AbstractController
         return new JsonResponse($data, Response::HTTP_OK);
     }
 
-    // Détails d'un utilisateur par ID
-    #[Route('/details/{id}', name: 'api_utilisateurs_details', methods: ['GET'])]
-    public function show(Utilisateur $utilisateur): JsonResponse
+    // Détails d'un utilisateur par api_token
+    #[Route('/details/{api_token}', name: 'api_utilisateurs_details', methods: ['GET'])]
+    public function show(string $api_token, UtilisateurRepository $utilisateurRepository): JsonResponse
     {
+        $utilisateur = $utilisateurRepository->findOneBy(['api_token' => $api_token]);
+        if (!$utilisateur) {
+            return new JsonResponse(['message' => 'Utilisateur non trouvé'], Response::HTTP_NOT_FOUND);
+        }
         return new JsonResponse($this->formatUtilisateurGet($utilisateur), Response::HTTP_OK);
     }
-
     // Création d'un utilisateur
     #[Route('/ajouter', name: 'api_utilisateurs_ajouter', methods: ['POST'])]
     public function create(Request $request): JsonResponse

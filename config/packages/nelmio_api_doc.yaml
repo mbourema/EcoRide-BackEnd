@@ -1023,17 +1023,17 @@ nelmio_api_doc:
                                                 preference:
                                                     type: "string"
                                                     example: ""
-            /api/utilisateurs/details/{id}:
+            /api/utilisateurs/details/{api_token}:
                 get:
                     tags: ["Utilisateurs"]
                     summary: "Obtenir les détails d'un utilisateur"
                     parameters:
-                        - name: "id"
+                        - name: "api_token"
                           in: "path"
                           required: true
-                          description: "ID de l'utilisateur"
+                          description: "api_token de l'utilisateur"
                           schema:
-                              type: "integer"
+                              type: "string"
                     responses:
                         200:
                             description: "Détails de l'utilisateur"
