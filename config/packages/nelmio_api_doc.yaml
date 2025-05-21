@@ -1023,6 +1023,68 @@ nelmio_api_doc:
                                                 preference:
                                                     type: "string"
                                                     example: ""
+            /api/utilisateurs/details/{id}:
+                get:
+                    tags: ["Utilisateurs"]
+                    summary: "Obtenir les détails d'un utilisateur"
+                    parameters:
+                        - name: "id"
+                          in: "path"
+                          required: true
+                          description: "ID de l'utilisateur"
+                          schema:
+                              type: "integer"
+                    responses:
+                        200:
+                            description: "Détails de l'utilisateur"
+                            content:
+                                application/json:
+                                    schema:
+                                        type: "object"
+                                        properties:
+                                            id:
+                                                type: "integer"
+                                                example: 1
+                                            nom:
+                                                type: "string"
+                                                example: "Dupont"
+                                            prenom:
+                                                type: "string"
+                                                example: "Jean"
+                                            email:
+                                                type: "string"
+                                                format: "email"
+                                                example: "jean.dupont@example.com"
+                                            mdp:
+                                                type: "string"
+                                                example: "yoyo"
+                                            telephone:
+                                                type: "string"
+                                                example: "0612345678"
+                                            adresse:
+                                                type: "string"
+                                                example: "10 rue de Paris, 75000 Paris"
+                                            date_naissance:
+                                                type: "string"
+                                                format: "date"
+                                                example: "1990-05-15"
+                                            pseudo:
+                                                type: "string"
+                                                example: "JeanD"
+                                            photo:
+                                                type: "string"
+                                                example: "https://example.com/photo.jpg"
+                                            fumeur:
+                                                type: "boolean"
+                                                example: false
+                                            animal:
+                                                type: "boolean"
+                                                example: false
+                                            preference:
+                                                type: "string"
+                                                example: ""
+                        404:
+                            description: "Utilisateur non trouvé"
             /api/utilisateurs/details/{api_token}:
                 get:
                     tags: ["Utilisateurs"]

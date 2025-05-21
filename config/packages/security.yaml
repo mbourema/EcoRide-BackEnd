@@ -53,6 +53,7 @@ security:
         - { path: ^/api/utilisateurs/reinistialiser-mot-de-passe, roles: [] }
         - { path: ^/api/utilisateurs/reset-password/\d+, roles: [] }
         - { path: ^/api/utilisateurs/liste, roles: [] }
+        - { path: "^/api/utilisateurs/details/[A-Za-z0-9]+", roles: [] }
         - { path: ^/api/utilisateurs/details/\d+, roles: [] }
         - { path: ^/api/utilisateurs/modifier/\d+, roles: [ROLE_PASSAGER, ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN] }
         - { path: ^/api/utilisateurs/supprimer/\d+, roles: [ROLE_PASSAGER, ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN] }
