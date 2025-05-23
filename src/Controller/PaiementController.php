@@ -10,6 +10,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\HttpFoundation\Response;
 
 class PaiementController extends AbstractController
 {
@@ -93,25 +97,49 @@ class PaiementController extends AbstractController
     return new JsonResponse($paiementsData, 200);
 }
 
-
-
-    #[Route('/paiement/{id}', methods: ['GET'])]
-    public function getPaiement(int $id, EntityManagerInterface $em): JsonResponse
+    #[Route('/paiement/confirmation/{id}', methods: ['GET'])]
+    public function getPaiement(int $id, EntityManagerInterface $em, MailerInterface $mailer): JsonResponse
     {
         $paiement = $em->getRepository(Paiement::class)->find($id);
+        $this->mailer = $mailer;
 
         if (!$paiement) {
             return new JsonResponse(['error' => 'Paiement non trouvé'], 404);
         }
 
-        return new JsonResponse([
+        $info_paiements=[
             'paiement_id' => $paiement->getPaiementId(),
             'utilisateur_id' => $paiement->getUtilisateurId()->getUtilisateurId(),
+            'email_utilisateur_id' => $paiement->getUtilisateurId()->getEmail(),
+            'pseudo_utilisateur_id' => $paiement->getUtilisateurId()->getPseudo(),
             'covoiturage_id' => $paiement->getCovoiturageId()->getCovoiturageId(),
+            'conducteur_id' => $paiement->getCovoiturageId()->getConducteur()->getUtilisateurId(),
+            'pseudo_conducteur_id' => $paiement->getCovoiturageId()->getConducteur()->getPseudo(),
             'montant' => $paiement->getMontant(),
             'date_paiement' => $paiement->getDatePaiement()->format('Y-m-d H:i:s'),
             'avancement' => $paiement->getAvancement(),
-        ]);
+        ];
+
+        $email = (new TemplatedEmail())
+            ->from('spaacetree@gmail.com')
+            ->to($info_paiements['email_utilisateur_id'])
+            ->subject('Noter et valider votre covoiturage')
+            ->htmlTemplate('confirmation_avis.twig')
+            ->embedFromPath(
+                // chemin physique vers l’image
+                \dirname(__DIR__, 2).'/public/images/hero.avif',
+                // alias CID utilisé dans le template
+                'heroImage'
+            )
+            ->context([
+                'pseudo_utilisateur_id' => $info_paiements['pseudo_utilisateur_id'],
+                'pseudo_conducteur_id' => $info_paiements['pseudo_conducteur_id'],
+                'date_paiement' => $info_paiements['date_paiement'],
+            ]);
+
+        $this->mailer->send($email);
+
+        return new JsonResponse(['message' => 'Email de réinitialisation envoyé'], Response::HTTP_OK);
     }
 
     // Route PUT pour modifier un paiement

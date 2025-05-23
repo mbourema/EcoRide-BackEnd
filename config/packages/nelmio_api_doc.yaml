@@ -541,11 +541,11 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Données manquantes"
-            /paiement/{id}:
+            /paiement/confirmation/{id}:
                 get:
                     tags: ["Paiement"]
-                    summary: "Récupérer un paiement par son ID"
-                    description: "Cette méthode permet de récupérer un paiement en fonction de son ID."
+                    summary: "Envoyer un mail de confirmation pour un covoiturage"
+                    description: "Cette méthode permet d'envoyer un email de confirmation a un passager'"
                     parameters:
                         - name: id
                           in: path
@@ -556,34 +556,17 @@ nelmio_api_doc:
                             example: 123
                     responses:
                         200:
-                            description: "Paiement trouvé"
+                            description: "Email envoyé"
                             content:
                                 application/json:
                                     schema:
                                         type: object
                                         properties:
-                                            paiement_id:
-                                                type: integer
-                                                example: 123
-                                            utilisateur_id:
-                                                type: integer
-                                                example: 1
-                                            covoiturage_id:
-                                                type: integer
-                                                example: 1
-                                            montant:
-                                                type: number
-                                                format: float
-                                                example: 250.50
-                                            date_paiement:
+                                            message:
                                                 type: string
-                                                format: date-time
-                                                example: "2025-02-06T15:00:00"
-                                            avancement:
-                                                type: string
-                                                example: "complet"
+                                                example: "Email de confirmation envoyé avec succès"                                   
                         404:
-                            description: "Paiement non trouvé"
+                            description: "Email non envoyé"
                             content:
                                 application/json:
                                     schema:
@@ -591,7 +574,8 @@ nelmio_api_doc:
                                         properties:
                                             error:
                                                 type: string
-                                                example: "Paiement non trouvé"
+                                                example: "Email non envoyé"
+            /paiement/{id}:
                 patch:
                     tags: ["Paiement"]
                     summary: "Mettre à jour un paiement"

@@ -1,0 +1,20 @@
+{# templates/email_reset.twig #}
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <style>
+      body { background-color: #7FDCC3; margin:0; padding-bottom:10px; }
+      h1 { text-align:center; font-family:"Grechen Fuemen"; color:#fff}
+      p { font-size:1.2rem; color:#fff; text-align:center; margin:1em 0; font-family:"Roboto"}
+    </style>
+  </head>
+  <body>
+    <img src="cid:heroImage" alt="Bannière" width="600" style="display:block;width:100%;height:400px;">
+    <h1>Noter et valider votre covoiturage !</h1>
+    <p>Bonjour {{ pseudo_utilisateur_id }} !,</p>
+    <p>Comment c'est passé votre covoiturage avec {{ pseudo_conducteur_id }} commandé en date du {{ date_paiement }} ?
+    Noter et valider votre voyage via ce lien ! : </p>
+    <p><a href="">Cliquez ici</a></p>
+  </body>
+</html>
