@@ -36,9 +36,9 @@ class PaiementController extends AbstractController
         } 
 
         // Définir le montant, la date de paiement et l'avancement
-        $montant = $data['prix_personne'] ?? $covoiturage->getPrixPersonne();
-        $date = $data['date_paiement'] ?? new \DateTime();  // Utilisation de la date actuelle
-        $avancement = $data['avancement'] ?? "En cours";
+        $montant = $covoiturage->getPrixPersonne();
+        $date = new \DateTime();  // Utilisation de la date actuelle
+        $avancement = "En cours";
 
         if ($utilisateur->getNbCredit() < $montant){
             return new JsonResponse(['error' => 'Nombre de crédits insuffisant'], 404);
@@ -76,22 +76,15 @@ class PaiementController extends AbstractController
     // Préparer la liste des paiements à renvoyer
     $paiementsData = [];
     foreach ($paiements as $paiement) {
-        // Calculer le crédit total de la plateforme
-        $creditTotalPlateforme = $paiement->getCreditTotalPlateforme();
-
-        // Vérification si l'avancement est "OK" pour ajouter des crédits supplémentaires
-        if ($paiement->getAvancement() === "OK") {
-            $creditTotalPlateforme += 2;  // Ajouter 2 crédits si l'avancement est "OK"
-        }
-
         $paiementsData[] = [
             'paiement_id' => $paiement->getPaiementId(),
             'utilisateur_id' => $paiement->getUtilisateurId()->getUtilisateurId(),
             'covoiturage_id' => $paiement->getCovoiturageId()->getCovoiturageId(),
+            'conducteur_id' => $paiement->getCovoiturageId()->getConducteur()->getUtilisateurId(),
             'montant' => $paiement->getMontant(),
             'date_paiement' => $paiement->getDatePaiement()->format('Y-m-d H:i:s'),
             'avancement' => $paiement->getAvancement(),
-            'credit_total_plateforme' => $creditTotalPlateforme,  // Ajouter le champ pour le total des crédits
+            'credit_total_plateforme' => $paiement->getCreditTotalPlateforme()
         ];
     }
 
@@ -153,7 +146,7 @@ class PaiementController extends AbstractController
         // Si l'avancement est "OK", on met à jour le crédit de l'utilisateur
         if ($paiement->getAvancement() == "OK") {
             $utilisateur->setNbCredit($utilisateur->getNbCredit() + ($paiement->getMontant() - 2));
-            $paiement->setCreditTotalPlateforme($paiement->getCreditTotalPlateforme() + 2);
+            $paiement->setCreditTotalPlateforme(2);
         }
     
         // Sauvegarde des modifications en base de données
