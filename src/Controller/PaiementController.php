@@ -79,6 +79,7 @@ class PaiementController extends AbstractController
         $paiementsData[] = [
             'paiement_id' => $paiement->getPaiementId(),
             'utilisateur_id' => $paiement->getUtilisateurId()->getUtilisateurId(),
+            'pseudo_utilisateur' => $paiement->getUtilisateurId()->getPseudo(),
             'covoiturage_id' => $paiement->getCovoiturageId()->getCovoiturageId(),
             'conducteur_id' => $paiement->getCovoiturageId()->getConducteur()->getUtilisateurId(),
             'montant' => $paiement->getMontant(),
