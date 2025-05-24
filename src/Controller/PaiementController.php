@@ -86,6 +86,7 @@ class PaiementController extends AbstractController
             'pseudo_utilisateur' => $paiement->getUtilisateurId()->getPseudo(),
             'covoiturage_id' => $paiement->getCovoiturageId()->getCovoiturageId(),
             'conducteur_id' => $paiement->getCovoiturageId()->getConducteur()->getUtilisateurId(),
+            'pseudo_conducteur_id' => $paiement->getCovoiturageId()->getConducteur()->getPseudo(),
             'montant' => $paiement->getMontant(),
             'date_paiement' => $paiement->getDatePaiement()->format('Y-m-d H:i:s'),
             'avancement' => $paiement->getAvancement(),
@@ -121,7 +122,7 @@ class PaiementController extends AbstractController
         ];
 
         $covoiturage = $info_paiements['covoiturage_id'];
-        $avis_link = 'https://ecoridespaacetree.netlify.app/avis?' . urlencode($covoiturage);
+        $avis_link = 'https://ecoridespaacetree.netlify.app/avis';
 
         $email = (new TemplatedEmail())
             ->from('spaacetree@gmail.com')
