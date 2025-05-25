@@ -175,15 +175,14 @@ class AvisController extends AbstractController
 
 
     // Récupérer tous les avis d'un conducteur via son pseudo
-    #[Route('/list/conducteur/{pseudo}', name: 'api_avis_conducteur_liste', methods: ['GET'])]
-    public function getAvisByConducteur(string $pseudo): JsonResponse
+    #[Route('/fulllist', name: 'api_avis_fullist', methods: ['GET'])]
+    public function getAllAvis(): JsonResponse
     {
-    $avisList = $this->documentManager->getRepository(Avis::class)
-        ->findBy(['pseudo_conducteur' => $pseudo]);
+    $avisList = $this->documentManager->getRepository(Avis::class)->findAll();
 
     if (!$avisList) {
         return new JsonResponse(
-            ['error' => 'Aucun avis trouvé pour ce conducteur.'],
+            ['error' => 'Aucun avis trouvé.'],
             Response::HTTP_NOT_FOUND
         );
     }
@@ -200,12 +199,18 @@ class AvisController extends AbstractController
             'date_depart' => $avis->getDateDepart()->format('Y-m-d H:i:s'),
             'date_arrivee' => $avis->getDateArrivee()->format('Y-m-d H:i:s'),
             'note' => $avis->getNote(),
+            'signalement' => $avis->getSignale()
         ];
 
         // Si le commentaire existe, on l'ajoute au tableau
         $commentaire = $avis->getCommentaire();
         if (!empty($commentaire)) {
             $avisData['commentaire'] = $commentaire;
+        }
+        $justification = $avis->getJustification();
+        // Si le champ justification existe, on l'ajoute au tableau
+        if (!empty($justification)) {
+            $avisData['justification'] = $justification;
         }
 
         return $avisData;

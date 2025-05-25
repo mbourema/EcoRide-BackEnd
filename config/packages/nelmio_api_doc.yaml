@@ -326,14 +326,14 @@ nelmio_api_doc:
                                             error:
                                                 type: string
                                                 example: "Avis non trouvé."
-            /avis/list/conducteur/{pseudo}:
+            /avis/fulllist:
                 get:
                     tags: ["Avis"]
-                    summary: "Récupérer la liste de tout les avis d'un conducteur"
-                    description: "Cette méthode permet de récupérer tous les avis d'un conducteur à partir de son pseudo"
+                    summary: "Récupérer la liste de tout les avis"
+                    description: "Cette méthode permet de récupérer tous les avis"
                     responses:
                         200:
-                            description: "Liste des avis du conducteur"
+                            description: "Liste des avis"
                             content:
                                 application/json:
                                     schema:
@@ -368,6 +368,12 @@ nelmio_api_doc:
                                                     type: number
                                                     format: float
                                                     example: 4.5
+                                                signalement:
+                                                    type: boolean
+                                                    example: true
+                                                justification:
+                                                    type: string
+                                                    example: "Conducteur désagréable"
             /avis/fulllist/conducteur/{pseudo}:
                 get:
                     tags: ["Avis"]

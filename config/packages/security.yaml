@@ -34,7 +34,7 @@ security:
         - { path: ^/api/utilisateurs/connexion, roles: PUBLIC_ACCESS }
         - { path: ^/avis/add, roles: [ROLE_PASSAGER, ROLE_ADMIN] }
         - { path: ^/avis/update/\d+, roles: [ROLE_EMPLOYE, ROLE_ADMIN] }
-        - { path: "^/avis/list/conducteur/[a-zA-Z0-9_-]+", roles: [ROLE_PASSAGER, ROLE_EMPLOYE, ROLE_ADMIN, ROLE_CONDUCTEUR] }
+        - { path: "^/avis/fulllist", roles: [ROLE_PASSAGER, ROLE_EMPLOYE, ROLE_ADMIN, ROLE_CONDUCTEUR] }
         - { path: "^/avis/fulllist/conducteur/[a-zA-Z0-9_-]+", roles: [] }
         - { path: ^/covoiturage/add, roles: [ROLE_CONDUCTEUR, ROLE_ADMIN] }
         - { path: ^/covoiturage/list, roles: [] }
