@@ -49,6 +49,7 @@ class PaiementController extends AbstractController
         }
         else{
             $utilisateur->setNbCredit($utilisateur->getNbCredit() - $montant);
+            $covoiturage->setNbPlaces($covoiturage->getNbPlaces() - 1);
         }
         // Création du paiement
         $paiement = new Paiement();
