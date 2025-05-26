@@ -6,8 +6,10 @@ namespace App\Controller;
 use App\Document\Avis;
 use App\Entity\Utilisateur;
 use App\Entity\Covoiturage;
+use App\Entity\Paiement;
 use App\Repository\UtilisateurRepository;
 use App\Repository\CovoiturageRepository;
+use App\Repository\PaiementRepository;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,15 +23,18 @@ class AvisController extends AbstractController
     private DocumentManager $documentManager;
     private UtilisateurRepository $utilisateurRepository;
     private CovoiturageRepository $covoiturageRepository;
+    private PaiementRepository $paiementRepository;
 
     public function __construct(
         DocumentManager $documentManager,
         UtilisateurRepository $utilisateurRepository,
-        CovoiturageRepository $covoiturageRepository
+        CovoiturageRepository $covoiturageRepository,
+        PaiementRepository $paiementRepository
     ) {
         $this->documentManager = $documentManager;
         $this->utilisateurRepository = $utilisateurRepository;
         $this->covoiturageRepository = $covoiturageRepository;
+        $this->paiementRepository = $paiementRepository;
     }
 
     // Ajouter un avis
@@ -66,8 +71,19 @@ class AvisController extends AbstractController
         return new JsonResponse(['error' => 'Conducteur introuvable dans la base utilisateur.'], Response::HTTP_NOT_FOUND);
     }
 
+    // Récupérer le paiement associé au covoiturage
+    $paiement = $this->paiementRepository->findOneBy([
+    'covoiturage_id' => $covoiturage->getCovoiturageId(),
+    'utilisateur_id' => $passager->getUtilisateurId()
+    ]);
+
+    if (!$paiement) {
+        return new JsonResponse(['error' => 'Paiement non trouvé pour ce covoiturage.'], Response::HTTP_NOT_FOUND);
+    }
+
     // Créer l'avis
     $avis = new Avis();
+    $avis->setPaiementId($paiement->getPaiementId());
     $avis->setUtilisateurIdPassager($passager->getUtilisateurId());
     $avis->setPseudoPassager($passager->getPseudo());
     $avis->setEmailPassager($passager->getEmail());
@@ -142,6 +158,7 @@ class AvisController extends AbstractController
         
         $avisData2 = [
             'id' => $avis->getId(),
+            'paiement_id' => $avis->getPaiementId(),
             'pseudo_passager' => $avis->getPseudoPassager(),
             'covoiturage_id' => $avis->getCovoiturageId(),
             'pseudo_conducteur' => $avis->getPseudoConducteur(),
@@ -191,6 +208,7 @@ class AvisController extends AbstractController
         // Crée d'abord le tableau avec les données de base de l'avis
         $avisData = [
             'id' => $avis->getId(),
+            'paiement_id' => $avis->getPaiementId(),
             'pseudo_passager' => $avis->getPseudoPassager(),
             'covoiturage_id' => $avis->getCovoiturageId(),
             'pseudo_conducteur' => $avis->getPseudoConducteur(),

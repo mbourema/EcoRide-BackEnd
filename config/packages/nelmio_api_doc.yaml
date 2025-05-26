@@ -232,6 +232,9 @@ nelmio_api_doc:
                                         utilisateur_id_passager:
                                             type: integer
                                             example: 2
+                                        paiement_id:
+                                            type: integer
+                                            example: 2
                                         covoiturage_id:
                                             type: integer
                                             example: 2
@@ -344,6 +347,9 @@ nelmio_api_doc:
                                                 id:
                                                     type: integer
                                                     example: 1
+                                                paiement_id:
+                                                    type: integer
+                                                    example: 2
                                                 pseudo_passager:
                                                     type: string
                                                     example: Paul24
@@ -395,6 +401,9 @@ nelmio_api_doc:
                                                 pseudo_passager:
                                                     type: string
                                                     example: Paul24
+                                                paiement_id:
+                                                    type: integer
+                                                    example: 2
                                                 covoiturage_id:
                                                     type: integer
                                                     example: 1

@@ -3,6 +3,8 @@
 namespace App\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use App\Entity\Covoiturage;
+use App\Entity\Paiement;
 
 #[MongoDB\Document]
 class Avis
@@ -48,6 +50,9 @@ class Avis
 
     #[MongoDB\Field(type: "bool")]
     private bool $validation = false;
+
+    #[MongoDB\Field(type: "integer")] // A recuperer dans la classe Paiement.php (covoiturage_id)
+    private int $paiement_id;
 
     public function getId(): ?string
     {
@@ -194,6 +199,17 @@ class Avis
     public function setValidation(bool $validation): self
     {
         $this->validation = $validation;
+        return $this;
+    }
+
+    public function getPaiementId(): ?int
+    {
+        return $this->covoiturage_id;
+    }
+
+    public function setPaiementId(int $paiement_id): self
+    {
+        $this->paiement_id = $paiement_id;
         return $this;
     }
 }
