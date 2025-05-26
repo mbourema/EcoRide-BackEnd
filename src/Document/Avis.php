@@ -204,7 +204,7 @@ class Avis
 
     public function getPaiementId(): ?int
     {
-        return $this->covoiturage_id;
+        return $this->paiement_id;
     }
 
     public function setPaiementId(int $paiement_id): self
