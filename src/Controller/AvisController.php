@@ -185,6 +185,10 @@ class AvisController extends AbstractController
         }
 
         $avancement = $avis->getAvancement();
+        if (!empty($avancement)) {
+            $avisData2['avancement'] = $avancement;
+        }
+
 
         return $avisData2;
     }, $avisList2);
