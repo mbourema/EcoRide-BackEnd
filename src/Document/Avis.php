@@ -54,6 +54,9 @@ class Avis
     #[MongoDB\Field(type: "integer")] // A recuperer dans la classe Paiement.php (covoiturage_id)
     private int $paiement_id;
 
+    #[MongoDB\Field(type: "string")]
+    private string $avancement;
+
     public function getId(): ?string
     {
         return $this->id;
@@ -210,6 +213,17 @@ class Avis
     public function setPaiementId(int $paiement_id): self
     {
         $this->paiement_id = $paiement_id;
+        return $this;
+    }
+
+    public function getAvancement(): ?string
+    {
+        return $this->avancement;
+    }
+
+    public function setAvancement(string $avancement): self
+    {
+        $this->avancement = $avancement;
         return $this;
     }
 }

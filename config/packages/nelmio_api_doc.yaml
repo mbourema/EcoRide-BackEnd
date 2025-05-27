@@ -251,6 +251,9 @@ nelmio_api_doc:
                                         justification:
                                             type: string
                                             example: "Conducteur froid"
+                                        avancement:
+                                            type: string
+                                            example: "En cours"
                     responses:
                         201:
                             description: "Avis ajouté avec succès"
