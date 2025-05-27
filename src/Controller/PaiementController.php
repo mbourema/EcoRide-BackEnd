@@ -193,7 +193,7 @@ class PaiementController extends AbstractController
         }
 
         if ($paiement->getAvancement() == "Annule par conducteur") {
-            $utilisateur_passager->setNbCredit($utilisateur->getNbCredit() + $paiement->getMontant());
+            $utilisateur_passager->setNbCredit($utilisateur_passager->getNbCredit() + $paiement->getMontant());
             $info_paiements=[
             'email_utilisateur_id' => $paiement->getUtilisateurId()->getEmail(),
             'pseudo_utilisateur_id' => $paiement->getUtilisateurId()->getPseudo(),
