@@ -220,8 +220,6 @@ class PaiementController extends AbstractController
             ]);
 
             $this->mailer->send($email);
-
-            return new JsonResponse(['message' => 'Email de réinitialisation envoyé'], Response::HTTP_OK);
         }
 
         if ($paiement->getAvancement() == "Annule par passager") {
