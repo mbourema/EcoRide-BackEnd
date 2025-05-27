@@ -14,24 +14,30 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        
+
         api_doc:
             pattern: ^/api/doc
-            security: false  # Désactive totalement la sécurité sur /api/doc
+            security: false
 
-        # Firewall API (gestion des tokens)
-        api:
-            pattern: ^/
+        # 🔓 Firewall PUBLIC sans authentification
+        api_public:
+            pattern: ^/api/utilisateurs/(ajouter|connexion|reinistialiser-mot-de-passe|reset-password)
+            security: false
+
+        # 🔐 Firewall PROTÉGÉ avec authentification
+        api_secure:
+            pattern: ^/api/
             stateless: true
             provider: app_user_provider
-            lazy: true
             custom_authenticators:
                 - App\Security\ApiTokenAuthentificatorAuthenticator
 
     access_control:
         - { path: ^/api/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY } 
-        - { path: ^/api/utilisateurs/ajouter, roles: [] }
-        - { path: ^/api/utilisateurs/connexion, roles: [] }
+        - { path: ^/api/utilisateurs/ajouter, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/utilisateurs/connexion, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/utilisateurs/reinistialiser-mot-de-passe, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/utilisateurs/reset-password/\d+, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/avis/add, roles: [ROLE_PASSAGER, ROLE_ADMIN] }
         - { path: ^/avis/update/\d+, roles: [ROLE_EMPLOYE, ROLE_ADMIN] }
         - { path: "^/avis/fulllist", roles: [ROLE_PASSAGER, ROLE_EMPLOYE, ROLE_ADMIN, ROLE_CONDUCTEUR] }
@@ -50,8 +56,6 @@ security:
         - { path: ^/role/list, roles: ROLE_ADMIN }
         - { path: ^/suspension/add, roles: [ROLE_EMPLOYE, ROLE_ADMIN] }
         - { path: ^/suspension/\d+, roles: [ROLE_EMPLOYE, ROLE_ADMIN] }
-        - { path: ^/api/utilisateurs/reinistialiser-mot-de-passe, roles: [] }
-        - { path: ^/api/utilisateurs/reset-password/\d+, roles: [] }
         - { path: ^/api/utilisateurs/liste, roles: [] }
         - { path: "^/api/utilisateurs/details/[A-Za-z0-9]+", roles: [] }
         - { path: ^/api/utilisateurs/details/\d+, roles: [] }

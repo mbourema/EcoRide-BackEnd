@@ -32,13 +32,6 @@ class ApiTokenAuthentificatorAuthenticator extends AbstractAuthenticator
 
     public function supports(Request $request): bool
     {
-        $path = $request->getPathInfo();
-
-        // Ne pas authentifier sur la route d'ajout utilisateur
-        if ($path === '/api/utilisateurs/ajouter') {
-            return false;
-        }
-
         return $request->cookies->has('API_TOKEN');
     }
 
