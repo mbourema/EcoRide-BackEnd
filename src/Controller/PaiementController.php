@@ -152,6 +152,8 @@ class PaiementController extends AbstractController
     #[Route('/paiement/{id}', methods: ['PATCH'])]
     public function updatePaiement(int $id, Request $request, EntityManagerInterface $em): JsonResponse
     {
+        
+        $this->mailer = $mailer;
         // Récupération des données envoyées dans la requête
         $data = json_decode($request->getContent(), true);
     
@@ -172,6 +174,12 @@ class PaiementController extends AbstractController
         if (!$utilisateur) {
             return new JsonResponse(['error' => 'Conducteur non trouvé'], 404);
         }
+
+        // Récupération de l'utilisateur passager à partir de l'ID de l'utilisateur du paiement
+        $utilisateur_passager = $em->getRepository(Utilisateur::class)->find($paiement['utilisateur_id']);
+        if (!$utilisateur_passager) {
+            return new JsonResponse(['error' => 'Utilisateur passager non trouvé'], 404);
+        }
     
         // Mise à jour de l'avancement du paiement, si envoyé dans la requête
         if (isset($data['avancement'])) {
@@ -183,7 +191,43 @@ class PaiementController extends AbstractController
             $utilisateur->setNbCredit($utilisateur->getNbCredit() + ($paiement->getMontant() - 2));
             $paiement->setCreditTotalPlateforme(2);
         }
-    
+
+        if ($paiement->getAvancement() == "Annule par conducteur") {
+            $utilisateur_passager->setNbCredit($utilisateur->getNbCredit() + $paiement->getMontant());
+            $info_paiements=[
+            'email_utilisateur_id' => $paiement->getUtilisateurId()->getEmail(),
+            'pseudo_utilisateur_id' => $paiement->getUtilisateurId()->getPseudo(),
+            'pseudo_conducteur_id' => $paiement->getCovoiturageId()->getConducteur()->getPseudo(),
+            'montant' => $paiement->getMontant(),
+            'date_paiement' => $paiement->getDatePaiement()->format('Y-m-d H:i:s'),
+            ];
+            $email = (new TemplatedEmail())
+            ->from('spaacetree@gmail.com')
+            ->to($info_paiements['email_utilisateur_id'])
+            ->subject('Covoiturage annulé par le conducteur')
+            ->htmlTemplate('covoiturage_annule.twig')
+            ->embedFromPath(
+                // chemin physique vers l’image
+                \dirname(__DIR__, 2).'/public/images/hero.avif',
+                // alias CID utilisé dans le template
+                'heroImage'
+            )
+            ->context([
+                'pseudo_utilisateur_id' => $info_paiements['pseudo_utilisateur_id'],
+                'pseudo_conducteur_id' => $info_paiements['pseudo_conducteur_id'],
+                'date_paiement' => $info_paiements['date_paiement'],
+                'montant' => $info_paiements['montant'],
+            ]);
+
+            $this->mailer->send($email);
+
+            return new JsonResponse(['message' => 'Email de réinitialisation envoyé'], Response::HTTP_OK);
+        }
+
+        if ($paiement->getAvancement() == "Annule par passager") {
+            $utilisateur_passager->setNbCredit($utilisateur->getNbCredit() + $paiement->getMontant());
+        }
+ 
         // Sauvegarde des modifications en base de données
         $em->flush();
     
