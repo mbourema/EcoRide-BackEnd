@@ -170,7 +170,6 @@ class AvisController extends AbstractController
             'note' => $avis->getNote(),
             'validation' => $avis->getValidation(),
             'signale' => $avis->getSignale(),
-            'avancement' => $avis->getAvancement(),
         ];
 
         // Si le commentaire existe, on l'ajoute au tableau
@@ -184,6 +183,8 @@ class AvisController extends AbstractController
         if (!empty($justification)) {
             $avisData2['justification'] = $justification;
         }
+
+        $avancement = $avis->getAvancement();
 
         return $avisData2;
     }, $avisList2);
