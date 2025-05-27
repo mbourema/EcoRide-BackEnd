@@ -184,7 +184,9 @@ class AvisController extends AbstractController
             $avisData2['justification'] = $justification;
         }
 
-        $avancement = $avis->getAvancement();
+        $paiement = $this->paiementRepository->findOneBy(['paiement_id' => $avis->getPaiementId()]);
+
+        $avancement = $paiement->getAvancement();
         if (!empty($avancement)) {
             $avisData2['avancement'] = $avancement;
         }
