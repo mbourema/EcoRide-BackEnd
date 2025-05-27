@@ -225,7 +225,7 @@ class PaiementController extends AbstractController
         }
 
         if ($paiement->getAvancement() == "Annule par passager") {
-            $utilisateur_passager->setNbCredit($utilisateur->getNbCredit() + $paiement->getMontant());
+            $utilisateur_passager->setNbCredit($utilisateur_passager->getNbCredit() + $paiement->getMontant());
         }
  
         // Sauvegarde des modifications en base de données
