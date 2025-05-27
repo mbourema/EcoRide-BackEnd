@@ -101,7 +101,7 @@ class AvisController extends AbstractController
     $avis->setSignale($data['signale'] ?? false);
     $avis->setJustification($data['justification'] ?? '');
     $avis->setValidation($data['validation'] ?? false);
-    $avis->setAvancement($paiement->getAvancement());
+    $avis->setAvancement("En cours");
 
     // Sauvegarde dans MongoDB
     $this->documentManager->persist($avis);
