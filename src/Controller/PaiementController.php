@@ -194,6 +194,7 @@ class PaiementController extends AbstractController
 
         if ($paiement->getAvancement() == "Annule par conducteur") {
             $utilisateur_passager->setNbCredit($utilisateur_passager->getNbCredit() + $paiement->getMontant());
+            $covoiturage->setNbPlaces($covoiturage->getNbPlaces() + 1);
             $info_paiements=[
             'email_utilisateur_id' => $paiement->getUtilisateurId()->getEmail(),
             'pseudo_utilisateur_id' => $paiement->getUtilisateurId()->getPseudo(),
@@ -224,6 +225,7 @@ class PaiementController extends AbstractController
 
         if ($paiement->getAvancement() == "Annule par passager") {
             $utilisateur_passager->setNbCredit($utilisateur_passager->getNbCredit() + $paiement->getMontant());
+            $covoiturage->setNbPlaces($covoiturage->getNbPlaces() + 1);
         }
  
         // Sauvegarde des modifications en base de données
