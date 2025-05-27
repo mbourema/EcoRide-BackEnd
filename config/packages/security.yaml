@@ -30,8 +30,8 @@ security:
 
     access_control:
         - { path: ^/api/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY } 
-        - { path: ^/api/utilisateurs/ajouter, roles: PUBLIC_ACCESS }
-        - { path: ^/api/utilisateurs/connexion, roles: PUBLIC_ACCESS }
+        - { path: ^/api/utilisateurs/ajouter, roles: [] }
+        - { path: ^/api/utilisateurs/connexion, roles: [] }
         - { path: ^/avis/add, roles: [ROLE_PASSAGER, ROLE_ADMIN] }
         - { path: ^/avis/update/\d+, roles: [ROLE_EMPLOYE, ROLE_ADMIN] }
         - { path: "^/avis/fulllist", roles: [ROLE_PASSAGER, ROLE_EMPLOYE, ROLE_ADMIN, ROLE_CONDUCTEUR] }
