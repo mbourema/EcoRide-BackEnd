@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ApiTokenVerifierListener
 {
     private array $excludedRoutes = [
-        '#^/api/utilisateurs/ajouter$#',
+        '#^/api/utilisateurs/ajouter/?$#',
         '#^/api/utilisateurs/connexion$#',
         '#^/avis/fulllist/conducteur$#',
         '#^/covoiturage/list$#',
