@@ -53,6 +53,10 @@ class Covoiturage
     #[ORM\JoinColumn(name: 'email_conducteur', referencedColumnName: 'utilisateur_id', nullable: false)]
     public ?Utilisateur $email = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $created_at = null;
+
+
     public function getCovoiturageId(): ?int
     {
         return $this->covoiturage_id;
@@ -182,6 +186,17 @@ class Covoiturage
     public function getPhoto(): ?string
     {
     return $this->conducteur ? $this->conducteur->getPhoto() : null;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+    return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $created_at): static
+    {
+    $this->created_at = $created_at;
+    return $this;
     }
 
 }

@@ -70,6 +70,8 @@ class CovoiturageController extends AbstractController
     $covoiturage->setNbPlaces($data['nb_places']);
     $covoiturage->setStatut($statut);
     $covoiturage->setPrixPersonne($data['prix_personne']);
+    $covoiturage->setCreatedAt(new DateTime());
+
 
     // Optionnel : Gestion de la photo (si présente)
     if (isset($data['photo'])) {
@@ -129,6 +131,7 @@ class CovoiturageController extends AbstractController
             'pseudo_conducteur' => $covoiturage->getPseudo()->getPseudo(),
             'email_conducteur' => $covoiturage->getEmail()->getEmail(),
             'photo_conducteur' => $covoiturage->getPhoto(),
+            'created_at' => $covoiturage->getCreatedAt()?->format('Y-m-d H:i:s'),
         ];
     }
 
