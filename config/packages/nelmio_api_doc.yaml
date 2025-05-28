@@ -1356,12 +1356,6 @@ nelmio_api_doc:
                                 schema:
                                     type: "object"
                                     properties:
-                                        nom:
-                                            type: "string"
-                                            example: "Dupont"
-                                        prenom:
-                                            type: "string"
-                                            example: "Jean"
                                         email:
                                             type: "string"
                                             format: "email"
@@ -1369,37 +1363,6 @@ nelmio_api_doc:
                                         mdp:
                                             type: "string"
                                             example: "yoyo"
-                                        telephone:
-                                            type: "string"
-                                            example: "0612345678"
-                                        adresse:
-                                            type: "string"
-                                            example: "10 rue de Paris, 75000 Paris"
-                                        date_naissance:
-                                            type: "string"
-                                            format: "date"
-                                            example: "1990-05-15"
-                                        pseudo:
-                                            type: "string"
-                                            example: "JeanD"
-                                        photo:
-                                            type: "string"
-                                            example: "https://example.com/photo.jpg"
-                                        roles:
-                                            type: "array"
-                                            items:
-                                                type: "integer"
-                                            example: [2]
-                                        fumeur:
-                                            type: "boolean"
-                                            example: false
-                                        animal:
-                                            type: "boolean"
-                                            example: false
-                                        preference:
-                                            type: "string"
-                                            example: ""
-
                     responses:
                         200:
                             description: "Utilisateur mis à jour avec succès"
@@ -1411,12 +1374,6 @@ nelmio_api_doc:
                                             id:
                                                 type: "integer"
                                                 example: 1
-                                            nom:
-                                                type: "string"
-                                                example: "Dupont"
-                                            prenom:
-                                                type: "string"
-                                                example: "Jean"
                                             email:
                                                 type: "string"
                                                 format: "email"
@@ -1424,37 +1381,6 @@ nelmio_api_doc:
                                             mdp:
                                                 type: "string"
                                                 example: "yoyo"
-                                            telephone:
-                                                type: "string"
-                                                example: "0612345678"
-                                            adresse:
-                                                type: "string"
-                                                example: "10 rue de Paris, 75000 Paris"
-                                            date_naissance:
-                                                type: "string"
-                                                format: "date"
-                                                example: "1990-05-15"
-                                            pseudo:
-                                                type: "string"
-                                                example: "JeanD"
-                                            photo:
-                                                type: "string"
-                                                example: "https://example.com/photo.jpg"
-                                            roles:
-                                                type: "array"
-                                                items:
-                                                    type: "string"
-                                                example: ["passager"]
-                                            fumeur:
-                                                type: "boolean"
-                                                example: false
-                                            animal:
-                                                type: "boolean"
-                                                example: false
-                                            preference:
-                                                type: "string"
-                                                example: ""
-
                         400:
                             description: "Données invalides"
                         404:

@@ -220,54 +220,18 @@ class UtilisateurController extends AbstractController
     #[Route('/modifier/{id}', name: 'api_utilisateurs_modifier', methods: ['PUT'])]
     public function update(Request $request, Utilisateur $utilisateur): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+    $data = json_decode($request->getContent(), true);
 
-        $utilisateur->setNom($data['nom']);
-        $utilisateur->setPrenom($data['prenom']);
-        $utilisateur->setEmail($data['email']);
-        
-        if (isset($data['mdp'])) {
-            $utilisateur->setMdp(password_hash($data['mdp'], PASSWORD_BCRYPT));
-        }
+    if (!isset($data['email']) || !isset($data['mdp'])) {
+        return new JsonResponse(['message' => 'Données manquantes'], Response::HTTP_BAD_REQUEST);
+    }
 
-        $utilisateur->setTelephone($data['telephone']);
-        $utilisateur->setAdresse($data['adresse']);
-        $utilisateur->setDateNaissance(new \DateTime($data['date_naissance']));
-        $utilisateur->setPseudo($data['pseudo']);
-        if (isset($data['fumeur'])) {
-            $utilisateur->setFumeur($data['fumeur']);
-        }
-        if (isset($data['animal'])) {
-            $utilisateur->setAnimal($data['animal']);
-        }
-        if (isset($data['preference'])) {
-            $utilisateur->setPreference($data['preference']);
-        }
+    $utilisateur->setEmail($data['email']);
+    $utilisateur->setMdp(password_hash($data['mdp'], PASSWORD_BCRYPT));
 
-        // Mise à jour de l'URL de la photo
-        if (isset($data['photo']) && filter_var($data['photo'], FILTER_VALIDATE_URL)) {
-            $utilisateur->setPhoto($data['photo']);
-        }
+    $this->entityManager->flush();
 
-        // Mise à jour des rôles
-        if (isset($data['roles']) && is_array($data['roles'])) {
-            // Suppression des anciens rôles
-            foreach ($utilisateur->getRole() as $role) {
-                $utilisateur->removeRole($role);
-            }
-
-            // Ajout des nouveaux rôles
-            foreach ($data['roles'] as $roleNom) {
-                $role = $this->entityManager->getRepository(Role::class)->findOneBy(['role_id' => $roleNom]);
-                if ($role) {
-                    $utilisateur->addRole($role);
-                }
-            }
-        }
-
-        $this->entityManager->flush();
-
-        return new JsonResponse($this->formatUtilisateur($utilisateur), Response::HTTP_OK);
+    return new JsonResponse($this->formatUtilisateur($utilisateur), Response::HTTP_OK);
     }
 
     // Suppression d'un utilisateur

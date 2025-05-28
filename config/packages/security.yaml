@@ -64,7 +64,7 @@ security:
         - { path: ^/api/voitures/liste, roles: [ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN, ROLE_PASSAGER] }
         - { path: ^/api/voitures/details/\d+, roles: [] }
         - { path: ^/api/voitures/ajouter, roles: [ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN] }
-        - { path: ^/api/voitures/modifier/\d+, roles: [ROLE_CONDUCTEUR, ROLE_EMPLOYE, ROLE_ADMIN] }
+        - { path: ^/api/voitures/modifier/\d+, roles: [ROLE_ADMIN] }
         - { path: ^/api/voitures/supprimer/\d+, roles: [ROLE_ADMIN] }
 
 
